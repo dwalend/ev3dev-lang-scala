@@ -11,6 +11,8 @@ import java.nio.file.Path
  */
 //todo Scala 3 use an enum
 object Ev3Led {
+  val darkest = 0
+  val brightest = 255
 
   lazy val LEFT: Ev3Led = Ev3Led(0)
   lazy val RIGHT: Ev3Led = Ev3Led(1)
@@ -18,9 +20,10 @@ object Ev3Led {
 
 sealed case class Ev3Led(side:Int) extends AutoCloseable {
 
-  //    /leds/led0:red:brick-status/brightness
   val rootName = "/sys/class"
+  //noinspection SpellCheckingInspection
   val redName = s"leds/led$side:red:brick-status/brightness"
+  //noinspection SpellCheckingInspection
   val greenName = s"leds/led$side:green:brick-status/brightness"
 
   private val redPath = Path.of(rootName,redName)
@@ -28,6 +31,7 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
 
   private val redWriter = ChannelRewriter(redPath)
   private val greenWriter = ChannelRewriter(greenPath)
+  //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
   def writeBrightness(red:Int,green:Int):Unit = this.synchronized {
     redWriter.writeAsciiInt(red)
@@ -39,8 +43,8 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
     greenWriter.close()
   }
 
-  val darkest = 0
-  val brightest = 255 //todo double-check value of max_brightness
+  import ev3dev4s.actuators.Ev3Led.darkest
+  import ev3dev4s.actuators.Ev3Led.brightest
 
   def writeOff():Unit = writeBrightness(darkest,darkest)
   def writeRed():Unit = writeBrightness(brightest,darkest)

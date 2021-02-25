@@ -16,12 +16,15 @@ case class ChannelRewriter(path: Path,bufferLength:Int = 32) extends AutoCloseab
 
   @tailrec
   private def keepTryingFileChannel(path: Path):FileChannel = {
+
     try {
       FileChannel.open(path,StandardOpenOption.WRITE)
     } catch {
       case x:AccessDeniedException =>
-        println(s"${x.getClass.getSimpleName} while opening $path. Will retry in ${ChannelRewriter.openRetryDelay} ms")
-        Thread.sleep(ChannelRewriter.openRetryDelay)
+        val openRetryDelay = 10
+
+        println(s"${x.getClass.getSimpleName} while opening $path. Will retry in $openRetryDelay ms")
+        Thread.sleep(openRetryDelay)
         keepTryingFileChannel(path)
     }
   }
@@ -42,8 +45,4 @@ case class ChannelRewriter(path: Path,bufferLength:Int = 32) extends AutoCloseab
   def close():Unit = this.synchronized{
     channel.close()
   }
-}
-
-object ChannelRewriter {
-  val openRetryDelay = 10
 }
