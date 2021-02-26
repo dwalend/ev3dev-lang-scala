@@ -18,7 +18,7 @@ object Ev3LangScala extends ScalaModule {
 }
 
 object Ev3LangScalaExample extends ScalaModule {
-  override def mainClass: T[Option[String]] = Some("ev3.example.Main")
+  override def mainClass: T[Option[String]] = Some("ev3dev4s.sensors.examples.Ev3KeyPadExample")
 
   override def artifactName: T[String] = "Ev3LangScalaExample"
 

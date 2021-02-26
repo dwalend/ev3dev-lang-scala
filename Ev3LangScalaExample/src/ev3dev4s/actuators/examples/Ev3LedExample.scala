@@ -1,4 +1,4 @@
-package ev3dev4s.examples.actuators
+package ev3dev4s.actuators.examples
 
 import ev3dev4s.actuators.Ev3Led
 
