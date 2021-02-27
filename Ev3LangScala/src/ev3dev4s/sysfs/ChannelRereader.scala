@@ -34,3 +34,14 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
     channel.close()
   }
 }
+
+object ChannelRereader {
+  def readString(path: Path, bufferLength:Int = 32): String = {
+    val reader = ChannelRereader(path, bufferLength)
+    try {
+      reader.readString()
+    } finally {
+      reader.close()
+    }
+  }
+}
