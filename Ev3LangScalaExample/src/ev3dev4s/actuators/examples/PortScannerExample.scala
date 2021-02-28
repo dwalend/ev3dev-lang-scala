@@ -1,6 +1,6 @@
 package ev3dev4s.actuators.examples
 
-import ev3dev4s.actuators.MotorScanner
+import ev3dev4s.actuators.MotorPortScanner
 
 /**
  *
@@ -10,8 +10,7 @@ import ev3dev4s.actuators.MotorScanner
  */
 object PortScannerExample {
   def main(args: Array[String]): Unit = {
-    val motors = MotorScanner.scanMotorsDir
-    println("Found: ")
+    val motors = MotorPortScanner.scanMotorsDir
     println(motors.mkString("\n"))
   }
 }
