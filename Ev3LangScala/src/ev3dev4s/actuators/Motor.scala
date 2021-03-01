@@ -18,7 +18,27 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
 
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
 
-  override def close(): Unit = this.synchronized {
+  //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
+  def writeCommand(command: MotorCommand):Unit = {
+    commandWriter.writeString(command.command)
+  }
+
+  def writeStopAction(command:MotorStopCommand):Unit = {
+    stopActionWriter.writeString(command.command)
+  }
+
+  def writeDutyCycle(percent:Int):Unit = {
+    dutyCycleSpWriter.writeAsciiInt(percent)
+  }
+
+  /**
+   * @return position in degrees todo double-check that
+   */
+  def readPosition():Int = {
+    positionReader.readAsciiInt()
+  }
+
+  override def close(): Unit = {
     positionReader.close()
 
     stopActionWriter.close()
@@ -61,9 +81,25 @@ run-timed: Run the motor for the amount of time specified in time_sp and then st
 
 sealed case class MotorCommand(command:String)
 
+/**
+ * Determines the motors behavior when command is set to stop. Possible values are:
+ */
 //todo use a Scala3 enum
 object MotorStopCommand {
-  //todo fill in the different stop commands here
+  /**
+   * Removes power from the motor. The motor will freely coast to a stop.
+   */
+  val COAST: MotorStopCommand = MotorStopCommand("coast")
+
+  /**
+   * Removes power from the motor and creates a passive electrical load. This is usually done by shorting the motor terminals together. This load will absorb the energy from the rotation of the motors and cause the motor to stop more quickly than coasting.
+   */
+  val BRAKE: MotorStopCommand = MotorStopCommand("brake")
+
+  /**
+   * Causes the motor to actively try to hold the current position. If an external force tries to turn the motor, the motor will “push back” to maintain its position.
+   */
+  val HOLD: MotorStopCommand = MotorStopCommand("hold")
 }
 
 sealed case class MotorStopCommand(command:String)
