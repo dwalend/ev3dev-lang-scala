@@ -1,6 +1,6 @@
 package ev3dev4s.sensors.examples
 
-import ev3dev4s.sensors.Ev3KeyPad
+import ev3dev4s.Ev3System
 
 import scala.annotation.tailrec
 
@@ -15,7 +15,7 @@ object Ev3KeyPadExample {
 
   @tailrec
   def printButton():Unit = {
-    println(Ev3KeyPad.blockUntilAnyKey())
+    println(Ev3System.keyPad.blockUntilAnyKey())
     printButton()
   }
 }

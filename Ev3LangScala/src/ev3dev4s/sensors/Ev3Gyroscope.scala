@@ -1,9 +1,8 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter}
+import ev3dev4s.sysfs.ChannelRereader
 
 import java.nio.file.Path
-import scala.reflect.ClassTag
 
 /**
  *
@@ -11,32 +10,7 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-case class Ev3Gyroscope(port:SensorPort, sensorDir:Path) extends Sensor {
-
-  private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
-
-  //todo maybe writeMode should be on the write side of a ReadWriteLock - and all others can be on the Read side?
-  private def writeMode(mode: Mode):Mode = this.synchronized {
-    modeWriter.writeString(mode.name)
-    mode
-  }
-
-  private var mode:Option[Mode] = None
-
-  def getCurrentMode:Option[Mode] = this.synchronized {
-    mode
-  }
-
-  private def getOrElseChangeMode[M <: Mode: ClassTag](create:() => M):M = this.synchronized{
-    mode.collect{case m:M => m}.getOrElse{
-      val toMode = create()
-      mode.foreach(_.close())
-      writeMode(toMode)
-      toMode.init()
-      mode = Option(toMode)
-      toMode
-    }
-  }
+case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends Sensor(sensorDir) {
 
   def headingMode():HeadingMode = {
     getOrElseChangeMode(HeadingMode.apply)
@@ -46,25 +20,17 @@ case class Ev3Gyroscope(port:SensorPort, sensorDir:Path) extends Sensor {
     getOrElseChangeMode(CalibrateMode.apply)
   }
 
-  override def close(): Unit = this.synchronized {
-    modeWriter.close()
-    mode.foreach(_.close())
-  }
-
-  trait Mode extends AutoCloseable {
-    def name:String
-
-    def init():Unit
-  }
-
+  /**
+   * Angle in degrees
+   */
   case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
     private lazy val headingReader = ChannelRereader(sensorDir.resolve("value0"))
-    override def init():Unit = headingReader.path
+    override private[sensors] def init():Unit = headingReader.path
 
     /**
-     * GYRO-ANG	Angle	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
+     * @return Angle (-32768 to 32767)
      */
     def readHeading():Int = this.synchronized{
       headingReader.readAsciiInt()
@@ -76,7 +42,7 @@ case class Ev3Gyroscope(port:SensorPort, sensorDir:Path) extends Sensor {
   }
 
   /**
-   * GYRO-CAL	Calibration ???	none	0	4
+   * Calibration
    */
   case class CalibrateMode() extends Mode {
     override def name: String = "GYRO-CAL"

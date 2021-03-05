@@ -1,11 +1,10 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter}
+import ev3dev4s.sysfs.ChannelRereader
 
 import java.io.File
 import java.nio.file.Path
 import scala.collection.immutable.ArraySeq
-import scala.reflect.ClassTag
 
 /**
  *
@@ -28,10 +27,11 @@ object SensorPortScanner {
 
       driverName match {
         case Ev3Gyroscope.driverName => Ev3Gyroscope(port,Path.of(sensorDir.getAbsolutePath))
+        case Ev3ColorSensor.driverName => Ev3ColorSensor(port,Path.of(sensorDir.getAbsolutePath))
         case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
       }
     }
-  }.map{motor => motor.port -> motor}.toMap
+  }.map{sensor => sensor.port -> sensor}.toMap
 }
 
 //todo use a Scala3 enum
@@ -45,5 +45,3 @@ object SensorPort {
 }
 
 sealed case class SensorPort(name:Char)
-
-trait Sensor extends AutoCloseable

@@ -1,5 +1,6 @@
 package ev3dev4s.actuators.examples
 
+import ev3dev4s.Ev3System
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
 
 /**
@@ -11,9 +12,8 @@ import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, Mot
 object MotorExample {
 
   def main(args: Array[String]): Unit = {
-    val motors: Map[MotorPort, Motor] = MotorPortScanner.scanMotorsDir
 
-    val firstMotor: Motor = motors.values.head
+    val firstMotor: Motor = Ev3System.portsToMotors.values.head
     println(firstMotor)
     println(firstMotor.readPosition())
 
