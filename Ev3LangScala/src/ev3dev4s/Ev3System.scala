@@ -4,8 +4,6 @@ import ev3dev4s.actuators.{Ev3Led, Motor, MotorPort, MotorPortScanner}
 import ev3dev4s.sensors.{Ev3KeyPad, Sensor, SensorPort, SensorPortScanner}
 
 /**
- *
- *
  * @author David Walend
  * @since v0.0.0
  */

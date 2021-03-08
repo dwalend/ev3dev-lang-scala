@@ -26,14 +26,27 @@ case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends Sensor(sensorDir
   case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
+    @volatile var offset = 0
+
     private lazy val headingReader = ChannelRereader(sensorDir.resolve("value0"))
-    override private[sensors] def init():Unit = headingReader.path
+    override private[sensors] def init():Unit = {
+      headingReader.path
+      zero()
+    }
 
     /**
      * @return Angle (-32768 to 32767)
      */
-    def readHeading():Int = this.synchronized{
+    def readRawHeading():Int = this.synchronized{
       headingReader.readAsciiInt()
+    }
+
+    def readHeading():Int = this.synchronized{
+      readRawHeading() - offset
+    }
+
+    def zero():Unit = this.synchronized{
+      offset = readRawHeading()
     }
 
     override def close(): Unit = this.synchronized{

@@ -17,10 +17,10 @@ object MotorExample {
     println(firstMotor)
     println(firstMotor.readPosition())
 
-    firstMotor.writeStopAction(MotorStopCommand.HOLD)
+    firstMotor.writeStopAction(MotorStopCommand.COAST)
     firstMotor.writeDutyCycle(50)
     firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
-    Thread.sleep(3000)
+    Thread.sleep(1000)
     firstMotor.writeCommand(MotorCommand.STOP)
 
     firstMotor.writeDutyCycle(10)
@@ -28,11 +28,17 @@ object MotorExample {
     Thread.sleep(1000)
     firstMotor.writeDutyCycle(100)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(70)
+    firstMotor.writeDutyCycle(-50)
     Thread.sleep(1000)
     firstMotor.writeDutyCycle(10)
     Thread.sleep(1000)
-    firstMotor.writeCommand(MotorCommand.STOP)
+    firstMotor.brake()
+    Thread.sleep(1000)
+
+
+    firstMotor.runSpeed(500)
+    Thread.sleep(1000)
+    firstMotor.brake()
 
     println(firstMotor.readPosition())
 

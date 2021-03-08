@@ -16,6 +16,21 @@ object Ev3Led {
 
   lazy val LEFT: Ev3Led = Ev3Led(0)
   lazy val RIGHT: Ev3Led = Ev3Led(1)
+
+  def writeBothGreen(): Unit = {
+    LEFT.writeGreen()
+    RIGHT.writeGreen()
+  }
+
+  def writeBothRed(): Unit = {
+    LEFT.writeRed()
+    RIGHT.writeRed()
+  }
+
+  def writeBothYellow(): Unit = {
+    LEFT.writeYellow()
+    RIGHT.writeYellow()
+  }
 }
 
 sealed case class Ev3Led(side:Int) extends AutoCloseable {
