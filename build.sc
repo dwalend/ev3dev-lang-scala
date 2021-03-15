@@ -23,7 +23,8 @@ object Ev3LangScala extends ScalaModule {
 
   //not needed after LCDs are in this library
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
-    ivy"com.github.ev3dev-lang-java:ev3dev-lang-java:2.6.2-SNAPSHOT",    //2.7.0-SNAPSHOT ??
+    ivy"net.java.dev.jna:jna:4.5.2"
+//    ivy"com.github.ev3dev-lang-java:ev3dev-lang-java:2.6.2-SNAPSHOT",    //2.7.0-SNAPSHOT ??
 //    ivy"com.github.ev3dev-lang-java:lejos-commons:0.7.3",   //won't need these two dependencies when you can pull the main library in from ivy
 //    ivy"net.java.dev.jna:jna:4.5.2",
 //    ivy"org.slf4j:slf4j-simple:1.7.25"
