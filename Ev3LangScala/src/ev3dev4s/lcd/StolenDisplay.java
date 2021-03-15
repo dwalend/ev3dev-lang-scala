@@ -1,5 +1,7 @@
 package ev3dev4s.lcd;
 
+import ev3dev4s.Log;
+
 /**
  * Class to allow running programs over SSH
  *
@@ -22,7 +24,7 @@ class StolenDisplay extends DisplayInterface {
      */
     @Override
     public void switchToGraphicsMode() {
-        System.out.println("Switch to graphics mode");
+        Log.log("Switch to graphics mode");
     }
 
     /**
@@ -30,7 +32,7 @@ class StolenDisplay extends DisplayInterface {
      */
     @Override
     public void switchToTextMode() {
-        System.out.println("Switch to text mode");
+        Log.log("Switch to text mode");
     }
 
     /**
@@ -38,7 +40,7 @@ class StolenDisplay extends DisplayInterface {
      */
     @Override
     public void close() {
-        System.out.println("Display close");
+        Log.log("Display close");
         // free objects
         closeFramebuffer();
         libc = null;
@@ -47,7 +49,7 @@ class StolenDisplay extends DisplayInterface {
     @Override
     public synchronized JavaFramebuffer openFramebuffer() {
         if (fbInstance == null) {
-            System.out.println("Initialing framebuffer in fake console");
+            Log.log("Initialing framebuffer in fake console");
             initializeFramebuffer(new NativeFramebuffer("/dev/fb0", libc), true);
         }
         return fbInstance;

@@ -1,5 +1,7 @@
 package ev3dev4s.lcd;
 
+import ev3dev4s.Log;
+
 public class Brickman {
 
     private static final String DISABLE_BRICKMAN_COMMAND = "sudo systemctl stop brickman";
@@ -9,7 +11,7 @@ public class Brickman {
      * Disable Brickman.
      */
     public static void disable() {
-        System.out.println("Disabling Brickman service");
+        Log.log("Disabling Brickman service");
 
         Shell.execute(DISABLE_BRICKMAN_COMMAND);
 
@@ -20,7 +22,7 @@ public class Brickman {
      * Enable Brickman.
      */
     private static void restoreBrickman() {
-        System.out.println("Enabling Brickman service");
+        Log.log("Enabling Brickman service");
 
         Shell.execute(ENABLE_BRICKMAN_COMMAND);
     }

@@ -2,6 +2,7 @@ package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Pointer;
+import ev3dev4s.Log;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -71,7 +72,7 @@ public abstract class LinuxFramebuffer implements JavaFramebuffer {
         backup = new byte[(int) getBufferSize()];
         blank = null;
         flushEnabled = true;
-        System.out.println("Opened LinuxFB, mode "+varinfo.xres+"x"+varinfo.yres+"x"+varinfo.bits_per_pixel+"bpp");
+        Log.log("Opened LinuxFB, mode "+varinfo.xres+"x"+varinfo.yres+"x"+varinfo.bits_per_pixel+"bpp");
     }
 
     protected void initializeMemory() throws LastErrorException {
@@ -80,7 +81,7 @@ public abstract class LinuxFramebuffer implements JavaFramebuffer {
 
     @Override
     public void close() throws LastErrorException {
-        System.out.println("Closing LinuxFB");
+        Log.log("Closing LinuxFB");
         if (videomem != null) {
             device.munmap(videomem, getBufferSize());
         }
@@ -133,11 +134,11 @@ public abstract class LinuxFramebuffer implements JavaFramebuffer {
     @Override
     public void flushScreen(BufferedImage compatible) {
         if (flushEnabled) {
-            System.out.println("Drawing frame on framebuffer");
+            Log.log("Drawing frame on framebuffer");
             videomem.write(0, ImageUtils.getImageBytes(compatible), 0, (int) getBufferSize());
             device.msync(videomem, getBufferSize(), NativeConstants.MS_SYNC);
         } else {
-            System.out.println("Not drawing frame on framebuffer");
+            Log.log("Not drawing frame on framebuffer");
         }
     }
 
@@ -148,20 +149,20 @@ public abstract class LinuxFramebuffer implements JavaFramebuffer {
 
     @Override
     public void storeData() {
-        System.out.println("Storing framebuffer snapshot");
+        Log.log("Storing framebuffer snapshot");
         videomem.read(0, backup, 0, (int) getBufferSize());
     }
 
     @Override
     public void restoreData() {
-        System.out.println("Restoring framebuffer snapshot");
+        Log.log("Restoring framebuffer snapshot");
         videomem.write(0, backup, 0, (int) getBufferSize());
         device.msync(videomem, getBufferSize(), NativeConstants.MS_SYNC);
     }
 
     @Override
     public void clear() {
-        System.out.println("Clearing framebuffer");
+        Log.log("Clearing framebuffer");
         if (blank == null) {
             blank = createCompatibleBuffer();
             Graphics2D gfx = blank.createGraphics();

@@ -1,5 +1,7 @@
 package ev3dev4s.lcd;
 
+import ev3dev4s.Log;
+
 import java.awt.Image;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -58,7 +60,7 @@ public class Lcd implements GraphicsLCD {
     // Prevent duplicate objects
     private Lcd() {
 
-        System.out.println("Instancing LCD for Stretch");
+        Log.log("Instancing LCD for Stretch");
 
         this.fb = SystemDisplay.initializeRealFramebuffer();
         this.timer = new Timer("LCD flusher", true);

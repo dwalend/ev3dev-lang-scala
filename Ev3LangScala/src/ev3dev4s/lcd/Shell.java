@@ -1,5 +1,7 @@
 package ev3dev4s.lcd;
 
+import ev3dev4s.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +23,7 @@ public class Shell {
      */
     public static String execute(final String command) {
 
-        System.out.println("Command: "+ command);
+        Log.log("Command: "+ command);
         StringBuilder output = new StringBuilder();
 
         Process p;
@@ -53,7 +55,7 @@ public class Shell {
     public static String execute(final String[] command) {
 
         for (String cmd : command) {
-            System.out.println("Command chunk: " + cmd);
+            Log.log("Command chunk: " + cmd);
         }
         StringBuilder output = new StringBuilder();
 

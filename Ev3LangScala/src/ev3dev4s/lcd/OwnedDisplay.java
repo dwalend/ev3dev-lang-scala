@@ -1,6 +1,7 @@
 package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
+import ev3dev4s.Log;
 
 import java.io.IOException;
 
@@ -44,13 +45,13 @@ class OwnedDisplay extends DisplayInterface {
     public OwnedDisplay(ILibc libc) {
         this.libc = libc;
         try {
-            System.out.println("Initialing system console");
+            Log.log("Initialing system console");
             initialize();
             deinitializer = new Thread(this::deinitialize, "console restore");
             Runtime.getRuntime().addShutdownHook(deinitializer);
             switchToTextMode();
         } catch (IOException e) {
-            System.out.println("System console initialization failed");
+            Log.log("System console initialization failed");
             throw new RuntimeException("Error initializing system console", e);
         }
     }
@@ -67,24 +68,24 @@ class OwnedDisplay extends DisplayInterface {
         NativeFramebuffer fbfd = null;
         boolean success = false;
         try {
-            System.out.println("Opening TTY");
+            Log.log("Opening TTY");
             ttyfd = new NativeTTY("/dev/tty", O_RDWR, libc);
             //TODO Review to put final (Checkstyle)
             int activeVT = ttyfd.getVTstate().v_active;
             old_kbmode = ttyfd.getKeyboardMode();
 
-            System.out.println("Opening FB 0");
+            Log.log("Opening FB 0");
             fbfd = new NativeFramebuffer("/dev/fb0", libc);
             int fbn = fbfd.mapConsoleToFramebuffer(activeVT);
-            System.out.println("map vt"+activeVT+" -> fb "+fbn);
+            Log.log("map vt"+activeVT+" -> fb "+fbn);
 
             if (fbn < 0) {
-                System.out.println("No framebuffer for current TTY");
+                Log.log("No framebuffer for current TTY");
                 throw new IOException("No framebuffer device for the current VT");
             }
             fbPath = "/dev/fb" + fbn;
             if (fbn != 0) {
-                System.out.println("Redirected to FB " + fbn);
+                Log.log("Redirected to FB " + fbn);
                 fbfd.close();
                 fbfd = new NativeFramebuffer(fbPath, libc);
             }
@@ -118,7 +119,7 @@ class OwnedDisplay extends DisplayInterface {
      * Then, console file descriptor is closed.</p>
      */
     private void deinitialize() {
-        System.out.println("Closing system console");
+        Log.log("Closing system console");
         try {
             ttyfd.setKeyboardMode(old_kbmode);
             ttyfd.setConsoleMode(KD_TEXT);
@@ -151,7 +152,7 @@ class OwnedDisplay extends DisplayInterface {
      * @throws RuntimeException when the switch fails
      */
     public void switchToGraphicsMode() {
-        System.out.println("Switching console to graphics mode");
+        Log.log("Switching console to graphics mode");
         try {
             ttyfd.setKeyboardMode(K_OFF);
             ttyfd.setConsoleMode(KD_GRAPHICS);
@@ -180,7 +181,7 @@ class OwnedDisplay extends DisplayInterface {
      * @throws RuntimeException when the switch fails
      */
     public void switchToTextMode() {
-        System.out.println("Switching console to text mode");
+        Log.log("Switching console to text mode");
         if (fbInstance != null) {
             fbInstance.setFlushEnabled(false);
             fbInstance.storeData();
@@ -210,7 +211,7 @@ class OwnedDisplay extends DisplayInterface {
      */
     public synchronized JavaFramebuffer openFramebuffer() {
         if (fbInstance == null) {
-            System.out.println("Initialing framebuffer in system console");
+            Log.log("Initialing framebuffer in system console");
             switchToGraphicsMode();
             initializeFramebuffer(new NativeFramebuffer(fbPath, libc), true);
         }

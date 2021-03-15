@@ -1,6 +1,7 @@
 package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
+import ev3dev4s.Log;
 
 /**
  * Helper class for initializing real on-brick display.
@@ -24,13 +25,13 @@ public final class SystemDisplay {
     public static DisplayInterface initializeRealDisplay() {
         ILibc libc = new NativeLibc();
 
-        System.out.println("initializing new real display");
+        Log.log("initializing new real display");
         try {
             return new OwnedDisplay(libc);
         } catch (LastErrorException e) {
             int errno = e.getErrorCode();
             if (errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO) {
-                System.out.println("real display init failed, "
+                Log.log("real display init failed, "
                     + "but it was caused by not having a real TTY, using fake console");
                 // we do not run from Brickman
                 return new StolenDisplay(libc);

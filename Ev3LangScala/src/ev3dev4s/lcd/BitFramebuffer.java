@@ -1,6 +1,7 @@
 package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
+import ev3dev4s.Log;
 
 import java.awt.image.BufferedImage;
 
@@ -13,7 +14,7 @@ import static ev3dev4s.lcd.NativeConstants.FB_VISUAL_MONO10;
  *
  * @since 2.4.7
  */
-//todo not this one
+//todo not this one - delete it
 public class BitFramebuffer extends LinuxFramebuffer {
 
     /**
@@ -33,7 +34,7 @@ public class BitFramebuffer extends LinuxFramebuffer {
             } catch (LastErrorException e) {
                 throw new RuntimeException("Cannot close framebuffer", e);
             }
-            System.out.println("Framebuffer uses non-packed pixels");
+            Log.log("Framebuffer uses non-packed pixels");
             throw new IllegalArgumentException("Only frame buffers with packed pixels are supported");
         }
         // probably duplicated, but this way we are sure
@@ -45,7 +46,7 @@ public class BitFramebuffer extends LinuxFramebuffer {
             } catch (LastErrorException e) {
                 throw new RuntimeException("Cannot close framebuffer", e);
             }
-            System.out.println("Framebuffer is not 1bpp mono");
+            Log.log("Framebuffer is not 1bpp mono");
             throw new IllegalArgumentException("Only frame buffers with 1bpp BW are supported");
         }
         // taking ownership

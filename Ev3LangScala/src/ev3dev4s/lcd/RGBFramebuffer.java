@@ -1,6 +1,7 @@
 package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
+import ev3dev4s.Log;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class RGBFramebuffer extends LinuxFramebuffer {
             } catch (LastErrorException e) {
                 throw new RuntimeException("Cannot close framebuffer", e);
             }
-            System.out.println("Framebuffer uses non-packed pixels");
+            Log.log("Framebuffer uses non-packed pixels");
             throw new IllegalArgumentException("Only frame buffers with packed pixels are supported");
         }
         if (getFixedInfo().visual != FB_VISUAL_TRUECOLOR || getVariableInfo().bits_per_pixel != 32) {
@@ -42,7 +43,7 @@ public class RGBFramebuffer extends LinuxFramebuffer {
             } catch (LastErrorException e) {
                 throw new RuntimeException("Cannot close framebuffer", e);
             }
-            System.out.println("Framebuffer is not 32bpp truecolor");
+            Log.log("Framebuffer is not 32bpp truecolor");
             throw new IllegalArgumentException("Only frame buffers with 32bpp RGB are supported");
         }
         // taking ownership

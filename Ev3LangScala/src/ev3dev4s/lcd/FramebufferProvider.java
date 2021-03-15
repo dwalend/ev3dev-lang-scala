@@ -1,6 +1,7 @@
 package ev3dev4s.lcd;
 
 import com.sun.jna.LastErrorException;
+import ev3dev4s.Log;
 
 import java.util.ServiceLoader;
 
@@ -22,22 +23,21 @@ public interface FramebufferProvider {
     static JavaFramebuffer load(NativeFramebuffer fb, DisplayInterface display) throws AllImplFailedException {
 
         //todo getting rid of this will get rid of a scan of .class files in the .jar, should really speed things up!
-        System.out.println("Loading framebuffer");
+        Log.log("Loading framebuffer");
         ServiceLoader<FramebufferProvider> loader = ServiceLoader.load(FramebufferProvider.class);
-        System.out.println(loader.findFirst());
         for (FramebufferProvider provider : loader) {
             try {
                 JavaFramebuffer ok = provider.createFramebuffer(fb, display);
-                System.out.println("Framebuffer "+provider.getClass().getSimpleName()+" is compatible");
+                Log.log("Framebuffer "+provider.getClass().getSimpleName()+" is compatible");
                 return ok;
             } catch (IllegalArgumentException ex) {
-                System.out.println("Framebuffer "+provider.getClass().getSimpleName()+" is not compatible");
+                Log.log("Framebuffer "+provider.getClass().getSimpleName()+" is not compatible");
             } catch (LastErrorException e) {
-                System.out.println("Framebuffer "+provider.getClass().getSimpleName()+" threw Exception");
+                Log.log("Framebuffer "+provider.getClass().getSimpleName()+" threw Exception");
                 e.printStackTrace();
             }
         }
-        System.out.println("All framebuffer implementations failed");
+        Log.log("All framebuffer implementations failed");
         throw new AllImplFailedException("No suitable framebuffer found");
     }
 
