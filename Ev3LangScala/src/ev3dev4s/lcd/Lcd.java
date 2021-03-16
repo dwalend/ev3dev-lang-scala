@@ -23,17 +23,13 @@ import java.util.TimerTask;
  */
 public class Lcd implements GraphicsLCD {
 
-    // custom config
-    public static final String EV3DEV_LCD_KEY = "EV3DEV_LCD_KEY";
-    public static final String EV3DEV_LCD_DEFAULT = "/dev/fb0";
-    public static final String EV3DEV_LCD_MODE_KEY = "EV3DEV_LCD_MODE_KEY";
-
     // drawable
     private final JavaFramebuffer fb;
     private final BufferedImage image;
     private final Graphics2D g2d;
 
     // autorefresh
+    //todo nothing seems to use autorefresh
     private final Timer timer;
     private boolean timer_run = false;
     private int timer_msec = 0;
@@ -59,7 +55,7 @@ public class Lcd implements GraphicsLCD {
     // Prevent duplicate objects
     private Lcd() {
 
-        Log.log("Instancing LCD for Stretch");
+        Log.log("Start creating LCD");
 
         this.fb = SystemDisplay.initializeRealFramebuffer();
         this.timer = new Timer("LCD flusher", true);
@@ -271,7 +267,7 @@ public class Lcd implements GraphicsLCD {
         tf.translate(-midx, -midy);
         AffineTransformOp op = new AffineTransformOp(tf, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         BufferedImage transformed = ImageUtils.createXRGBImage(w, h);
-        transformed = op.filter(srcI, transformed);
+        op.filter(srcI, transformed);
 
         BufferedImage dstI = any2rgb(image);
         bitBlt(srcI, sx, sy, dstI, x, y, w, h, rop);
