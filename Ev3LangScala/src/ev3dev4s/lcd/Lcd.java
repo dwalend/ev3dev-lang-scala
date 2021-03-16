@@ -21,7 +21,6 @@ import java.util.TimerTask;
 /**
  * Lejos LCD reimplementation using Java2D API
  */
-@SuppressWarnings("unused")
 public class Lcd implements GraphicsLCD {
 
     // custom config

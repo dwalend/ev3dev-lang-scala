@@ -79,11 +79,7 @@ public abstract class DisplayInterface implements Closeable {
      * @param enable Whether to enable framebuffer flushing from the beginning.
      */
     protected void initializeFramebuffer(NativeFramebuffer backend, boolean enable) {
-        try {
-            fbInstance = FramebufferProvider.load(backend, this);
-        } catch (AllImplFailedException e) {
-            throw new RuntimeException("System framebuffer opening failed", e);
-        }
+        fbInstance = new RGBFramebuffer(backend, this);
         fbInstance.setFlushEnabled(enable);
         fbInstance.clear();
         fbInstance.storeData();
