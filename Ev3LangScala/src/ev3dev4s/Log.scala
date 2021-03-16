@@ -8,6 +8,6 @@ package ev3dev4s
  */
 object Log {
   def log(text: String): Unit = {
-    Log.log(s"${System.currentTimeMillis()} $text")
+    println(s"${System.currentTimeMillis()} $text")
   }
 }

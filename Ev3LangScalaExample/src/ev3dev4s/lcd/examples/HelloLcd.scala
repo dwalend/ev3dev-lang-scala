@@ -6,9 +6,11 @@ import ev3dev4s.lcd.{GraphicsLCD, Lcd}
  * @author David Walend
  * @since v0.0.0
  */
-object HelloLcd {
+object HelloLcd extends Runnable {
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = run()
+
+  override def run(): Unit = {
     val lcd: GraphicsLCD = Lcd.getInstance()
 
     //clear the LCD
@@ -21,5 +23,4 @@ object HelloLcd {
 
     Thread.sleep(10000)
   }
-
 }
