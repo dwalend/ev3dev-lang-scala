@@ -13,7 +13,7 @@ object HelloLcd extends Runnable {
 
   override def run(): Unit = {
     Log.log("start")
-    val lcd: GraphicsLCD = Lcd.getInstance()
+    val lcd: GraphicsLCD = Lcd
 
     //clear the LCD
     lcd.setColor(GraphicsLCD.WHITE)
