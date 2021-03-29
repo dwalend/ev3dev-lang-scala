@@ -1,17 +1,23 @@
 To Test:
 
+Medium motor
+
+
+In progress:
+
+ant scp to copy up the .jar
+ant ssh to run the .jar
+
         
 To Do:
 
-Medium motor
-
 Battery
 
-Figure out what to do with the LCD
+Refine the LCD code
 
 Fill in existing classes
 
-Sound
+Direct Sound
 
 IR sensor
 
@@ -22,8 +28,6 @@ Touch sensor
 tut examples
 
 ant task for mill yguard or proguard to shrink the code down
-ant scp to copy up the .jar
-ant ssh to run the .jar
 
      
 
@@ -45,3 +49,8 @@ Use motors
 Define robot from scans
 
 Assess options for LCD
+
+Command-line sound
+
+Figure out what to do with the LCD
+

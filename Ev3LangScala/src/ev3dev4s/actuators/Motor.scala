@@ -20,7 +20,7 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
   private val positionWriter = ChannelRewriter(motorDir.resolve("position"))
 
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
-  private val stateReader = ChannelRereader(motorDir.resolve("state"))
+  private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
 
 
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
@@ -55,12 +55,12 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
     positionReader.readAsciiInt()
   }
 
-  def readState():MotorState = {
-    MotorState.stateNamesToStates(stateReader.readString())
+  def readState():Seq[MotorState] = {
+    stateReader.readString().split(' ').filterNot(_ == "").map{MotorState.stateNamesToStates(_)}
   }
 
   def readIsStalled():Boolean = {
-    readState() == MotorState.STALLED
+    readState().contains(MotorState.STALLED)
   }
 
   def coast(): Unit = {
@@ -104,6 +104,12 @@ sealed case class Ev3LargeMotor(port:MotorPort,motorDir:Path) extends Motor(port
 
 object Ev3LargeMotor {
   val driverName = "lego-ev3-l-motor"
+}
+
+sealed case class Ev3MediumMotor(port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
+
+object Ev3MediumMotor {
+  val driverName = "lego-ev3-m-motor"
 }
 
 //todo use a Scala3 enum

@@ -17,7 +17,7 @@ import java.util.TimerTask
 /**
  * Lejos LCD reimplementation using Java2D API
  */
-object Lcd extends GraphicsLCD {
+object Lcd {
 
   Log.log("Start creating LCD")
   // drawable
@@ -25,11 +25,6 @@ object Lcd extends GraphicsLCD {
   val image: BufferedImage = fb.createCompatibleBuffer
   val g2d: Graphics2D = this.image.createGraphics
 
-  // autorefresh
-  //todo nothing seems to use autorefresh
-  val timer = new Timer("LCD flusher", true)
-  private var timer_run = false
-  private var timer_msec = 0
   this.clear()
 
   // stroke
@@ -42,26 +37,55 @@ object Lcd extends GraphicsLCD {
    */
   def flush(): Unit = fb.flushScreen(image)
 
-  override def translate(x: Int, y: Int): Unit = g2d.translate(x, y)
+  /**
+   * Translates the origin of the graphics context to the point
+   * (x, y) in the current coordinate system. Calls are cumulative.
+   *
+   * @param x the new translation origin x value
+   * @param y new translation origin y value
+   * @see #getTranslateX()
+   * @see #getTranslateY()
+   */
+  def translate(x: Int, y: Int): Unit = g2d.translate(x, y)
 
-  override def getFont: Font = g2d.getFont
+  def getFont: Font = g2d.getFont
 
-  override def setFont(font: Font): Unit = g2d.setFont(font)
+  def setFont(font: Font): Unit = g2d.setFont(font)
 
-  override def getTranslateX: Int = g2d.getTransform.getTranslateX.toInt
+  def getTranslateX: Int = g2d.getTransform.getTranslateX.toInt
 
-  override def getTranslateY: Int = g2d.getTransform.getTranslateY.toInt
+  def getTranslateY: Int = g2d.getTransform.getTranslateY.toInt
+
+  /* Public color definitions NOT Standard*/
+  val BLACK = 0
+  val WHITE = 0xffffff
 
   /**
-   * Set RGB value
+   * Set the current drawing color. The value is in the format 0x00RRGGBB.
+   * NOTE. Currently only black and white is supported. any non black color
+   * is treated as white!
    *
-   * @param rgb rgb
+   * @param rgb new color.
    */
-  override def setColor(rgb: Int): Unit = g2d.setColor(new Color(rgb))
+  def setColor(rgb: Int): Unit = g2d.setColor(new Color(rgb))
 
-  override def setColor(r: Int, g: Int, b: Int): Unit = g2d.setColor(new Color(r, g, b))
+/**
+ * Sets the current color to the specified RGB values.
+ *
+ * @param red   the red component
+ * @param green the green component
+ * @param blue  the blue
+ * @throws IllegalArgumentException if any of the color components
+ *                                  are outside of range 
+ */
+  def setColor(red: Int, green: Int, blue: Int): Unit = g2d.setColor(new Color(red, green, blue))
 
-  override def setPixel(x: Int, y: Int, color: Int): Unit = {
+  /**
+   * @param x     the x coordinate
+   * @param y     the y coordinate
+   * @param color the pixel color (0 = white, 1 = black)
+   */
+  def setPixel(x: Int, y: Int, color: Int): Unit = {
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
@@ -70,7 +94,11 @@ object Lcd extends GraphicsLCD {
     image.setRGB(dst.x.toInt, dst.y.toInt, fill.getRGB)
   }
 
-  override def getPixel(x: Int, y: Int): Int = {
+  /**
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return the pixel color (0 = white, 1 = black)
+   */  def getPixel(x: Int, y: Int): Int = {
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
@@ -79,7 +107,21 @@ object Lcd extends GraphicsLCD {
     else 1
   }
 
-  override def drawString(str: String, x: Int, y: Int, anchor: Int, inverted: Boolean): Unit = {
+  /**
+   * Draws the specified String using the current font and color. x and y
+   * give the location of the anchor point. Additional method to allow for
+   * the easy use of inverted text. In this case the area below the string
+   * is drawn in the current color, before drawing the text in the "inverted"
+   * color.
+   * <br><b>Note</b>: This is a non standard method.
+   *
+   * @param str      the String to be drawn
+   * @param x        the x coordinate of the anchor point
+   * @param y        the y coordinate of the anchor point
+   * @param anchor   the anchor point for positioning the text
+   * @param inverted true to invert the text display.
+   */
+  def drawString(str: String, x: Int, y: Int, anchor: Int, inverted: Boolean): Unit = {
     val oldFg = g2d.getColor
     val oldBg = g2d.getBackground
     g2d.setColor(if (inverted) Color.WHITE
@@ -91,7 +133,16 @@ object Lcd extends GraphicsLCD {
     g2d.setBackground(oldBg)
   }
 
-  override def drawString(str: String, x: Int, y: Int, anchor: Int): Unit = {
+  /**
+   * Draws the specified String using the current font and color. x and y
+   * give the location of the anchor point.
+   *
+   * @param str    the String to be drawn
+   * @param x      the x coordinate of the anchor point
+   * @param y      the y coordinate of the anchor point
+   * @param anchor the anchor point for positioning the text
+   */
+  def drawString(str: String, x: Int, y: Int, anchor: Int): Unit = {
     val metrics = g2d.getFontMetrics
     val w = metrics.stringWidth(str)
     val h = metrics.getHeight
@@ -100,40 +151,111 @@ object Lcd extends GraphicsLCD {
     g2d.drawString(str, x1, y1)
   }
 
-  override def drawSubstring(str: String, offset: Int, len: Int, x: Int, y: Int, anchor: Int): Unit = {
+  /**
+   * Draw a substring to the graphics surface using the current color.
+   *
+   * @param str    the base string
+   * @param offset the start of the sub string
+   * @param len    the length of the sub string
+   * @param x      the x coordinate of the anchor point
+   * @param y      the x coordinate of the anchor point
+   * @param anchor the anchor point used to position the text.
+   */
+  def drawSubstring(str: String, offset: Int, len: Int, x: Int, y: Int, anchor: Int): Unit = {
     val sub = str.substring(offset, offset + len)
     drawString(sub, x, y, anchor)
   }
 
-  override def drawChar(character: Char, x: Int, y: Int, anchor: Int): Unit = {
+  /**
+   * Draw a single character to the graphics surface using the current color.
+   *
+   * @param character the character to draw
+   * @param x         the x coordinate of the anchor point
+   * @param y         the x coordinate of the anchor point
+   * @param anchor    the anchor point used to position the text.
+   */
+  def drawChar(character: Char, x: Int, y: Int, anchor: Int): Unit = {
     val str = new String(Array[Char](character))
     drawString(str, x, y, anchor)
   }
 
-  override def drawChars(data: Array[Char], offset: Int, length: Int, x: Int, y: Int, anchor: Int): Unit = {
+  /**
+   * Draw a series of characters to the graphics surface using the current color.
+   *
+   * @param data   the characters
+   * @param offset the start of the characters to be drawn
+   * @param length the length of the character string to draw
+   * @param x      the x coordinate of the anchor point
+   * @param y      the x coordinate of the anchor point
+   * @param anchor the anchor point used to position the text.
+   */
+  def drawChars(data: Array[Char], offset: Int, length: Int, x: Int, y: Int, anchor: Int): Unit = {
     val str = new String(data)
     drawString(str, x, y, anchor)
   }
 
-  override def getStrokeStyle: Int = this.stroke
+  /**
+   * Constant for the <code>SOLID</code> stroke style.
+   *
+   * <P>Value <code>0</code> is assigned to <code>SOLID</code>.</P>
+   */
+  val SOLID = 0
+  /**
+   * Constant for the <code>DOTTED</code> stroke style.
+   *
+   * <P>Value <code>1</code> is assigned to <code>DOTTED</code>.</P>
+   */
+  val DOTTED = 1
 
-  override def setStrokeStyle(i: Int): Unit = {
+  /**
+   * @return current style.
+   */
+  def getStrokeStyle: Int = this.stroke
+
+  /**
+   * @param i new style.
+   */  
+  def setStrokeStyle(i: Int): Unit = {
     this.stroke = i
-    val stroke:BasicStroke = if (i == GraphicsLCD.DOTTED) {
+    val stroke:BasicStroke = if (i == DOTTED) {
       val dash = Array[Float](3.0f, 3.0f)
       val dash_phase = 0.0f
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f, dash, dash_phase)
     }
-    else if (i == GraphicsLCD.SOLID)
+    else if (i == SOLID)
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f)
     else
       throw new IllegalArgumentException("Invalid stroke")
     g2d.setStroke(stroke)
   }
 
-  @deprecated override def drawRegionRop(src: Image, sx: Int, sy: Int, w: Int, h: Int, x: Int, y: Int, anchor: Int, rop: Int): Unit = drawRegionRop(src, sx, sy, w, h, GraphicsLCD.TRANS_NONE, x, y, anchor, rop)
-
-  @deprecated override def drawRegionRop(src: Image, sx: Int, sy: Int, wIn: Int, hIn: Int, transform: Int, xIn: Int, yIn: Int, anchor: Int, rop: Int): Unit = {
+  val TRANS_MIRROR = 2
+  val TRANS_MIRROR_ROT180 = 1
+  val TRANS_MIRROR_ROT270 = 4
+  val TRANS_MIRROR_ROT90 = 7
+  val TRANS_NONE = 0
+  val TRANS_ROT180 = 3
+  val TRANS_ROT270 = 6
+  val TRANS_ROT90 = 5
+  
+  /**
+   * Draw the specified region of the source image to the graphics surface
+   * after applying the requested transformation, use the supplied rop.
+   * <br>NOTE: When calculating the anchor point this method assumes that
+   * a transformed version of the source width/height should be used.
+   *
+   * @param src       The source image
+   * @param sx        x coordinate of the region
+   * @param sy        y coordinate of the region
+   * @param wIn         width of the region
+   * @param hIn         height of the region
+   * @param transform the required transform
+   * @param xIn         x coordinate of the anchor point
+   * @param yIn         y coordinate of the anchor point
+   * @param anchor    type of anchor
+   * @param rop       raster operation used to draw the output.
+   */
+  private def drawRegionRop(src: Image, sx: Int, sy: Int, wIn: Int, hIn: Int, transform: Int, xIn: Int, yIn: Int, anchor: Int, rop: Int): Unit = {
     var w = wIn
     var h = hIn
     val x = adjustX(xIn, w, anchor)
@@ -145,29 +267,29 @@ object Lcd extends GraphicsLCD {
     tf.translate(midx, midy)
     val h0 = h
     transform match {
-      case GraphicsLCD.TRANS_MIRROR =>
+      case TRANS_MIRROR =>
         tf.scale(-1.0, 1.0)
-      case GraphicsLCD.TRANS_MIRROR_ROT90 =>
+      case TRANS_MIRROR_ROT90 =>
         tf.scale(-1.0, 1.0)
         tf.quadrantRotate(1)
         h = w
         w = h0
-      case GraphicsLCD.TRANS_MIRROR_ROT180 =>
+      case TRANS_MIRROR_ROT180 =>
         tf.scale(-1.0, 1.0)
         tf.quadrantRotate(2)
-      case GraphicsLCD.TRANS_MIRROR_ROT270 =>
+      case TRANS_MIRROR_ROT270 =>
         tf.scale(-1.0, 1.0)
         tf.quadrantRotate(3)
         h = w
         w = h0
-      case GraphicsLCD.TRANS_NONE =>
-      case GraphicsLCD.TRANS_ROT90 =>
+      case TRANS_NONE =>
+      case TRANS_ROT90 =>
         tf.quadrantRotate(1)
         h = w
         w = h0
-      case GraphicsLCD.TRANS_ROT180 =>
+      case TRANS_ROT180 =>
         tf.quadrantRotate(2)
-      case GraphicsLCD.TRANS_ROT270 =>
+      case TRANS_ROT270 =>
         tf.quadrantRotate(3)
         h = w
         w = h0
@@ -182,29 +304,87 @@ object Lcd extends GraphicsLCD {
     bitBlt(srcI, sx, sy, dstI, x, y, w, h, rop)
     g2d.drawImage(dstI, 0, 0, null)
   }
+  
+  def drawImage(image: Image, i: Int, i1: Int, i2: Int): Unit = g2d.drawImage(image, i, i1, null)
 
-  @deprecated override def drawRegion(src: Image, sx: Int, sy: Int, w: Int, h: Int, transform: Int, x: Int, y: Int, anchor: Int): Unit = drawRegionRop(src, sx, sy, w, h, transform, x, y, anchor, CommonLCD.ROP_COPY)
+  def drawLine(x1: Int, y1: Int, x2: Int, y2: Int): Unit = g2d.drawLine(x1, y1, x2, y2)
 
-  override def drawImage(image: Image, i: Int, i1: Int, i2: Int): Unit = g2d.drawImage(image, i, i1, null)
+  def fillRect(x: Int, y: Int, width: Int, height: Int): Unit = g2d.fillRect(x, y, width, height)
 
-  override def drawLine(x1: Int, y1: Int, x2: Int, y2: Int): Unit = g2d.drawLine(x1, y1, x2, y2)
-
-  override def fillRect(x: Int, y: Int, width: Int, height: Int): Unit = g2d.fillRect(x, y, width, height)
-
-  override def copyArea(sx: Int, sy: Int, w: Int, h: Int, x: Int, y: Int, anchor: Int): Unit = {
+  /**
+   * Copy one rectangular area of the drawing surface to another.
+   *
+   * @param sx     Source x
+   * @param sy     Source y
+   * @param w      Source width
+   * @param h      Source height
+   * @param x      Destination x
+   * @param y      Destination y
+   * @param anchor location of the anchor point of the destination.
+   */
+  def copyArea(sx: Int, sy: Int, w: Int, h: Int, x: Int, y: Int, anchor: Int): Unit = {
     g2d.copyArea(sx, sy, w, h, adjustX(x, w, anchor), adjustY(y, h, anchor))
   }
+
+  /**
+   * Centering text and images horizontally
+   * around the anchor point
+   *
+   * <P>Value <code>1</code> is assigned to <code>HCENTER</code>.</P>
+   */
+  val HCENTER = 1
+  /**
+   * Centering images vertically
+   * around the anchor point.
+   *
+   * <P>Value <code>2</code> is assigned to <code>VCENTER</code>.</P>
+   */
+  val VCENTER = 2
+  /**
+   * Position the anchor point of text and images
+   * to the left of the text or image.
+   *
+   * <P>Value <code>4</code> is assigned to <code>LEFT</code>.</P>
+   */
+  val LEFT = 4
+  /**
+   * Position the anchor point of text and images
+   * to the right of the text or image.
+   *
+   * <P>Value <code>8</code> is assigned to <code>RIGHT</code>.</P>
+   */
+  val RIGHT = 8
+  /**
+   * Position the anchor point of text and images
+   * above the text or image.
+   *
+   * <P>Value <code>16</code> is assigned to <code>TOP</code>.</P>
+   */
+  val TOP = 16
+  /**
+   * Position the anchor point of text and images
+   * below the text or image.
+   *
+   * <P>Value <code>32</code> is assigned to <code>BOTTOM</code>.</P>
+   */
+  val BOTTOM = 32
+  /**
+   * Position the anchor point at the baseline of text.
+   *
+   * <P>Value <code>64</code> is assigned to <code>BASELINE</code>.</P>
+   */
+  val BASELINE = 64
 
   /**
    * Adjust the x co-ordinate to use the translation and anchor values.
    */
   private def adjustX(xIn: Int, w: Int, anchor: Int): Int = { //todo make functional
     var x = xIn
-    anchor & (GraphicsLCD.LEFT | GraphicsLCD.RIGHT | GraphicsLCD.HCENTER) match {
-      case GraphicsLCD.LEFT =>
-      case GraphicsLCD.RIGHT =>
+    anchor & (LEFT | RIGHT | HCENTER) match {
+      case LEFT =>
+      case RIGHT =>
         x -= w
-      case GraphicsLCD.HCENTER =>
+      case HCENTER =>
         x -= w / 2
       case _ =>
         throw new RuntimeException("Bad Option")
@@ -217,11 +397,11 @@ object Lcd extends GraphicsLCD {
    */
   private def adjustY(yIn: Int, h: Int, anchor: Int):Int = { //todo make functional
     var y = yIn
-    anchor & (GraphicsLCD.TOP | GraphicsLCD.BOTTOM | GraphicsLCD.VCENTER) match {
-      case GraphicsLCD.TOP =>
-      case GraphicsLCD.BOTTOM =>
+    anchor & (TOP | BOTTOM | VCENTER) match {
+      case TOP =>
+      case BOTTOM =>
         y -= h
-      case GraphicsLCD.VCENTER =>
+      case VCENTER =>
         y -= h / 2
       case _ =>
         throw new RuntimeException("Bad Option")
@@ -229,19 +409,27 @@ object Lcd extends GraphicsLCD {
     y
   }
 
-  override def drawRoundRect(x: Int, y: Int, width: Int, height: Int, arcWidth: Int, arcHeight: Int): Unit = g2d.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
+  def drawRoundRect(x: Int, y: Int, width: Int, height: Int, arcWidth: Int, arcHeight: Int): Unit = g2d.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
 
-  override def drawRect(x: Int, y: Int, width: Int, height: Int): Unit = g2d.drawRect(x, y, width, height)
+  def drawRect(x: Int, y: Int, width: Int, height: Int): Unit = g2d.drawRect(x, y, width, height)
 
-  override def drawArc(x: Int, y: Int, width: Int, height: Int, startAngle: Int, arcAngle: Int): Unit = g2d.drawArc(x, y, width, height, startAngle, arcAngle)
+  def drawArc(x: Int, y: Int, width: Int, height: Int, startAngle: Int, arcAngle: Int): Unit = g2d.drawArc(x, y, width, height, startAngle, arcAngle)
 
-  override def fillArc(x: Int, y: Int, width: Int, height: Int, startAngle: Int, arcAngle: Int): Unit = g2d.fillArc(x, y, width, height, startAngle, arcAngle)
+  def fillArc(x: Int, y: Int, width: Int, height: Int, startAngle: Int, arcAngle: Int): Unit = g2d.fillArc(x, y, width, height, startAngle, arcAngle)
 
-  override def drawOval(x: Int, y: Int, width: Int, height: Int): Unit = g2d.drawOval(x, y, width, height)
+  def drawOval(x: Int, y: Int, width: Int, height: Int): Unit = g2d.drawOval(x, y, width, height)
 
-  override def refresh(): Unit = flush()
+  /**
+   * Refresh the display. If auto refresh is off, this method will wait until
+   * the display refresh has completed. If auto refresh is on it will return
+   * immediately.
+   */
+  def refresh(): Unit = flush()
 
-  override def clear(): Unit = {
+  /**
+   * Clear the display.
+   */
+  def clear(): Unit = {
     val tf = g2d.getTransform.clone.asInstanceOf[AffineTransform]
     g2d.getTransform.setToIdentity()
     g2d.setColor(Color.WHITE)
@@ -250,15 +438,25 @@ object Lcd extends GraphicsLCD {
     g2d.setTransform(tf)
   }
 
-  override def getWidth: Int = fb.getWidth
+  def getWidth: Int = fb.getWidth
 
-  override def getHeight: Int = fb.getHeight
+  def getHeight: Int = fb.getHeight
 
-  override def getDisplay: Array[Byte] = ImageUtils.getImageBytes(image)
+  /**
+   * Provide access to the LCD display frame buffer.
+   *
+   * @return byte array that is the frame buffer.
+   */
+  def getDisplay: Array[Byte] = ImageUtils.getImageBytes(image)
 
-  override def getHWDisplay: Array[Byte] = getDisplay
+  /**
+   * Get access to hardware LCD display.
+   *
+   * @return byte array that is the frame buffer
+   */
+  def getHWDisplay: Array[Byte] = getDisplay
 
-  override def setContrast(i: Int): Unit = {
+  def setContrast(i: Int): Unit = {
     // not implemented even on leJOS
   }
 
@@ -298,15 +496,48 @@ object Lcd extends GraphicsLCD {
 
   /**
    * Slow emulation of leJOS bitBlt()
+   *
+   * Standard two input BitBlt function with the LCD display as the
+   * destination. Supports standard raster ops and
+   * overlapping images. Images are held in native leJOS/Lego format.
+   *
+   * @param src byte array containing the source image
+   * @param sw  Width of the source image
+   * @param sh  Height of the source image
+   * @param sx  X position to start the copy from
+   * @param sy  Y Position to start the copy from
+   * @param dx  X destination
+   * @param dy  Y destination
+   * @param w   width of the area to copy
+   * @param h   height of the area to copy
+   * @param rop raster operation.
    */
-  override def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
+  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
     val srcI = lejos2rgb(src, sw, sh)
     val dstI = any2rgb(image)
     bitBlt(srcI, sx, sy, dstI, dx, dy, w, h, rop)
     g2d.drawImage(dstI, 0, 0, null)
   }
 
-  override def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dst: Array[Byte], dw: Int, dh: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
+  /**
+   * Standard two input BitBlt function. Supports standard raster ops and
+   * overlapping images. Images are held in native leJOS/Lego format.
+   *
+   * @param src byte array containing the source image
+   * @param sw  Width of the source image
+   * @param sh  Height of the source image
+   * @param sx  X position to start the copy from
+   * @param sy  Y Position to start the copy from
+   * @param dst byte array containing the destination image
+   * @param dw  Width of the destination image
+   * @param dh  Height of the destination image
+   * @param dx  X destination
+   * @param dy  Y destination
+   * @param w   width of the area to copy
+   * @param h   height of the area to copy
+   * @param rop raster operation.
+   */
+  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dst: Array[Byte], dw: Int, dh: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
     val srcI = lejos2rgb(src, sw, sh)
     val dstI = lejos2rgb(dst, dw, dh)
     bitBlt(srcI, sx, sy, dstI, dx, dy, w, h, rop)
@@ -350,12 +581,18 @@ object Lcd extends GraphicsLCD {
     }
   }
 
-  override def setAutoRefresh(b: Boolean): Unit = if (this.timer_run != b) {
+  // autorefresh
+  //todo nothing seems to use autorefresh
+  lazy val timer = new Timer("LCD flusher", true)
+  private var timer_run = false
+  private var timer_msec = 0
+
+  def setAutoRefresh(b: Boolean): Unit = if (this.timer_run != b) {
     this.timer_run = b
     timerUpdate()
   }
 
-  override def setAutoRefreshPeriod(i: Int): Unit = {
+  def setAutoRefreshPeriod(i: Int): Unit = {
     val old = this.timer_msec
     if (old != i) {
       this.timer_msec = i
@@ -369,6 +606,6 @@ object Lcd extends GraphicsLCD {
   }
 
   private class Flusher extends TimerTask {
-    override def run(): Unit = refresh()
+    def run(): Unit = refresh()
   }
 }

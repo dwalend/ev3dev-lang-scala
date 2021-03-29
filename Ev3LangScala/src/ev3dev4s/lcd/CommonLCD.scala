@@ -1,4 +1,4 @@
-package ev3dev4s.lcd
+/*package ev3dev4s.lcd
 
 object CommonLCD {
   /**
@@ -23,16 +23,10 @@ object CommonLCD {
 }
 
 trait CommonLCD {
-  /**
-   * Refresh the display. If auto refresh is off, this method will wait until
-   * the display refresh has completed. If auto refresh is on it will return
-   * immediately.
-   */
+
   def refresh():Unit
 
-  /**
-   * Clear the display.
-   */
+
   def clear():Unit
 
   /**
@@ -51,18 +45,10 @@ trait CommonLCD {
    */
   def getHeight:Int
 
-  /**
-   * Provide access to the LCD display frame buffer.
-   *
-   * @return byte array that is the frame buffer.
-   */
+
   def getDisplay:Array[Byte]
 
-  /**
-   * Get access to hardware LCD display.
-   *
-   * @return byte array that is the frame buffer
-   */
+
   def getHWDisplay:Array[Byte]
 
   /**
@@ -72,42 +58,10 @@ trait CommonLCD {
    */
   def setContrast(contrast: Int):Unit
 
-  /**
-   * Standard two input BitBlt function with the LCD display as the
-   * destination. Supports standard raster ops and
-   * overlapping images. Images are held in native leJOS/Lego format.
-   *
-   * @param src byte array containing the source image
-   * @param sw  Width of the source image
-   * @param sh  Height of the source image
-   * @param sx  X position to start the copy from
-   * @param sy  Y Position to start the copy from
-   * @param dx  X destination
-   * @param dy  Y destination
-   * @param w   width of the area to copy
-   * @param h   height of the area to copy
-   * @param rop raster operation.
-   */
+
   def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int):Unit
 
-  /**
-   * Standard two input BitBlt function. Supports standard raster ops and
-   * overlapping images. Images are held in native leJOS/Lego format.
-   *
-   * @param src byte array containing the source image
-   * @param sw  Width of the source image
-   * @param sh  Height of the source image
-   * @param sx  X position to start the copy from
-   * @param sy  Y Position to start the copy from
-   * @param dst byte array containing the destination image
-   * @param dw  Width of the destination image
-   * @param dh  Height of the destination image
-   * @param dx  X destination
-   * @param dy  Y destination
-   * @param w   width of the area to copy
-   * @param h   height of the area to copy
-   * @param rop raster operation.
-   */
+
   def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dst: Array[Byte], dw: Int, dh: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int):Unit
 
   /**
@@ -126,4 +80,4 @@ trait CommonLCD {
    * @return the previous refresh period.
    */
   def setAutoRefreshPeriod(period: Int):Unit
-}
+}*/

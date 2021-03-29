@@ -1,7 +1,7 @@
 package ev3dev4s.lcd.examples
 
 import ev3dev4s.Log
-import ev3dev4s.lcd.{GraphicsLCD, Lcd}
+import ev3dev4s.lcd.Lcd
 
 /**
  * @author David Walend
@@ -13,15 +13,14 @@ object HelloLcd extends Runnable {
 
   override def run(): Unit = {
     Log.log("start")
-    val lcd: GraphicsLCD = Lcd
 
     //clear the LCD
-    lcd.setColor(GraphicsLCD.WHITE)
-    lcd.fillRect(0, 0, lcd.getWidth, lcd.getHeight)
+    Lcd.setColor(Lcd.WHITE)
+    Lcd.fillRect(0, 0, Lcd.getWidth, Lcd.getHeight)
 
-    lcd.setColor(GraphicsLCD.BLACK)
-    lcd.drawString("Hello World!",0,30,GraphicsLCD.LEFT+GraphicsLCD.BOTTOM)
-    lcd.refresh()
+    Lcd.setColor(Lcd.BLACK)
+    Lcd.drawString("Hello World!",0,30,Lcd.LEFT+Lcd.BOTTOM)
+    Lcd.refresh()
     Log.log("showing Hello World")
 
     Thread.sleep(10000)

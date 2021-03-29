@@ -134,7 +134,7 @@ public abstract class LinuxFramebuffer implements JavaFramebuffer {
     @Override
     public void flushScreen(BufferedImage compatible) {
         if (flushEnabled) {
-            Log.log("Drawing frame on framebuffer");
+//            Log.log("Drawing frame on framebuffer");
             videomem.write(0, ImageUtils.getImageBytes(compatible), 0, (int) getBufferSize());
             device.msync(videomem, getBufferSize(), NativeConstants.MS_SYNC);
         } else {
