@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends Sensor(sensorDir) {
+case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends MultiModeSensor(sensorDir) {
 
   def headingMode():HeadingMode = {
     getOrElseChangeMode(HeadingMode.apply)

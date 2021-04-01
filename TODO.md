@@ -11,19 +11,15 @@ ant ssh to run the .jar
         
 To Do:
 
-Battery
-
 Refine the LCD code
 
 Fill in existing classes
-
-Direct Sound
 
 IR sensor
 
 Ultrasonic sensor
 
-Touch sensor
+Direct Sound
 
 tut examples
 
@@ -54,3 +50,6 @@ Command-line sound
 
 Figure out what to do with the LCD
 
+Battery
+
+Touch sensor

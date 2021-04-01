@@ -9,9 +9,11 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-abstract class Sensor(sensorDir:Path) extends AutoCloseable{
-
+trait Sensor extends AutoCloseable {
   def port: SensorPort
+}
+
+abstract class MultiModeSensor(sensorDir:Path) extends Sensor{
 
   private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
 

@@ -28,6 +28,7 @@ object SensorPortScanner {
       driverName match {
         case Ev3Gyroscope.driverName => Ev3Gyroscope(port,Path.of(sensorDir.getAbsolutePath))
         case Ev3ColorSensor.driverName => Ev3ColorSensor(port,Path.of(sensorDir.getAbsolutePath))
+        case Ev3TouchSensor.driverName => Ev3TouchSensor(port,Path.of(sensorDir.getAbsolutePath))
         case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
       }
     }
