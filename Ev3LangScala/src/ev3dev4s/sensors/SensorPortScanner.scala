@@ -16,7 +16,7 @@ object SensorPortScanner {
 
   def scanSensorsDir:Map[SensorPort,Sensor] = {
     val sensorsDir: File = new File("/sys/class/lego-sensor")
-    ArraySeq.unsafeWrapArray(sensorsDir.listFiles()).map{ sensorDir: File =>
+    ArraySeq.unsafeWrapArray(sensorsDir.listFiles()).map{ (sensorDir: File) =>
       //read the address to learn which port
       val addressPath = Path.of(sensorDir.getAbsolutePath,"address")
       val port = SensorPort.namesToPorts(ChannelRereader.readString(addressPath).last)

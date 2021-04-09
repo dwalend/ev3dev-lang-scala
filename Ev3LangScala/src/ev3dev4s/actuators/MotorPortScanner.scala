@@ -18,7 +18,7 @@ object MotorPortScanner {
     val motorMap = {
       //noinspection SpellCheckingInspection
       val motorsDir: File = new File("/sys/class/tacho-motor")
-      ArraySeq.unsafeWrapArray(motorsDir.listFiles()).map{ motorDir: File =>
+      ArraySeq.unsafeWrapArray(motorsDir.listFiles()).map{ (motorDir: File) =>
         //read the address to learn which port
         val addressPath = Path.of(motorDir.getAbsolutePath,"address")
         val port = MotorPort.namesToPorts(ChannelRereader.readString(addressPath).last)

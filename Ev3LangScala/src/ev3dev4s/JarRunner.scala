@@ -24,7 +24,7 @@ object JarRunner {
       while (keepGoing) {
         println(s"Reloading and rerunning $className from $jarFile")
         val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
-        classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty).asInstanceOf[Runnable].run()
+        classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()
         println(s"Finished run() of $className from $jarFile")
       }
     } catch {

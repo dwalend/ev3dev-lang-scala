@@ -11,7 +11,7 @@ import os.{CommandResult, Path}
 object Ev3LangScala extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScala"
 
-  def scalaVersion = "2.13.5"
+  def scalaVersion = "2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
   override def scalacOptions = Seq("-deprecation")
@@ -52,7 +52,7 @@ object Ev3LangScalaExample extends ScalaModule {
 
   override def artifactName: T[String] = "Ev3LangScalaExample"
 
-  def scalaVersion = "2.13.5"
+  def scalaVersion = "2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
   override def scalacOptions = Seq("-deprecation")
