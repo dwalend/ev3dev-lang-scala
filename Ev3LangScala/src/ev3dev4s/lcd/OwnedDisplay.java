@@ -31,7 +31,6 @@ import static ev3dev4s.lcd.NativeConstants.VT_PROCESS;
  */
 class OwnedDisplay extends DisplayInterface {
 
-    private ILibc libc;
     private String fbPath = null;
     private NativeTTY ttyfd = null;
     private int old_kbmode;
@@ -42,8 +41,7 @@ class OwnedDisplay extends DisplayInterface {
      *
      * @throws RuntimeException when initialization or mode switch fails.
      */
-    public OwnedDisplay(ILibc libc) {
-        this.libc = libc;
+    public OwnedDisplay() {
         try {
             Log.log("Initialing system console");
             initialize();
@@ -69,13 +67,13 @@ class OwnedDisplay extends DisplayInterface {
         boolean success = false;
         try {
             Log.log("Opening TTY");
-            ttyfd = new NativeTTY("/dev/tty", O_RDWR, libc);
+            ttyfd = new NativeTTY("/dev/tty", O_RDWR);
             //TODO Review to put final (Checkstyle)
             int activeVT = ttyfd.getVTstate().v_active;
             old_kbmode = ttyfd.getKeyboardMode();
 
             Log.log("Opening FB 0");
-            fbfd = new NativeFramebuffer("/dev/fb0", libc);
+            fbfd = new NativeFramebuffer("/dev/fb0");
             int fbn = fbfd.mapConsoleToFramebuffer(activeVT);
             Log.log("map vt"+activeVT+" -> fb "+fbn);
 
@@ -87,7 +85,7 @@ class OwnedDisplay extends DisplayInterface {
             if (fbn != 0) {
                 Log.log("Redirected to FB " + fbn);
                 fbfd.close();
-                fbfd = new NativeFramebuffer(fbPath, libc);
+                fbfd = new NativeFramebuffer(fbPath);
             }
 
             success = true;
@@ -139,7 +137,6 @@ class OwnedDisplay extends DisplayInterface {
         // free objects
         closeFramebuffer();
         ttyfd = null;
-        libc = null;
     }
 
     /**
@@ -197,7 +194,7 @@ class OwnedDisplay extends DisplayInterface {
         } catch (LastErrorException e) {
             throw new RuntimeException("Switch to text mode failed", e);
         }
-
+        Log.log("Switching to text mode succeeded");
     }
 
     /**
@@ -213,7 +210,7 @@ class OwnedDisplay extends DisplayInterface {
         if (fbInstance == null) {
             Log.log("Initialing framebuffer in system console");
             switchToGraphicsMode();
-            initializeFramebuffer(new NativeFramebuffer(fbPath, libc), true);
+            initializeFramebuffer(new NativeFramebuffer(fbPath), true);
         }
         return fbInstance;
     }

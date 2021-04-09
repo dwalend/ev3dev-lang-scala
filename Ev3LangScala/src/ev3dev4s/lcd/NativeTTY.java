@@ -44,30 +44,7 @@ public class NativeTTY extends NativeDevice {
     public NativeTTY(String dname, int flags) throws LastErrorException {
         super(dname, flags);
     }
-
-    /**
-     * Initialize new TTY.
-     *
-     * @param dname Path to TTY device.
-     * @param libc  standard C library interface to be used.
-     * @throws LastErrorException when the operation fails.
-     */
-    public NativeTTY(String dname, ILibc libc) throws LastErrorException {
-        super(dname, NativeConstants.O_RDWR, libc);
-    }
-
-    /**
-     * Initialize new TTY.
-     *
-     * @param dname Path to TTY device.
-     * @param flags Opening mode, e.g. read, write or both.
-     * @param libc  standard C library interface to be used.
-     * @throws LastErrorException when the operation fails.
-     */
-    public NativeTTY(String dname, int flags, ILibc libc) throws LastErrorException {
-        super(dname, flags, libc);
-    }
-
+    
     /**
      * Get current TTY mode. TTY mode is mostly about VT switching.
      *

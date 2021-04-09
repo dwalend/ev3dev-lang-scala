@@ -9,13 +9,11 @@ import ev3dev4s.Log;
  * @since 2.4.7
  */
 class StolenDisplay extends DisplayInterface {
-    private ILibc libc;
 
     /**
      * noop
      */
-    public StolenDisplay(ILibc libc) {
-        this.libc = libc;
+    public StolenDisplay() {
         Brickman.disable();
     }
 
@@ -43,14 +41,13 @@ class StolenDisplay extends DisplayInterface {
         Log.log("Display close");
         // free objects
         closeFramebuffer();
-        libc = null;
     }
 
     @Override
     public synchronized JavaFramebuffer openFramebuffer() {
         if (fbInstance == null) {
             Log.log("Initialing framebuffer in fake console");
-            initializeFramebuffer(new NativeFramebuffer("/dev/fb0", libc), true);
+            initializeFramebuffer(new NativeFramebuffer("/dev/fb0"), true);
         }
         return fbInstance;
     }

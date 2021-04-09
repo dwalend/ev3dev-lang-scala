@@ -1,6 +1,8 @@
 package ev3dev4s.lcd
 
+import com.sun.jna.LastErrorException
 import ev3dev4s.Log
+
 import java.awt.Image
 import java.awt.Font
 import java.awt.BasicStroke
@@ -15,14 +17,32 @@ import java.util.Timer
 import java.util.TimerTask
 
 /**
- * Lejos LCD reimplementation using Java2D API
+ * Lejos LCD reimplementation using Java2D API in Scala
  */
 object Lcd {
 
   Log.log("Start creating LCD")
   // drawable
-  val fb: JavaFramebuffer = SystemDisplay.initializeRealFramebuffer
-  val image: BufferedImage = fb.createCompatibleBuffer
+  private val framebuffer: JavaFramebuffer = {
+    val display: DisplayInterface = {
+      Log.log("initializing new real display")
+      try new OwnedDisplay()
+      catch {
+        case e: LastErrorException =>
+          val errno = e.getErrorCode
+          if (errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO) {
+            Log.log("real display init failed, but it was caused by not having a real TTY, using fake console")
+            // not inside Brickman
+            new StolenDisplay()
+          }
+          else throw e
+      }
+    }
+    display.openFramebuffer()
+  }
+
+  Log.log(s"framebuffer is $framebuffer")
+  val image: BufferedImage = framebuffer.createCompatibleBuffer
   val g2d: Graphics2D = this.image.createGraphics
 
   this.clear()
@@ -30,12 +50,10 @@ object Lcd {
   // stroke
   private var stroke = 0
 
-  def getFramebuffer: JavaFramebuffer = fb
-
   /**
    * Write LCD with current context
    */
-  def flush(): Unit = fb.flushScreen(image)
+  def flush(): Unit = framebuffer.flushScreen(image)
 
   /**
    * Translates the origin of the graphics context to the point
@@ -433,14 +451,14 @@ object Lcd {
     val tf = g2d.getTransform.clone.asInstanceOf[AffineTransform]
     g2d.getTransform.setToIdentity()
     g2d.setColor(Color.WHITE)
-    g2d.fillRect(0, 0, fb.getWidth, fb.getHeight)
+    g2d.fillRect(0, 0, framebuffer.getWidth, framebuffer.getHeight)
     flush()
     g2d.setTransform(tf)
   }
 
-  def getWidth: Int = fb.getWidth
+  def getWidth: Int = framebuffer.getWidth
 
-  def getHeight: Int = fb.getHeight
+  def getHeight: Int = framebuffer.getHeight
 
   /**
    * Provide access to the LCD display frame buffer.
