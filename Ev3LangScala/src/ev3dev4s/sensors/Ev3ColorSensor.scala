@@ -33,6 +33,53 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
     }
   }
 
+  def ambientMode():AmbientMode = {
+    getOrElseChangeMode(AmbientMode.apply)
+  }
+
+  case class AmbientMode() extends Mode {
+    val name = "COL-AMBIENT"
+
+    private lazy val ambientReader = ChannelRereader(sensorDir.resolve("value0"))
+    override private[sensors] def init():Unit = ambientReader.path
+
+    /**
+     * Ambient light
+     * @return Ambient light intensity (0 to 100)
+     */
+    def readAmbient():Int = this.synchronized{
+      ambientReader.readAsciiInt()
+    }
+
+    override def close(): Unit = this.synchronized{
+      ambientReader.close()
+    }
+  }
+
+  def colorMode():ColorMode = {
+    getOrElseChangeMode(ColorMode.apply)
+  }
+
+  case class ColorMode() extends Mode {
+    val name = "COL-COLOR"
+
+    private lazy val colorReader = ChannelRereader(sensorDir.resolve("value0"))
+    override private[sensors] def init():Unit = colorReader.path
+
+    /**
+     * Ambient light
+     * @return 0 to 7 color code todo create an enum with scala 3
+     */
+    def readColor():Int = this.synchronized{
+      colorReader.readAsciiInt()
+    }
+
+    override def close(): Unit = this.synchronized{
+      colorReader.close()
+    }
+  }
+
+
   /* todo
 COL-REFLECT	Reflected light - sets LED color to red	pct (percent)	0	1	value0: Reflected light intensity (0 to 100)
 COL-AMBIENT	Ambient light - sets LED color to blue (dimly lit)	pct (percent)	0	1	value0: Ambient light intensity (0 to 100)

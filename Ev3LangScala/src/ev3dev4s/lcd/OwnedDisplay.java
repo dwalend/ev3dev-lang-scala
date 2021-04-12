@@ -68,8 +68,9 @@ class OwnedDisplay extends DisplayInterface {
         try {
             Log.log("Opening TTY");
             ttyfd = new NativeTTY("/dev/tty", O_RDWR);
-            //TODO Review to put final (Checkstyle)
+            Log.log("Getting activeVT");
             int activeVT = ttyfd.getVTstate().v_active;
+            Log.log("Getting old keyboard mode");
             old_kbmode = ttyfd.getKeyboardMode();
 
             Log.log("Opening FB 0");
