@@ -221,4 +221,9 @@ public final class NativeConstants {
      * IOCTL number for getting fixed screen info.
      */
     public static final int FBIOGET_FSCREENINFO = 0x4602;
+
+    /**
+     * Default file access
+     */
+    public static int DEFAULT_PRIVS = 0x0777;
 }

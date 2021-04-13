@@ -12,6 +12,10 @@ import static ev3dev4s.lcd.NativeConstants.FBIOGET_CON2FBMAP;
 import static ev3dev4s.lcd.NativeConstants.FBIOGET_FSCREENINFO;
 import static ev3dev4s.lcd.NativeConstants.FBIOGET_VSCREENINFO;
 import static ev3dev4s.lcd.NativeConstants.FBIOPUT_VSCREENINFO;
+import static ev3dev4s.lcd.NativeConstants.MAP_SHARED;
+import static ev3dev4s.lcd.NativeConstants.O_RDWR;
+import static ev3dev4s.lcd.NativeConstants.PROT_READ;
+import static ev3dev4s.lcd.NativeConstants.PROT_WRITE;
 
 /**
  * Linux framebuffer wrapper class
@@ -19,7 +23,9 @@ import static ev3dev4s.lcd.NativeConstants.FBIOPUT_VSCREENINFO;
  * @since 2.4.7
  */
 @SuppressWarnings("unused")
-public class NativeFramebuffer extends NativeDevice {
+public class NativeFramebuffer implements AutoCloseable {// extends NativeDevice {
+
+    private final NativeFile nativeFile;
 
     /**
      * Create a native device to provide access to the specified character device
@@ -28,7 +34,7 @@ public class NativeFramebuffer extends NativeDevice {
      * @throws LastErrorException when operations fails
      */
     public NativeFramebuffer(String dname) throws LastErrorException {
-        super(dname);
+        nativeFile = new NativeFile(dname,O_RDWR,0) ;
     }
 
     /**
@@ -39,7 +45,7 @@ public class NativeFramebuffer extends NativeDevice {
      * @throws LastErrorException when operations fails
      */
     public NativeFramebuffer(String dname, int flags) throws LastErrorException {
-        super(dname, flags);
+        nativeFile = new NativeFile(dname,flags,NativeConstants.DEFAULT_PRIVS); //todo can't do default args from java
     }
 
     /**
@@ -49,7 +55,7 @@ public class NativeFramebuffer extends NativeDevice {
      */
     public fb_fix_screeninfo getFixedScreenInfo() throws LastErrorException {
         fb_fix_screeninfo info = new fb_fix_screeninfo();
-        super.ioctl(FBIOGET_FSCREENINFO, info.getPointer());
+        nativeFile.ioctl(FBIOGET_FSCREENINFO, info.getPointer());
         info.read();
         return info;
     }
@@ -62,7 +68,7 @@ public class NativeFramebuffer extends NativeDevice {
      */
     public fb_var_screeninfo getVariableScreenInfo() throws LastErrorException {
         fb_var_screeninfo info = new fb_var_screeninfo();
-        super.ioctl(FBIOGET_VSCREENINFO, info.getPointer());
+        nativeFile.ioctl(FBIOGET_VSCREENINFO, info.getPointer());
         info.read();
         return info;
     }
@@ -75,7 +81,7 @@ public class NativeFramebuffer extends NativeDevice {
      */
     public void setVariableScreenInfo(fb_var_screeninfo info) throws LastErrorException {
         info.write();
-        super.ioctl(FBIOPUT_VSCREENINFO, info.getPointer());
+        nativeFile.ioctl(FBIOPUT_VSCREENINFO, info.getPointer());
     }
 
     /**
@@ -89,9 +95,48 @@ public class NativeFramebuffer extends NativeDevice {
         fb_con2fbmap map = new fb_con2fbmap();
         map.console = console;
         map.write();
-        super.ioctl(FBIOGET_CON2FBMAP, map.getPointer());
+        nativeFile.ioctl(FBIOGET_CON2FBMAP, map.getPointer());
         map.read();
         return map.framebuffer;
+    }
+
+    /**
+     * Map a portion of the device into memory and return a pointer which can be
+     * used to read/write the device.
+     *
+     * @param len number of bytes to map
+     * @return a pointer that can be used to access the device memory
+     */
+    public Pointer mmap(long len) throws LastErrorException {
+        return nativeFile.mmap(len, PROT_READ | PROT_WRITE, MAP_SHARED, 0);
+    }
+
+    /**
+     * Synchronize mapped memory region.
+     *
+     * @param addr  Mapped address.
+     * @param len   Region length.
+     * @param flags Synchronization flags
+     * @throws LastErrorException when operations fails
+     */
+    public int msync(Pointer addr, long len, int flags) {
+        return nativeFile.msync(addr,len,flags);
+    }
+
+    /**
+     * Unmap mapped memory region.
+     *
+     * @param addr Mapped address.
+     * @param len  Region length.
+     * @throws LastErrorException when operations fails
+     */
+    public int munmap(Pointer addr,long len) {
+      return nativeFile.munmap(addr,len);
+    }
+
+    @Override
+    public void close() {
+        nativeFile.close();
     }
 
     /**

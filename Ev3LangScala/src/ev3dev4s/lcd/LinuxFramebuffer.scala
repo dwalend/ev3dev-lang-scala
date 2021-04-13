@@ -86,7 +86,7 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
   override def flushScreen(compatible: BufferedImage): Unit = {
     if (flushEnabled) {
       videomem.write(0, ImageUtils.getImageBytes(compatible), 0, getBufferSize.toInt)
-      device.msync(videomem, getBufferSize, NativeConstants.MS_SYNC)
+      device.msync(videomem, getBufferSize, NativeConstants.MS_SYNC)  //todo demiter
     }
     else Log.log("Not drawing frame on framebuffer")
   }

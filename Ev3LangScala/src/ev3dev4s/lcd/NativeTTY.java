@@ -22,17 +22,9 @@ import static ev3dev4s.lcd.NativeConstants.VT_SETMODE;
  * @author Jakub Vaněk
  * @since 2.4.7
  */
-public class NativeTTY extends NativeDevice {
+public final class NativeTTY implements AutoCloseable {//extends NativeDevice {
 
-    /**
-     * Initialize new TTY.
-     *
-     * @param dname Path to TTY device.
-     * @throws LastErrorException when the operation fails.
-     */
-    public NativeTTY(String dname) throws LastErrorException {
-        super(dname, NativeConstants.O_RDWR);
-    }
+    private final NativeFile nativeFile;
 
     /**
      * Initialize new TTY.
@@ -42,7 +34,7 @@ public class NativeTTY extends NativeDevice {
      * @throws LastErrorException when the operation fails.
      */
     public NativeTTY(String dname, int flags) throws LastErrorException {
-        super(dname, flags);
+        nativeFile = new NativeFile(dname, flags, NativeConstants.DEFAULT_PRIVS); //todo can use default agrs in scala
     }
     
     /**
@@ -53,7 +45,7 @@ public class NativeTTY extends NativeDevice {
      */
     public vt_mode getVTmode() throws LastErrorException {
         vt_mode mode = new vt_mode();
-        super.ioctl(VT_GETMODE, mode.getPointer());
+        nativeFile.ioctl(VT_GETMODE, mode.getPointer());
         mode.read();
         return mode;
     }
@@ -66,7 +58,7 @@ public class NativeTTY extends NativeDevice {
      */
     public void setVTmode(vt_mode mode) throws LastErrorException {
         mode.write();
-        super.ioctl(VT_SETMODE, mode.getPointer());
+        nativeFile.ioctl(VT_SETMODE, mode.getPointer());
     }
 
     /**
@@ -77,7 +69,7 @@ public class NativeTTY extends NativeDevice {
      */
     public vt_stat getVTstate() throws LastErrorException {
         vt_stat stat = new vt_stat();
-        super.ioctl(VT_GETSTATE, stat.getPointer());
+        nativeFile.ioctl(VT_GETSTATE, stat.getPointer());
         stat.read();
         return stat;
     }
@@ -90,7 +82,7 @@ public class NativeTTY extends NativeDevice {
      */
     public int getKeyboardMode() throws LastErrorException {
         IntByReference kbd = new IntByReference(0);
-        super.ioctl(KDGKBMODE, kbd);
+        nativeFile.ioctl(KDGKBMODE, kbd);
         return kbd.getValue();
     }
 
@@ -101,7 +93,7 @@ public class NativeTTY extends NativeDevice {
      * @throws LastErrorException when the operation fails.
      */
     public void setKeyboardMode(int mode) throws LastErrorException {
-        super.ioctl(KDSKBMODE, mode);
+        nativeFile.ioctl(KDSKBMODE, mode);
     }
 
     /**
@@ -111,7 +103,7 @@ public class NativeTTY extends NativeDevice {
      * @throws LastErrorException when the operation fails.
      */
     public void setConsoleMode(int mode) throws LastErrorException {
-        super.ioctl(KDSETMODE, mode);
+        nativeFile.ioctl(KDSETMODE, mode);
     }
 
     /**
@@ -121,7 +113,16 @@ public class NativeTTY extends NativeDevice {
      * @throws LastErrorException when the operation fails.
      */
     public void signalSwitch(int mode) throws LastErrorException {
-        super.ioctl(VT_RELDISP, mode);
+        nativeFile.ioctl(VT_RELDISP, mode);
+    }
+
+    boolean isOpen() {
+        return nativeFile.isOpen();
+    }
+
+    @Override
+    public void close() {
+        nativeFile.close();
     }
 
     /**
@@ -169,5 +170,4 @@ public class NativeTTY extends NativeDevice {
             return Arrays.asList("mode", "waitv", "relsig", "acqsig", "frsig");
         }
     }
-
 }
