@@ -22,6 +22,8 @@ import static ev3dev4s.lcd.NativeConstants.VT_SETMODE;
  * @author Jakub Vaněk
  * @since 2.4.7
  */
+
+//todo hold off converting to Scala until after OwnedDisplay is converted
 public final class NativeTTY implements AutoCloseable {//extends NativeDevice {
 
     private final NativeFile nativeFile;

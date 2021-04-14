@@ -22,6 +22,7 @@ import static ev3dev4s.lcd.NativeConstants.PROT_WRITE;
  *
  * @since 2.4.7
  */
+//todo hold off converting to Scala until after OwnedDisplay is converted
 @SuppressWarnings("unused")
 public class NativeFramebuffer implements AutoCloseable {// extends NativeDevice {
 
