@@ -38,7 +38,7 @@ class StolenDisplay() extends DisplayInterface {
     closeFramebuffer()
   }
 
-  override def openFramebuffer: JavaFramebuffer = {
+  override def openFramebuffer(): JavaFramebuffer = {
     if (fbInstance == null) {
       Log.log("Initialing framebuffer in fake console")
       initializeFramebuffer(new NativeFramebuffer("/dev/fb0"), true)

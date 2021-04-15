@@ -125,14 +125,14 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
    *
    * @return Fixed information about the framebuffer.
    */
-  def getFixedInfo: NativeFramebuffer.fb_fix_screeninfo = fixinfo
+  def getFixedInfo: NativeFramebufferStructures.fb_fix_screeninfo = fixinfo
 
   /**
    * Get Linux framebuffer variable info.
    *
    * @return Variable information about the framebuffer.
    */
-  def getVariableInfo: NativeFramebuffer.fb_var_screeninfo = varinfo
+  def getVariableInfo: NativeFramebufferStructures.fb_var_screeninfo = varinfo
 
   /**
    * Get the underlying native device.

@@ -1,6 +1,5 @@
 package ev3dev4s.lcd;
 
-import com.sun.jna.LastErrorException;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -8,137 +7,15 @@ import com.sun.jna.Structure;
 import java.util.Arrays;
 import java.util.List;
 
-import static ev3dev4s.lcd.NativeConstants.FBIOGET_CON2FBMAP;
-import static ev3dev4s.lcd.NativeConstants.FBIOGET_FSCREENINFO;
-import static ev3dev4s.lcd.NativeConstants.FBIOGET_VSCREENINFO;
-import static ev3dev4s.lcd.NativeConstants.FBIOPUT_VSCREENINFO;
-import static ev3dev4s.lcd.NativeConstants.MAP_SHARED;
-import static ev3dev4s.lcd.NativeConstants.O_RDWR;
-import static ev3dev4s.lcd.NativeConstants.PROT_READ;
-import static ev3dev4s.lcd.NativeConstants.PROT_WRITE;
-
 /**
- * Linux framebuffer wrapper class
+ * A Java container for NativeFramebuffer's JNA Structures.
  *
- * @since 2.4.7
+ * @author David Walend
+ * @since v0.0.0
  */
-//todo hold off converting to Scala until after OwnedDisplay is converted
-@SuppressWarnings("unused")
-public class NativeFramebuffer implements AutoCloseable {// extends NativeDevice {
-
-    private final NativeFile nativeFile;
-
-    /**
-     * Create a native device to provide access to the specified character device
-     *
-     * @param dname name of the character device
-     * @throws LastErrorException when operations fails
-     */
-    public NativeFramebuffer(String dname) throws LastErrorException {
-        nativeFile = new NativeFile(dname,O_RDWR,0) ;
-    }
-
-    /**
-     * Create a native device to provide access to the specified character device
-     *
-     * @param dname name of the character device
-     * @param flags Opening mode, e.g. read, write or both.
-     * @throws LastErrorException when operations fails
-     */
-    public NativeFramebuffer(String dname, int flags) throws LastErrorException {
-        nativeFile = new NativeFile(dname,flags,NativeConstants.DEFAULT_PRIVS); //todo can't do default args from java
-    }
-
-    /**
-     * Fetch fixed screen info.
-     *
-     * @return Non-changing info about the display.
-     */
-    public fb_fix_screeninfo getFixedScreenInfo() throws LastErrorException {
-        fb_fix_screeninfo info = new fb_fix_screeninfo();
-        nativeFile.ioctl(FBIOGET_FSCREENINFO, info.getPointer());
-        info.read();
-        return info;
-    }
-
-    /**
-     * Fetch variable screen info.
-     *
-     * @return Changeable info about the display.
-     * @throws LastErrorException when operations fails
-     */
-    public fb_var_screeninfo getVariableScreenInfo() throws LastErrorException {
-        fb_var_screeninfo info = new fb_var_screeninfo();
-        nativeFile.ioctl(FBIOGET_VSCREENINFO, info.getPointer());
-        info.read();
-        return info;
-    }
-
-    /**
-     * Send variable screen info.
-     *
-     * @param info Changeable info about the display.
-     * @throws LastErrorException when operations fails
-     */
-    public void setVariableScreenInfo(fb_var_screeninfo info) throws LastErrorException {
-        info.write();
-        nativeFile.ioctl(FBIOPUT_VSCREENINFO, info.getPointer());
-    }
-
-    /**
-     * Identify which framebuffer is connected to a specified VT.
-     *
-     * @param console VT number.
-     * @return Framebuffer number or -1 if console has no framebuffer.
-     * @throws LastErrorException when operations fails
-     */
-    public int mapConsoleToFramebuffer(int console) throws LastErrorException {
-        fb_con2fbmap map = new fb_con2fbmap();
-        map.console = console;
-        map.write();
-        nativeFile.ioctl(FBIOGET_CON2FBMAP, map.getPointer());
-        map.read();
-        return map.framebuffer;
-    }
-
-    /**
-     * Map a portion of the device into memory and return a pointer which can be
-     * used to read/write the device.
-     *
-     * @param len number of bytes to map
-     * @return a pointer that can be used to access the device memory
-     */
-    public Pointer mmap(long len) throws LastErrorException {
-        return nativeFile.mmap(len, PROT_READ | PROT_WRITE, MAP_SHARED, 0);
-    }
-
-    /**
-     * Synchronize mapped memory region.
-     *
-     * @param addr  Mapped address.
-     * @param len   Region length.
-     * @param flags Synchronization flags
-     * @throws LastErrorException when operations fails
-     */
-    public int msync(Pointer addr, long len, int flags) {
-        return nativeFile.msync(addr,len,flags);
-    }
-
-    /**
-     * Unmap mapped memory region.
-     *
-     * @param addr Mapped address.
-     * @param len  Region length.
-     * @throws LastErrorException when operations fails
-     */
-    public int munmap(Pointer addr,long len) {
-      return nativeFile.munmap(addr,len);
-    }
-
-    @Override
-    public void close() {
-        nativeFile.close();
-    }
+//todo someday add a feature to JNA to support Scala. See https://groups.google.com/g/scala-user/c/xdNt0OrhvMg?pli=1
+public final class NativeFramebufferStructures {
+    private NativeFramebufferStructures(){}//Never construct
 
     /**
      * fb_fix_screeninfo mapping
