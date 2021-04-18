@@ -13,7 +13,7 @@ import java.io.IOException
  * @author Jakub Vaněk
  */
 abstract class DisplayInterface extends AutoCloseable {
-  protected var fbInstance:RGBFramebuffer = null //todo this can be a val - simplify the lifecycle
+  protected var fbInstance:JavaFramebuffer = null //todo this can be a val - simplify the lifecycle
 
   /**
    * <p>Switch the display to a graphics mode.</p>
@@ -71,7 +71,7 @@ abstract class DisplayInterface extends AutoCloseable {
    * @param enable  Whether to enable framebuffer flushing from the beginning.
    */
   protected def initializeFramebuffer(backend: NativeFramebuffer, enable: Boolean): Unit = {
-    fbInstance = new RGBFramebuffer(backend, this)
+    fbInstance = new JavaFramebuffer(backend, this)
     fbInstance.setFlushEnabled(enable)
     fbInstance.clear() //this initial clear takes a long time
     fbInstance.storeData()

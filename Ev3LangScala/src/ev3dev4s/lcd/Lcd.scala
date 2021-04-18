@@ -42,7 +42,7 @@ object Lcd {
   }
 
   Log.log(s"framebuffer is $framebuffer")
-  val image: BufferedImage = framebuffer.createCompatibleBuffer
+  val image: BufferedImage = framebuffer.createCompatibleBuffer()
   val g2d: Graphics2D = this.image.createGraphics
 
   this.clear()
@@ -629,23 +629,24 @@ object Lcd {
 }
 
 /*
-1618761084731 Command: beep
-1618761087379 Start creating LCD
-1618761087389 initializing new real display
-1618761087452 Opening TTY
-1618761096376 Getting activeVT
-1618761097008 Getting old keyboard mode
-1618761097070 Opening FB 0
-1618761097225 map vt5 -> fb 0
-1618761097238 add deinitializer
-1618761097400 Switching console to text mode
-1618761097678 Switching to text mode succeeded
-1618761097691 Initialing framebuffer in system console
-1618761097696 Switching console to graphics mode
-1618761116092 Opened LinuxFB, mode 178x128x32bpp
-1618761116103 Clearing framebuffer
-1618761116129 Storing framebuffer snapshot
-1618761116142 framebuffer is ev3dev4s.lcd.RGBFramebuffer@1ad8b2f
+1618762332841 Command: beep
+1618762335660 Start creating LCD
+1618762335673 initializing new real display
+1618762335709 Opening TTY
+1618762346066 Getting activeVT
+1618762346618 Getting old keyboard mode
+1618762346693 Opening FB 0
+1618762346905 map vt5 -> fb 0
+1618762346918 add deinitializer
+1618762347074 Switching console to text mode
+1618762347416 Switching to text mode succeeded
+1618762347429 Initialing framebuffer in system console
+1618762347438 Switching console to graphics mode
+1618762368119 Opened LinuxFB, mode 178x128x32bpp
+1618762368132 Clearing framebuffer
+1618762368158 Storing framebuffer snapshot
+1618762368171 framebuffer is ev3dev4s.lcd.JavaFramebuffer@1edcf1
+
 
 
 
