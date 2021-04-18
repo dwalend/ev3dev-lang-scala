@@ -73,7 +73,7 @@ abstract class DisplayInterface extends AutoCloseable {
   protected def initializeFramebuffer(backend: NativeFramebuffer, enable: Boolean): Unit = {
     fbInstance = new RGBFramebuffer(backend, this)
     fbInstance.setFlushEnabled(enable)
-    fbInstance.clear()
+    fbInstance.clear() //this initial clear takes a long time
     fbInstance.storeData()
   }
 }

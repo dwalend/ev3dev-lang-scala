@@ -6,12 +6,16 @@ Medium motor
 In progress:
 
 ant scp to copy up the .jar
-ant ssh to run the .jar
+ant ssh to run the .jar - need to get a signal into the jvm from the command prompt
 
         
 To Do:
 
-Refine the LCD code
+Refine the LCD code even more - it's still really slow
+
+Is there another option? C interface maybe? https://github.com/theZiz/ev3c ( http://ziz.gp2x.de/ev3c_documentation/files/include/ev3c_lcd-h.html ) looks promising
+                        
+Or immitate theZiz' work, do it as almost-pure-scala. (Will still need NativeFile for some of that.)
 
 Fill in existing classes
 

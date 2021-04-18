@@ -83,7 +83,7 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def setKeyboardMode(mode: Int): Any = nativeFile.ioctl(KDSKBMODE, mode)
+  def setKeyboardMode(mode: Int): Int = nativeFile.ioctl(KDSKBMODE, mode)
 
   /**
    * Set console mode.
@@ -92,7 +92,7 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def setConsoleMode(mode: Int): Any = nativeFile.ioctl(KDSETMODE, mode)
+  def setConsoleMode(mode: Int): Int = nativeFile.ioctl(KDSETMODE, mode)
 
   /**
    * Signal VT switch to the kernel.
@@ -101,7 +101,7 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def signalSwitch(mode: Int): Any = nativeFile.ioctl(VT_RELDISP, mode)
+  def signalSwitch(mode: Int): Int = nativeFile.ioctl(VT_RELDISP, mode)
 
   private[lcd] def isOpen = nativeFile.isOpen
 

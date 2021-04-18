@@ -18,15 +18,15 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
   /**
    * Underlying fixed framebuffer info.
    */
-  private var fixinfo = device.getFixedScreenInfo
+  private val fixinfo: NativeFramebufferStructures.fb_fix_screeninfo = device.getFixedScreenInfo
   /**
    * Underlying variable framebuffer info.
    */
-  private var varinfo = device.getVariableScreenInfo
+  private val varinfo: NativeFramebufferStructures.fb_var_screeninfo = device.getVariableScreenInfo
   /**
    * Memory-mapped memory from Linux framebuffer device.
    */
-  private var videomem = device.mmap(getBufferSize)
+  private val videomem: Pointer = device.mmap(getBufferSize)
   /**
    * Whether to enable display output.
    */
@@ -34,39 +34,33 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
   /**
    * Framebuffer backup for VT switches.
    */
-  private var backup = new Array[Byte](getBufferSize.toInt)
+  private val backup = new Array[Byte](getBufferSize.toInt)
   /**
    * Cache blank image.
    */
-  private var blank:BufferedImage = null
-  /**
-   * Whether to close the nativeframebuffer device when closing this framebuffer.
-   */
-  private var closeDevice = false
+  private val blank:BufferedImage = {
+    val willBeBlank = createCompatibleBuffer
+    val gfx = willBeBlank.createGraphics
+    gfx.setColor(Color.WHITE)
+    gfx.fillRect(0, 0, getWidth, getHeight)
+    gfx.dispose()
+    willBeBlank
+  }
 
-  setDeviceClose(false)
   varinfo.xres_virtual = varinfo.xres
   varinfo.yres_virtual = varinfo.yres
   varinfo.xoffset = 0
   varinfo.yoffset = 0
   device.setVariableScreenInfo(varinfo)
-  blank = null
   Log.log("Opened LinuxFB, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp")
 
 
   @throws[LastErrorException]
   override def close(): Unit = {
     Log.log("Closing LinuxFB")
-    if (videomem != null) device.munmap(videomem, getBufferSize)
-    if (closeDevice && device != null) device.close()
-    // free objects
-    if (display != null) display.releaseFramebuffer(this)
-//todo delete    display = null
-    blank = null
-//todo delete    device = null
-    backup = null
-    fixinfo = null
-    varinfo = null
+    device.munmap(videomem, getBufferSize)
+    device.close()
+    display.releaseFramebuffer(this)
   }
 
   override def getWidth: Int = varinfo.xres
@@ -86,7 +80,7 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
   override def flushScreen(compatible: BufferedImage): Unit = {
     if (flushEnabled) {
       videomem.write(0, ImageUtils.getImageBytes(compatible), 0, getBufferSize.toInt)
-      device.msync(videomem, getBufferSize, NativeConstants.MS_SYNC)  //todo demiter
+      device.msync(videomem, getBufferSize, NativeConstants.MS_SYNC)
     }
     else Log.log("Not drawing frame on framebuffer")
   }
@@ -108,13 +102,6 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
 
   override def clear(): Unit = {
     Log.log("Clearing framebuffer")
-    if (blank == null) {
-      blank = createCompatibleBuffer
-      val gfx = blank.createGraphics
-      gfx.setColor(Color.WHITE)
-      gfx.fillRect(0, 0, getWidth, getHeight)
-      gfx.dispose()
-    }
     flushScreen(blank)
   }
 
@@ -157,8 +144,4 @@ abstract class LinuxFramebuffer(val device: NativeFramebuffer,val display: Displ
    */
   def getBufferSize: Long = getHeight.toLong * getStride
 
-  /**
-   * Set whether to close the underlying device on exit.
-   */
-  protected def setDeviceClose(rly: Boolean): Unit = closeDevice = rly
 }

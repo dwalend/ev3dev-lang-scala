@@ -629,24 +629,24 @@ object Lcd {
 }
 
 /*
-1618453969906 Command: beep
-1618453972563 Start creating LCD
-1618453972573 initializing new real display
-1618453972634 Opening TTY
-1618453982321 Getting activeVT
-1618453982824 Getting old keyboard mode
-1618453982909 Opening FB 0
-1618453983081 map vt5 -> fb 0
-1618453983093 add deinitializer
-1618453983249 Switching console to text mode
-1618453983582 Switching to text mode succeeded
-1618453983594 Initialing framebuffer in system console
-1618453983599 Switching console to graphics mode
-1618453984851 Opened LinuxFB, mode 178x128x32bpp
-1618453984863 Clearing framebuffer
-1618454002883 Storing framebuffer snapshot
-1618454002901 framebuffer is ev3dev4s.lcd.RGBFramebuffer@1ad8b2f
-lcd created
+1618761084731 Command: beep
+1618761087379 Start creating LCD
+1618761087389 initializing new real display
+1618761087452 Opening TTY
+1618761096376 Getting activeVT
+1618761097008 Getting old keyboard mode
+1618761097070 Opening FB 0
+1618761097225 map vt5 -> fb 0
+1618761097238 add deinitializer
+1618761097400 Switching console to text mode
+1618761097678 Switching to text mode succeeded
+1618761097691 Initialing framebuffer in system console
+1618761097696 Switching console to graphics mode
+1618761116092 Opened LinuxFB, mode 178x128x32bpp
+1618761116103 Clearing framebuffer
+1618761116129 Storing framebuffer snapshot
+1618761116142 framebuffer is ev3dev4s.lcd.RGBFramebuffer@1ad8b2f
+
 
 
  */

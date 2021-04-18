@@ -15,18 +15,7 @@ import ev3dev4s.lcd.NativeConstants.FB_VISUAL_TRUECOLOR
  */
 class RGBFramebuffer(val fb: NativeFramebuffer, override val display: DisplayInterface)
   extends LinuxFramebuffer(fb, display) {
-
-  //todo this is really odd
-  /*
-  try {
-    close()
-  } catch {
-    case e: LastErrorException => throw new RuntimeException("Cannot close framebuffer", e)
-  }
-    */
-  // taking ownership
-  setDeviceClose(true)
-
+  
   override def createCompatibleBuffer(width: Int, height: Int): BufferedImage = {
     val stride = 4 * width
     createCompatibleBuffer(width, height, stride, new Array[Byte](stride * height))
