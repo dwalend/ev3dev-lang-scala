@@ -16,18 +16,23 @@ import java.awt.Color
  */
 class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterface) {
 
+  Log.log("JavaFramebuffer start")
   /**
    * Underlying fixed framebuffer info.
    */
+    //todo only uses line_length and
   private val fixinfo: NativeFramebufferStructures.fb_fix_screeninfo = device.getFixedScreenInfo
+  Log.log("JavaFramebuffer fixinfo")
   /**
    * Underlying variable framebuffer info.
    */
   private val varinfo: NativeFramebufferStructures.fb_var_screeninfo = device.getVariableScreenInfo
+  Log.log("JavaFramebuffer varinfo")
   /**
    * Memory-mapped memory from Linux framebuffer device.
    */
   private val videomem: Pointer = device.mmap(getBufferSize)
+  Log.log("JavaFramebuffer videomem")
   /**
    * Whether to enable display output.
    */
@@ -36,6 +41,7 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
    * Framebuffer backup for VT switches.
    */
   private val backup = new Array[Byte](getBufferSize.toInt)
+  Log.log("JavaFramebuffer backup")
   /**
    * Cache blank image.
    */
@@ -53,7 +59,7 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
   varinfo.xoffset = 0
   varinfo.yoffset = 0
   device.setVariableScreenInfo(varinfo)
-  Log.log("Opened LinuxFB, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp")
+  Log.log("Opened JavaFramebuffer, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp")
 
   def close(): Unit = {
     Log.log("Closing LinuxFB")
@@ -66,9 +72,12 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
 
   def getHeight: Int = varinfo.yres
 
-  def getStride: Int = fixinfo.line_length
+  def getStride: Int = {
+    Log.log(s"stride is ${fixinfo.line_length}")
+    fixinfo.line_length
+  }
 
-  def createCompatibleBuffer(): BufferedImage = createCompatibleBuffer(getWidth, getHeight, getFixedInfo.line_length)
+  def createCompatibleBuffer(): BufferedImage = createCompatibleBuffer(getWidth, getHeight, getStride)
 
   def createCompatibleBuffer(width: Int, height: Int, stride: Int): BufferedImage = createCompatibleBuffer(width, height, stride, new Array[Byte](height * stride))
 
@@ -109,13 +118,6 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
   }
 
   def getDisplay: DisplayInterface = display
-
-  /**
-   * Get Linux framebuffer fixed info.
-   *
-   * @return Fixed information about the framebuffer.
-   */
-  def getFixedInfo: NativeFramebufferStructures.fb_fix_screeninfo = fixinfo
 
   /**
    * Get Linux framebuffer variable info.

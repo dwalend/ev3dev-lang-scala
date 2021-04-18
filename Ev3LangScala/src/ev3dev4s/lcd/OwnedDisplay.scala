@@ -105,13 +105,17 @@ class OwnedDisplay() extends DisplayInterface {
   override def switchToGraphicsMode(): Unit = {
     Log.log("Switching console to graphics mode")
     try {
+      Log.log("Switching off keyboard")
       ttyfd.setKeyboardMode(K_OFF)
+      Log.log("Switching to graphics")
       ttyfd.setConsoleMode(KD_GRAPHICS)
+      Log.log("Switching setting VT mode")
       val vtm = new vt_mode
       vtm.mode = VT_PROCESS.toByte
       vtm.relsig = SIGUSR2.toByte
       vtm.acqsig = SIGUSR2.toByte
       ttyfd.setVTmode(vtm)
+      Log.log("Done Switching console to graphics mode try block")
     } catch {
       case e: LastErrorException =>
         throw new RuntimeException("Switch to graphics mode failed", e)
@@ -119,6 +123,7 @@ class OwnedDisplay() extends DisplayInterface {
     if (fbInstance != null) {
       fbInstance.restoreData()
       fbInstance.setFlushEnabled(true)
+      Log.log("Switching finished if block")
     }
   }
 

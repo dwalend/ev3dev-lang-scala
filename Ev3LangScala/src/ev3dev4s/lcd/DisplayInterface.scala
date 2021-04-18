@@ -1,6 +1,8 @@
 package ev3dev4s.lcd
 
 import com.sun.jna.LastErrorException
+import ev3dev4s.Log
+
 import java.io.IOException
 
 /**
@@ -71,9 +73,14 @@ abstract class DisplayInterface extends AutoCloseable {
    * @param enable  Whether to enable framebuffer flushing from the beginning.
    */
   protected def initializeFramebuffer(backend: NativeFramebuffer, enable: Boolean): Unit = {
+    Log.log("Start initializeFramebuffer")
     fbInstance = new JavaFramebuffer(backend, this)
+    Log.log("initializeFramebuffer made JavaFramebuffer")
     fbInstance.setFlushEnabled(enable)
+    Log.log("initializeFramebuffer setFlushEnabled")
     fbInstance.clear() //this initial clear takes a long time
+    Log.log("initializeFramebuffer cleared")
     fbInstance.storeData()
+    Log.log("initializeFramebuffer data stored")
   }
 }
