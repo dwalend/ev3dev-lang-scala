@@ -38,9 +38,13 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
    */
   private val backup = new Array[Byte](getBufferSize.toInt)
   Log.log("JavaFramebuffer backup")
+
   /**
    * Cache blank image.
    */
+  //converting this to bytes did not make a difference in start-up time, but did move things around
+  //perhaps replacing Java's BufferedImage with something simpler can save 30 seconds, but will stay with this for now
+
   private val blank:BufferedImage = {
     val willBeBlank = createCompatibleBuffer()
     val gfx = willBeBlank.createGraphics

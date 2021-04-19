@@ -629,40 +629,48 @@ object Lcd {
 }
 
 /*
-1618845008798 Command: beep
-1618845011246 Start creating LCD
-1618845011255 initializing new real display
-1618845011293 Opening TTY
-1618845020652 Getting activeVT
-1618845021129 Getting old keyboard mode
-1618845021193 Opening FB 0
-1618845021255 Start NativeFramebuffer /dev/fb0
-1618845021309 NativeFramebuffer /dev/fb0 constructed
-1618845021518 map vt5 -> fb 0
-1618845021539 add deinitializer
-1618845021668 Switching console to text mode
-1618845021835 Switching to text mode succeeded
-1618845021847 Initialing framebuffer in system console
-1618845021853 Switching console to graphics mode
-1618845021859 Switching off keyboard
-1618845021863 Switching to graphics
-1618845021868 Switching setting VT mode
-1618845021893 Done Switching console to graphics mode try block
-1618845021899 Start NativeFramebuffer /dev/fb0
-1618845021910 NativeFramebuffer /dev/fb0 constructed
-1618845021916 Start initializeFramebuffer
-1618845021981 JavaFramebuffer start
-1618845022713 JavaFramebuffer varinfo
-1618845022727 JavaFramebuffer videomem
-1618845022734 JavaFramebuffer backup
-1618845040413 JavaFramebuffer blank
-1618845040486 Opened JavaFramebuffer, mode 178x128x32bpp
-1618845040496 initializeFramebuffer made JavaFramebuffer
-1618845040502 initializeFramebuffer setFlushEnabled
-1618845040509 Clearing framebuffer
-1618845040539 initializeFramebuffer cleared
-1618845040546 Storing framebuffer snapshot
-1618845040556 initializeFramebuffer data stored
-1618845040568 framebuffer is ev3dev4s.lcd.JavaFramebuffer@176aeea
+Color sensors created
+1618845922909 Command: beep
+1618845925417 Start creating LCD
+1618845925427 initializing new real display
+1618845925467 Opening TTY
+1618845935011 Getting activeVT
+1618845935520 Getting old keyboard mode
+1618845935588 Opening FB 0
+1618845935672 Start NativeFramebuffer /dev/fb0
+1618845935723 NativeFramebuffer /dev/fb0 constructed
+1618845935939 map vt5 -> fb 0
+1618845935961 add deinitializer
+1618845936088 Switching console to text mode
+1618845936258 Switching to text mode succeeded
+1618845936271 Initialing framebuffer in system console
+1618845936277 Switching console to graphics mode
+1618845936281 Switching off keyboard
+1618845936286 Switching to graphics
+1618845936295 Switching setting VT mode
+1618845936321 Done Switching console to graphics mode try block
+1618845936327 Start NativeFramebuffer /dev/fb0
+1618845936335 NativeFramebuffer /dev/fb0 constructed
+1618845936340 Start initializeFramebuffer
+1618845936406 JavaFramebuffer start
+1618845937182 JavaFramebuffer varinfo
+1618845937196 JavaFramebuffer videomem
+1618845937203 JavaFramebuffer backup
+1618845954954 JavaFramebuffer blank
+1618845955018 Opened JavaFramebuffer, mode 178x128x32bpp
+1618845955027 initializeFramebuffer made JavaFramebuffer
+1618845955031 initializeFramebuffer setFlushEnabled
+1618845955037 Clearing framebuffer
+1618845956918 flushScreen bytes is a 91136 array of -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+1618845956947 initializeFramebuffer cleared
+1618845956953 Storing framebuffer snapshot
+1618845956965 initializeFramebuffer data stored
+1618845956981 framebuffer is ev3dev4s.lcd.JavaFramebuffer@9e345f
+1618845957174 flushScreen bytes is a 91136 array of -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+lcd created
+Starting the screen updater
+1618845978583 flushScreen bytes is a 91136 array of -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+1618845978648 Command: beep
+Starting the WileyMenu loop true
 
  */

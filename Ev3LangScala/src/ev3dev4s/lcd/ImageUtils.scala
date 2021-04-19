@@ -58,6 +58,8 @@ object ImageUtils {
   def createXRGBImage(width: Int, height: Int, stride: Int, offsets: Array[Int], buffer: Array[Byte]): BufferedImage = {
     if (buffer.length < (stride * height)) throw new IllegalArgumentException("Buffer is smaller than height*stride")
     if (stride < width * 4) throw new IllegalArgumentException("Stride is smaller than width * 4")
+
+    //todo if any of these take a while just do them once
     val db = new DataBufferByte(buffer, buffer.length)
     // initialize buffer <-> samples bridge
     val sm = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, width, height, 4, stride, offsets)
