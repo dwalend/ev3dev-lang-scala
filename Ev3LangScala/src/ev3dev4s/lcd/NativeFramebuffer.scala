@@ -3,7 +3,6 @@ package ev3dev4s.lcd
 import com.sun.jna.{LastErrorException, Pointer}
 import ev3dev4s.Log
 import ev3dev4s.lcd.NativeConstants.FBIOGET_CON2FBMAP
-import ev3dev4s.lcd.NativeConstants.FBIOGET_FSCREENINFO
 import ev3dev4s.lcd.NativeConstants.FBIOGET_VSCREENINFO
 import ev3dev4s.lcd.NativeConstants.FBIOPUT_VSCREENINFO
 import ev3dev4s.lcd.NativeConstants.MAP_SHARED
@@ -23,19 +22,7 @@ class NativeFramebuffer(devicePath:String, flags:Int = O_RDWR) extends AutoClose
   private val nativeFile:NativeFile = new NativeFile(devicePath,flags,0)
   Log.log(s"NativeFramebuffer $devicePath constructed")
 
-  import NativeFramebufferStructures.{fb_fix_screeninfo,fb_var_screeninfo,fb_con2fbmap}
-
-  /**
-   * Fetch fixed screen info.
-   *
-   * @return Non-changing info about the display.
-   */
-  def getFixedScreenInfo: fb_fix_screeninfo = {
-    val info = new fb_fix_screeninfo
-    nativeFile.ioctl(FBIOGET_FSCREENINFO, info.getPointer)
-    info.read()
-    info
-  }
+  import NativeFramebufferStructures.{fb_var_screeninfo,fb_con2fbmap}
 
   /**
    * Fetch variable screen info.

@@ -17,15 +17,11 @@ import java.awt.Color
 class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterface) {
 
   Log.log("JavaFramebuffer start")
-  /**
-   * Underlying fixed framebuffer info.
-   */
-    //todo only uses line_length and
-  private val fixinfo: NativeFramebufferStructures.fb_fix_screeninfo = device.getFixedScreenInfo
-  Log.log("JavaFramebuffer fixinfo")
+
   /**
    * Underlying variable framebuffer info.
    */
+    //todo I think all of varinfo can be hard-coded
   private val varinfo: NativeFramebufferStructures.fb_var_screeninfo = device.getVariableScreenInfo
   Log.log("JavaFramebuffer varinfo")
   /**
@@ -53,13 +49,15 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
     gfx.dispose()
     willBeBlank
   }
+  Log.log("JavaFramebuffer blank")
 
+  //todo are these values different from what we just loaded??
   varinfo.xres_virtual = varinfo.xres
   varinfo.yres_virtual = varinfo.yres
   varinfo.xoffset = 0
   varinfo.yoffset = 0
   device.setVariableScreenInfo(varinfo)
-  Log.log("Opened JavaFramebuffer, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp")
+  Log.log("Opened JavaFramebuffer, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp") //178x128x32bpp
 
   def close(): Unit = {
     Log.log("Closing LinuxFB")
@@ -68,14 +66,12 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
     display.releaseFramebuffer(this)
   }
 
-  def getWidth: Int = varinfo.xres
+  //todo these can be hard-coded
+  def getWidth: Int = varinfo.xres  //178
 
-  def getHeight: Int = varinfo.yres
+  def getHeight: Int = varinfo.yres //128
 
-  def getStride: Int = {
-    Log.log(s"stride is ${fixinfo.line_length}")
-    fixinfo.line_length
-  }
+  def getStride: Int = 712
 
   def createCompatibleBuffer(): BufferedImage = createCompatibleBuffer(getWidth, getHeight, getStride)
 
@@ -120,13 +116,6 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
   def getDisplay: DisplayInterface = display
 
   /**
-   * Get Linux framebuffer variable info.
-   *
-   * @return Variable information about the framebuffer.
-   */
-  def getVariableInfo: NativeFramebufferStructures.fb_var_screeninfo = varinfo
-
-  /**
    * Get the underlying native device.
    *
    * @return Linux device
@@ -156,9 +145,9 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
    */
   private def getComponentOffsets = {
     val offsets = new Array[Int](4)
-    offsets(0) = getVariableInfo.red.toLEByteOffset
-    offsets(1) = getVariableInfo.green.toLEByteOffset
-    offsets(2) = getVariableInfo.blue.toLEByteOffset
+    offsets(0) = varinfo.red.toLEByteOffset  //todo these cna be hard-coded
+    offsets(1) = varinfo.green.toLEByteOffset
+    offsets(2) = varinfo.blue.toLEByteOffset
     val set = util.Arrays.asList(0, 1, 2, 3)
     val avail = new util.ArrayList[Int](set)
     avail.remove(offsets(0).asInstanceOf[Integer]) //todo really need these casts?

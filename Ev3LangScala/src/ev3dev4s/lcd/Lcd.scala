@@ -629,51 +629,40 @@ object Lcd {
 }
 
 /*
-Color sensors created
-1618764674394 Command: beep
-1618764677266 Start creating LCD
-1618764677281 initializing new real display
-1618764677326 Opening TTY
-1618764687734 Getting activeVT
-1618764688302 Getting old keyboard mode
-1618764688374 Opening FB 0
-1618764688445 Start NativeFramebuffer /dev/fb0
-1618764688500 NativeFramebuffer /dev/fb0 constructed
-1618764688730 map vt5 -> fb 0
-1618764688753 add deinitializer
-1618764688921 Switching console to text mode
-1618764689114 Switching to text mode succeeded
-1618764689132 Initialing framebuffer in system console
-1618764689140 Switching console to graphics mode
-1618764689144 Switching off keyboard
-1618764689151 Switching to graphics
-1618764689155 Switching setting VT mode
-1618764689182 Done Switching console to graphics mode try block
-1618764689189 Start NativeFramebuffer /dev/fb0
-1618764689194 NativeFramebuffer /dev/fb0 constructed
-1618764689201 Start initializeFramebuffer
-1618764689271 JavaFramebuffer start
-1618764689554 JavaFramebuffer fixinfo
-1618764690439 JavaFramebuffer varinfo
-1618764690455 stride is 712
-1618764690464 JavaFramebuffer videomem
-1618764690472 stride is 712
-1618764690476 JavaFramebuffer backup
-1618764690485 stride is 712
-1618764710768 Opened JavaFramebuffer, mode 178x128x32bpp
-1618764710776 initializeFramebuffer made JavaFramebuffer
-1618764710783 initializeFramebuffer setFlushEnabled
-1618764710791 Clearing framebuffer
-1618764710801 stride is 712
-1618764710815 stride is 712
-1618764710825 initializeFramebuffer cleared
-1618764710830 Storing framebuffer snapshot
-1618764710836 stride is 712
-1618764710844 initializeFramebuffer data stored
-1618764710856 framebuffer is ev3dev4s.lcd.JavaFramebuffer@1edcf1
-1618764710863 stride is 712
-1618764711001 stride is 712
-1618764711021 stride is 712
-lcd created
+1618845008798 Command: beep
+1618845011246 Start creating LCD
+1618845011255 initializing new real display
+1618845011293 Opening TTY
+1618845020652 Getting activeVT
+1618845021129 Getting old keyboard mode
+1618845021193 Opening FB 0
+1618845021255 Start NativeFramebuffer /dev/fb0
+1618845021309 NativeFramebuffer /dev/fb0 constructed
+1618845021518 map vt5 -> fb 0
+1618845021539 add deinitializer
+1618845021668 Switching console to text mode
+1618845021835 Switching to text mode succeeded
+1618845021847 Initialing framebuffer in system console
+1618845021853 Switching console to graphics mode
+1618845021859 Switching off keyboard
+1618845021863 Switching to graphics
+1618845021868 Switching setting VT mode
+1618845021893 Done Switching console to graphics mode try block
+1618845021899 Start NativeFramebuffer /dev/fb0
+1618845021910 NativeFramebuffer /dev/fb0 constructed
+1618845021916 Start initializeFramebuffer
+1618845021981 JavaFramebuffer start
+1618845022713 JavaFramebuffer varinfo
+1618845022727 JavaFramebuffer videomem
+1618845022734 JavaFramebuffer backup
+1618845040413 JavaFramebuffer blank
+1618845040486 Opened JavaFramebuffer, mode 178x128x32bpp
+1618845040496 initializeFramebuffer made JavaFramebuffer
+1618845040502 initializeFramebuffer setFlushEnabled
+1618845040509 Clearing framebuffer
+1618845040539 initializeFramebuffer cleared
+1618845040546 Storing framebuffer snapshot
+1618845040556 initializeFramebuffer data stored
+1618845040568 framebuffer is ev3dev4s.lcd.JavaFramebuffer@176aeea
 
  */
