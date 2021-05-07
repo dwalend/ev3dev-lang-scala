@@ -22,7 +22,7 @@ object ImageUtils {
    * @param h Image height
    * @return Configured BufferedImage
    */
-    def createXRGBImage(w: Int, h: Int): BufferedImage = createXRGBImage(w, h, w * 4)
+  def createXRGBImage(w: Int, h: Int): BufferedImage = createXRGBImage(w, h, w * 4)
 
   /**
    * Create new XRGB image.
@@ -43,7 +43,8 @@ object ImageUtils {
    * @param buffer Backing buffer.
    * @return Configured BufferedImage
    */
-  def createXRGBImage(width: Int, height: Int, stride: Int, buffer: Array[Byte]): BufferedImage = createXRGBImage(width, height, stride, getDefaultComponentOffsets, buffer)
+  def createXRGBImage(width: Int, height: Int, stride: Int, buffer: Array[Byte]): BufferedImage =
+    createXRGBImage(width, height, stride, getDefaultComponentOffsets, buffer)
 
   /**
    * Create new XRGB image.

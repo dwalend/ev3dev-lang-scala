@@ -1,7 +1,8 @@
 package ev3dev4s
 
-import ev3dev4s.actuators.{Ev3Led, Motor, MotorPort, MotorPortScanner}
-import ev3dev4s.sensors.{Ev3KeyPad, Sensor, SensorPort, SensorPortScanner}
+import ev3dev4s.actuators.{Ev3Led, Motor, MotorPort, MotorPortScanner, Sound}
+import ev3dev4s.lcd.Lcd
+import ev3dev4s.sensors.{Ev3Battery, Ev3KeyPad, Sensor, SensorPort, SensorPortScanner}
 
 /**
  * @author David Walend
@@ -17,8 +18,7 @@ object Ev3System {
   lazy val portsToMotors: Map[MotorPort, Motor] = MotorPortScanner.scanMotorsDir
   lazy val portsToSensors: Map[SensorPort, Sensor] = SensorPortScanner.scanSensorsDir
 
-  //todo LCD
-  //todo sound
-  //todo battery
-
+  lazy val lcd = Lcd
+  lazy val sound = Sound
+  lazy val battery = Ev3Battery
 }

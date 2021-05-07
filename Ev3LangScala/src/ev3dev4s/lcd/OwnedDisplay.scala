@@ -122,7 +122,6 @@ class OwnedDisplay() extends DisplayInterface {
     }
     if (fbInstance != null) {
       fbInstance.restoreData()
-      fbInstance.setFlushEnabled(true)
       Log.log("Switching finished if block")
     }
   }
@@ -170,7 +169,7 @@ class OwnedDisplay() extends DisplayInterface {
       Log.log("Initialing framebuffer in system console")
       switchToGraphicsMode()
       //todo another option is to just reuse the native frame buffer from the initialization here
-      initializeFramebuffer(new NativeFramebuffer(fbPath), true)
+      initializeFramebuffer(new NativeFramebuffer(fbPath), enable = true)
     }
     fbInstance
   }

@@ -1,6 +1,5 @@
 package ev3dev4s.lcd;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 

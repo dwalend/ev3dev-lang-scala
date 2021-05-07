@@ -451,14 +451,14 @@ object Lcd {
     val tf = g2d.getTransform.clone.asInstanceOf[AffineTransform]
     g2d.getTransform.setToIdentity()
     g2d.setColor(Color.WHITE)
-    g2d.fillRect(0, 0, framebuffer.getWidth, framebuffer.getHeight)
+    g2d.fillRect(0, 0, framebuffer.width, framebuffer.height)
     flush()
     g2d.setTransform(tf)
   }
 
-  def getWidth: Int = framebuffer.getWidth
+  def getWidth: Int = framebuffer.width
 
-  def getHeight: Int = framebuffer.getHeight
+  def getHeight: Int = framebuffer.height
 
   /**
    * Provide access to the LCD display frame buffer.
