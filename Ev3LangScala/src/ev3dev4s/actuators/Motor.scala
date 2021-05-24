@@ -22,6 +22,8 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
   private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
 
+  private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
+
 
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
   def writeCommand(command: MotorCommand):Unit = {
@@ -48,6 +50,8 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
     writePosition(0)
   }
 
+  def writeGoalPosition(degrees:Int):Unit =
+    goalPositionWriter.writeAsciiInt(degrees)
   /**
    * @return position in degrees todo double-check that
    */
@@ -92,6 +96,7 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
     stateReader.close()
     positionReader.close()
 
+    goalPositionWriter.close()
     positionWriter.close()
     stopActionWriter.close()
     dutyCycleSpWriter.close()
@@ -118,6 +123,12 @@ object MotorCommand {
    * run-forever: Causes the motor to run until another command is sent
    */
   val RUN: MotorCommand = MotorCommand("run-forever")
+
+  /**
+   * run-to-abs-pos: Runs the motor to an absolute position specified by``position_sp`` and then stops the motor using the command specified in stop_action.
+   */
+  val RUN_TO_ABSOLUTE_POSITION = MotorCommand("run-to-abs-pos")
+
   /**
    * run-to-abs-pos: Runs the motor to an absolute position specified by``position_sp`` and then stops the motor using the command specified in stop_action.
 run-to-rel-pos: Runs the motor to a position relative to the current position value. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action.
