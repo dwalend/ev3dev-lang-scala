@@ -29,6 +29,7 @@ object MotorPortScanner {
 
         driverName match {
           case Ev3LargeMotor.driverName => Ev3LargeMotor(port,Path.of(motorDir.getAbsolutePath))
+          case Ev3MediumMotor.driverName => Ev3MediumMotor(port,Path.of(motorDir.getAbsolutePath))
           case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
         }
       }

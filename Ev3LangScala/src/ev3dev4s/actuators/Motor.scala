@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable {
+sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoCloseable {
 
   private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
   private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
@@ -23,7 +23,6 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
   private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
 
   private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
-
 
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
   def writeCommand(command: MotorCommand):Unit = {
@@ -105,13 +104,13 @@ sealed abstract class Motor(port:MotorPort,motorDir:Path) extends AutoCloseable 
   }
 }
 
-sealed case class Ev3LargeMotor(port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
+sealed case class Ev3LargeMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
 
 object Ev3LargeMotor {
   val driverName = "lego-ev3-l-motor"
 }
 
-sealed case class Ev3MediumMotor(port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
+sealed case class Ev3MediumMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
 
 object Ev3MediumMotor {
   val driverName = "lego-ev3-m-motor"
