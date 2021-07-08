@@ -1,7 +1,5 @@
 To Test:
 
-Medium motor
-
 
 In progress:
 
@@ -29,7 +27,19 @@ tut examples
 
 ant task for mill yguard or proguard to shrink the code down
 
-     
+Faster start-up
+
+Remove dependency on brickman
+
+Faster start-up of the OS
+  
+Scala-friendly JNA (SNA?)
+
+Lesson plan
+
+mill and mdoc and examples
+
+Set up
 
 
 Done:
@@ -46,13 +56,11 @@ Use sensors
 Scan for motors
 Use motors
 
-Define robot from scans
+Define robot from scans of ports
 
 Assess options for LCD
 
 Command-line sound
-
-Figure out what to do with the LCD
 
 Battery
 

@@ -4,7 +4,7 @@ package ev3dev4s.lcd;
  * A collection of various Linux constants (ioctl numbers, file modes erc)
  */
 
-//todo convert in scala 3, use http://dotty.epfl.ch/docs/reference/changed-features/numeric-literals.html to make the octal literals not terrible. Maybe contribute that back
+//todo convert in scala 3, use http://dotty.epfl.ch/docs/reference/changed-features/numeric-literals.html to make the octal literals not terrible. as @inline. Maybe contribute that back
 @SuppressWarnings({"unused", "OctalInteger"})
 public final class NativeConstants {
     public static final int O_ACCMODE = 0003;

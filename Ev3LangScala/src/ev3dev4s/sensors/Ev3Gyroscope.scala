@@ -16,6 +16,11 @@ case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends MultiModeSensor(
     getOrElseChangeMode(HeadingMode.apply)
   }
 
+  def rateMode():HeadingMode = {
+    getOrElseChangeMode(HeadingMode.apply)
+  }
+
+  //todo this doesn't seem to work. delete?
   def calibrateMode():CalibrateMode = {
     getOrElseChangeMode(CalibrateMode.apply)
   }
@@ -53,6 +58,28 @@ case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends MultiModeSensor(
       headingReader.close()
     }
   }
+
+  /**
+   * Angle change rate in degrees per second
+   */
+  case class RateMode() extends Mode {
+    val name = "GYRO-RATE"
+
+    private lazy val rateReader = ChannelRereader(sensorDir.resolve("value0"))
+    override private[sensors] def init():Unit = {
+      rateReader.path
+    }
+
+    def readRate():Int = this.synchronized{
+      rateReader.readAsciiInt()
+    }
+
+    override def close(): Unit = this.synchronized{
+      rateReader.close()
+    }
+  }
+
+  //todo calibrate via GYRO-RATE, then GYRO-ANG as a separate method - if it works
 
   /**
    * Calibration
