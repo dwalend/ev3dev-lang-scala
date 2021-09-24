@@ -52,8 +52,23 @@ Reloading and rerunning ev3dev4s.timing.LED from Ev3LangScalaExample.jar
 real	0m42.822s
 
 ---
+Full on LCD
+
 
 robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar ev3dev4s.timing.LCD
 Reloading and rerunning ev3dev4s.timing.LCD from Ev3LangScalaExample.jar
 
 real	1m51.388s
+
+---
+
+Hello to /dev/tty
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.lcd.console.Hello
+1632518590241 Where does this go?
+
+real	0m41.430s
+user	0m0.318s
+sys	0m0.215s
+
+---
