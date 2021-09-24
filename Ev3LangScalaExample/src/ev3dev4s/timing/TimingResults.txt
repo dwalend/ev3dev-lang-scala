@@ -1,0 +1,59 @@
+With no assembly for Ev3LangScalaExample.jar:
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar ev3dev4s.timing.Simplest
+Reloading and rerunning ev3dev4s.timing.Simplest from Ev3LangScalaExample.jar
+Hi!
+real	0m40.094s
+
+---
+
+With assembly for Ev3LangScalaExample.jar:
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar ev3dev4s.timing.Simplest
+Reloading and rerunning ev3dev4s.timing.Simplest from Ev3LangScalaExample.jar
+Hi!
+
+real	0m45.153s
+
+---
+
+No dynamic loading
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScalaExample.jar ev3dev4s.timing.Simplest
+Hi!
+
+real	0m41.300s
+
+---
+
+No dynamic loading, no scala
+
+robot@ev3dev:~$ time brickrun -r -- java -cp Hello.jar ev3.timing.Hello$
+Hello
+
+real	0m10.365s
+
+---
+
+No brickrun
+
+robot@ev3dev:~$ time java -cp Hello.jar ev3.timing.Hello$
+Hello
+
+real	0m8.205s
+
+---
+
+With an LED
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar ev3dev4s.timing.LED
+Reloading and rerunning ev3dev4s.timing.LED from Ev3LangScalaExample.jar
+
+real	0m42.822s
+
+---
+
+robot@ev3dev:~$ time brickrun -r -- java -Xmx3M -Xms3M -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar ev3dev4s.timing.LCD
+Reloading and rerunning ev3dev4s.timing.LCD from Ev3LangScalaExample.jar
+
+real	1m51.388s
