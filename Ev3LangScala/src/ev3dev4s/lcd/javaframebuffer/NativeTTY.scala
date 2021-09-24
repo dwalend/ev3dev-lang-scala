@@ -1,14 +1,14 @@
-package ev3dev4s.lcd
+package ev3dev4s.lcd.javaframebuffer
 
 import com.sun.jna.LastErrorException
 import com.sun.jna.ptr.IntByReference
-import ev3dev4s.lcd.NativeConstants.KDGKBMODE
-import ev3dev4s.lcd.NativeConstants.KDSETMODE
-import ev3dev4s.lcd.NativeConstants.KDSKBMODE
-import ev3dev4s.lcd.NativeConstants.VT_GETMODE
-import ev3dev4s.lcd.NativeConstants.VT_GETSTATE
-import ev3dev4s.lcd.NativeConstants.VT_RELDISP
-import ev3dev4s.lcd.NativeConstants.VT_SETMODE
+import NativeConstants.KDGKBMODE
+import NativeConstants.KDSETMODE
+import NativeConstants.KDSKBMODE
+import NativeConstants.VT_GETMODE
+import NativeConstants.VT_GETSTATE
+import NativeConstants.VT_RELDISP
+import NativeConstants.VT_SETMODE
 
 /**
  * Wrapper for basic actions on Linux VT/TTY

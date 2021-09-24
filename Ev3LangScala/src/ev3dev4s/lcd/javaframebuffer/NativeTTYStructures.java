@@ -1,4 +1,4 @@
-package ev3dev4s.lcd;
+package ev3dev4s.lcd.javaframebuffer;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;

@@ -1,4 +1,4 @@
-package ev3dev4s.lcd
+package ev3dev4s.lcd.javaframebuffer
 
 import java.awt.Transparency
 import java.awt.color.ColorSpace

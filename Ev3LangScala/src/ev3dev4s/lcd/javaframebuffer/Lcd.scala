@@ -1,4 +1,4 @@
-package ev3dev4s.lcd
+package ev3dev4s.lcd.javaframebuffer
 
 import com.sun.jna.LastErrorException
 import ev3dev4s.Log
@@ -665,7 +665,7 @@ Color sensors created
 1618845956947 initializeFramebuffer cleared
 1618845956953 Storing framebuffer snapshot
 1618845956965 initializeFramebuffer data stored
-1618845956981 framebuffer is ev3dev4s.lcd.JavaFramebuffer@9e345f
+1618845956981 framebuffer is ev3dev4s.lcd.javaframebuffer.lcd.JavaFramebuffer@9e345f
 1618845957174 flushScreen bytes is a 91136 array of -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 lcd created
 Starting the screen updater

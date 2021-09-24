@@ -1,7 +1,7 @@
-package ev3dev4s.lcd.examples
+package ev3dev4s.lcd.javaframebuffer.examples
 
 import ev3dev4s.Log
-import ev3dev4s.lcd.Lcd
+import ev3dev4s.lcd.javaframebuffer.Lcd
 
 /**
  * @author David Walend

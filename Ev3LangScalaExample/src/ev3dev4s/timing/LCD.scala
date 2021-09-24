@@ -1,6 +1,6 @@
 package ev3dev4s.timing
 
-import ev3dev4s.lcd.Lcd
+import ev3dev4s.lcd.javaframebuffer.Lcd
 
 /**
  * Run via

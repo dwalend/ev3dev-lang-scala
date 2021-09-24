@@ -1,7 +1,7 @@
 package ev3dev4s
 
 import ev3dev4s.actuators.{Ev3Led, Motor, MotorPort, MotorPortScanner, Sound}
-import ev3dev4s.lcd.Lcd
+import ev3dev4s.lcd.javaframebuffer.Lcd
 import ev3dev4s.sensors.{Ev3Battery, Ev3KeyPad, Sensor, SensorPort, SensorPortScanner}
 
 /**

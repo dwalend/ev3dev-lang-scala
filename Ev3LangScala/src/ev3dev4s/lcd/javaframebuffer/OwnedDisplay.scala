@@ -1,17 +1,17 @@
-package ev3dev4s.lcd
+package ev3dev4s.lcd.javaframebuffer
 
 import com.sun.jna.LastErrorException
 import ev3dev4s.Log
 
 import java.io.IOException
-import ev3dev4s.lcd.NativeConstants.KD_GRAPHICS
-import ev3dev4s.lcd.NativeConstants.KD_TEXT
-import ev3dev4s.lcd.NativeConstants.K_OFF
-import ev3dev4s.lcd.NativeConstants.O_RDWR
-import ev3dev4s.lcd.NativeConstants.SIGUSR2
-import ev3dev4s.lcd.NativeConstants.VT_AUTO
-import ev3dev4s.lcd.NativeConstants.VT_PROCESS
-import ev3dev4s.lcd.NativeTTYStructures.vt_mode
+import NativeConstants.KD_GRAPHICS
+import NativeConstants.KD_TEXT
+import NativeConstants.K_OFF
+import NativeConstants.O_RDWR
+import NativeConstants.SIGUSR2
+import NativeConstants.VT_AUTO
+import NativeConstants.VT_PROCESS
+import NativeTTYStructures.vt_mode
 
 /**
  * <p>System console manager.</p>

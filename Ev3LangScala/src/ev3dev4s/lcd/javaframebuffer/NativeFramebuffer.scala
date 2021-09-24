@@ -1,14 +1,14 @@
-package ev3dev4s.lcd
+package ev3dev4s.lcd.javaframebuffer
 
 import com.sun.jna.{LastErrorException, Pointer}
 import ev3dev4s.Log
-import ev3dev4s.lcd.NativeConstants.FBIOGET_CON2FBMAP
-import ev3dev4s.lcd.NativeConstants.FBIOGET_VSCREENINFO
-import ev3dev4s.lcd.NativeConstants.FBIOPUT_VSCREENINFO
-import ev3dev4s.lcd.NativeConstants.MAP_SHARED
-import ev3dev4s.lcd.NativeConstants.O_RDWR
-import ev3dev4s.lcd.NativeConstants.PROT_READ
-import ev3dev4s.lcd.NativeConstants.PROT_WRITE
+import NativeConstants.FBIOGET_CON2FBMAP
+import NativeConstants.FBIOGET_VSCREENINFO
+import NativeConstants.FBIOPUT_VSCREENINFO
+import NativeConstants.MAP_SHARED
+import NativeConstants.O_RDWR
+import NativeConstants.PROT_READ
+import NativeConstants.PROT_WRITE
 
 /**
  * Linux framebuffer wrapper class

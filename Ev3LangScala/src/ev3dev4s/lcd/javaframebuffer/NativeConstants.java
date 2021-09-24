@@ -1,4 +1,4 @@
-package ev3dev4s.lcd;
+package ev3dev4s.lcd.javaframebuffer;
 
 /**
  * A collection of various Linux constants (ioctl numbers, file modes erc)
