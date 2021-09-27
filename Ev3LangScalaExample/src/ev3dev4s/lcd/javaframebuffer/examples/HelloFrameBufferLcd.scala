@@ -7,7 +7,7 @@ import ev3dev4s.lcd.javaframebuffer.Lcd
  * @author David Walend
  * @since v0.0.0
  */
-object HelloLcd extends Runnable {
+object HelloFrameBufferLcd extends Runnable {
 
   def main(args: Array[String]): Unit = run()
 
