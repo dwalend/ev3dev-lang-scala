@@ -14,6 +14,8 @@ object Lcd extends AutoCloseable {
 
   private lazy val printStream: PrintStream = {
     Shell.execute("setfont Uni3-TerminusBold32x16")
+    Shell.execute("stty -F /dev/tty -echoctl")
+
     new PrintStream(
       new BufferedOutputStream(
         new FileOutputStream("/dev/tty"),64
@@ -32,7 +34,8 @@ object Lcd extends AutoCloseable {
   private lazy val clearRow:Array[Char] = Array.fill(maxColumn+1)(' ')
 
   def flush():Unit = {
-    printStream.print("\n")
+//    printStream.print("\n") //todo try the escape sequence "\033[2J\033[1;1H" instead . See https://en.wikipedia.org/wiki/ANSI_escape_code
+    printStream.print("\u001b[3J\u001b[1;1H")
     //noinspection MakeArrayToString
     rows.foreach(i => printStream.print(characters(i)) )
     printStream.flush()

@@ -29,7 +29,7 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
       val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3System.keyPad.blockUntilAnyKey()
       key match {
         case (Ev3KeyPad.ENTER,Ev3KeyPad.RELEASED) => doAction()
-        case (Ev3KeyPad.ESCAPE,Ev3KeyPad.RELEASED) => quit()
+        case (Ev3KeyPad.ESCAPE,Ev3KeyPad.RELEASED) => stopLoop()
         case (Ev3KeyPad.LEFT,Ev3KeyPad.RELEASED) => decrementMenu()
         case (Ev3KeyPad.RIGHT,Ev3KeyPad.RELEASED) => incrementMenu()
         case _ => ;
@@ -39,7 +39,6 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
   }
 
   def doAction(): Unit = {
-    drawScreen()
     doingAction = true
     actions(index).run(this)
     System.gc()
@@ -47,9 +46,8 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
     drawScreen()
   }
 
-  def quit():Unit = {
+  def stopLoop():Unit = {
     keepGoing = false
-    System.exit(0)
   }
 
   def decrementMenu():Unit = {
@@ -90,8 +88,8 @@ object TtyMenu extends Runnable {
     run()
   }
 
-  object Exit extends TtyMenuAction {
-    override def run(menu: TtyMenu): Unit = menu.quit()
+  object Reload extends TtyMenuAction {
+    override def run(menu: TtyMenu): Unit = menu.stopLoop()
   }
 
   override def run(): Unit = {
@@ -108,7 +106,7 @@ object TtyMenu extends Runnable {
         Ev3System.leftLed.writeRed()
         Ev3System.rightLed.writeRed()
       }),
-      Exit
+      Reload
     )
     TtyMenu(actions).run()
   }
