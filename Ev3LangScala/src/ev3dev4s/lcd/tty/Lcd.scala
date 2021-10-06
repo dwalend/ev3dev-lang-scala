@@ -22,6 +22,7 @@ object Lcd extends AutoCloseable {
     Shell.execute("setfont Uni3-TerminusBold32x16")
     Shell.execute("stty -F /dev/tty -echoctl -echo")
 
+    //using a ChannelRewriter gives an "IOException: Illegal seek" in JDK11
     new PrintStream(
       new BufferedOutputStream(
         new FileOutputStream("/dev/tty"),64
