@@ -15,6 +15,7 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
   @volatile var index = 0
   @volatile var keepGoing = true
   @volatile var doingAction = false
+  @volatile var drawCount = 0
 
   override def run(): Unit = {
 
@@ -65,7 +66,8 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
   def drawScreen(): Unit = this.synchronized{
     Lcd.clear()
     drawActionRow()
-
+    Lcd.set(3,drawCount.toString,Lcd.CENTER)
+    drawCount = drawCount+1
     Lcd.flush()
   }
 

@@ -13,8 +13,14 @@ import java.io.{BufferedOutputStream, FileOutputStream, PrintStream}
 object Lcd extends AutoCloseable {
 
   private lazy val printStream: PrintStream = {
+    //set everything back on shutdown
+    val sttySane = new Runnable {
+      override def run(): Unit = Shell.execute("stty -F /dev/tty sane")
+    }
+    Runtime.getRuntime.addShutdownHook(new Thread(sttySane,"reset stty at shutdown"))
+
     Shell.execute("setfont Uni3-TerminusBold32x16")
-    Shell.execute("stty -F /dev/tty -echoctl")
+    Shell.execute("stty -F /dev/tty -echoctl -echo")
 
     new PrintStream(
       new BufferedOutputStream(
@@ -23,9 +29,7 @@ object Lcd extends AutoCloseable {
     )
   }
 
-  /**
-   * 4 Rows of 11 Characters
-   */
+  // 4 Rows of 11 Characters for Uni3-TerminusBold32x16
   val maxRow = 3
   val maxColumn=10
   private lazy val characters: Array[Array[Char]] = Array.fill(maxRow+1,maxColumn+1)(' ')
@@ -34,27 +38,21 @@ object Lcd extends AutoCloseable {
   private lazy val clearRow:Array[Char] = Array.fill(maxColumn+1)(' ')
 
   def flush():Unit = {
-//    printStream.print("\n") //todo try the escape sequence "\033[2J\033[1;1H" instead . See https://en.wikipedia.org/wiki/ANSI_escape_code
-    printStream.print("\u001b[3J\u001b[1;1H")
+    printStream.print("\u001b[1;1H\u001b[0J") // tty black magic See https://en.wikipedia.org/wiki/ANSI_escape_code
     //noinspection MakeArrayToString
     rows.foreach(i => printStream.print(characters(i)) )
     printStream.flush()
-
-    rows.foreach(i => {print(new String(characters(i)));println("")} )
-
   }
 
-  def clear():Unit ={
-
+  def clear():Unit = {
     rows.foreach(i => clearRow.copyToArray(characters(i)))
-    characters
   }
 
   override def close(): Unit = {
     printStream.close()
   }
 
-  sealed abstract class Justification{
+  sealed trait Justification {
     def start(length:Int):Int
   }
 

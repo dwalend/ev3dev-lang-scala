@@ -13,12 +13,11 @@ object Ev3System {
   lazy val leftLed: Ev3Led = Ev3Led.LEFT
   lazy val rightLed: Ev3Led = Ev3Led.RIGHT
 
-  lazy val keyPad: Ev3KeyPad.type = Ev3KeyPad
-
-  lazy val portsToMotors: Map[MotorPort, Motor] = MotorPortScanner.scanMotorsDir
-  lazy val portsToSensors: Map[SensorPort, Sensor] = SensorPortScanner.scanSensorsDir
-
+  lazy val keyPad = Ev3KeyPad
   lazy val lcd = Lcd
   lazy val sound = Sound
   lazy val battery = Ev3Battery
+
+  lazy val portsToMotors: Map[MotorPort, Motor] = MotorPortScanner.scanMotorsDir
+  lazy val portsToSensors: Map[SensorPort, Sensor] = SensorPortScanner.scanSensorsDir
 }
