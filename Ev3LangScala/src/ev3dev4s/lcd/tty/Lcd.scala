@@ -52,17 +52,17 @@ object Lcd extends AutoCloseable {
     printStream.close()
   }
 
-  sealed trait Justification {
+  sealed trait Justify {
     def start(length:Int):Int
   }
 
-  val LEFT: Justification = new Justification {
+  val LEFT: Justify = new Justify {
     override def start(length: Int): Int = 0
   }
-  val RIGHT: Justification = new Justification {
+  val RIGHT: Justify = new Justify {
     override def start(length: Int): Int = Math.max(maxColumn + 1 - length,0)
   }
-  val CENTER: Justification = new Justification {
+  val CENTER: Justify = new Justify {
     override def start(length: Int): Int = Math.max((maxColumn/2) + 1 - ((length+1)/2),0)
     // 11:0 10:1 9:1 8:2 7:2 6:3 5:3 4:4 3:4 2:5 1:5
   }
@@ -71,7 +71,7 @@ object Lcd extends AutoCloseable {
     characters(row)(column) = char
   }
 
-  def set(row:Int,string:String,justification: Justification = LEFT):Unit = {
+  def set(row:Int,string:String,justification: Justify = LEFT):Unit = {
     val chars: Array[Char] = string.toCharArray
     val start = justification.start(chars.length)
     chars.copyToArray(characters(row),start)
