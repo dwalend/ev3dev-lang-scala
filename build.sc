@@ -17,10 +17,11 @@ object Ev3LangScala extends ScalaModule {
   override def scalacOptions = Seq("-deprecation")
 
   //not needed after LCDs are in this library
+  /*
   override def repositories: Seq[Repository] = super.repositories ++ Seq(
     MavenRepository("https://jitpack.io")
   )
-
+  */
   //not needed after LCDs are in this library
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
     ivy"net.java.dev.jna:jna:4.5.2"
@@ -63,7 +64,7 @@ object Ev3LangScalaExample extends ScalaModule {
 
   override def artifactName: T[String] = "Ev3LangScalaExample"
 
-  def scalaVersion = "2.13.5"//"3.0.0-RC2"//
+  def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
   override def scalacOptions = Seq("-deprecation")
