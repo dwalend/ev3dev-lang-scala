@@ -11,7 +11,7 @@ import os.{CommandResult, Path}
 object Ev3LangScala extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScala"
 
-  def scalaVersion = "2.13.5"//"3.0.0-RC2"//
+  def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
   override def scalacOptions = Seq("-deprecation")
@@ -44,6 +44,17 @@ object Ev3LangScala extends ScalaModule {
     println(result.err)
 
     result
+  }
+
+  /**
+   * Update the millw script.
+   */
+  def millw() = T.command {
+    val target = mill.modules.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
+    val millw = build.millSourcePath / "millw"
+    os.copy.over(target.path, millw)
+    os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
+    target
   }
 }
 
