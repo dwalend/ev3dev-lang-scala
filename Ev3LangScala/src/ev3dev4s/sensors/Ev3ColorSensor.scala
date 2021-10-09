@@ -63,16 +63,22 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
 
     /**
      * Ambient light
-     * @return 0 to 7 color code todo create an enum with scala 3
+     * @return color detected
      */
-    def readColor():Int = this.synchronized{
-      colorReader.readAsciiInt()
+    def readColor():Color = this.synchronized {
+      Color.values(colorReader.readAsciiInt())
     }
+
 
     override def close(): Unit = this.synchronized{
       colorReader.close()
     }
 
+    /**
+     * @see https://docs.ev3dev.org/projects/lego-linux-drivers/en/ev3dev-stretch/sensor_data.html#lego-ev3-color-mode2-value0
+     */
+    enum Color:
+      case None, Black, Blue, Green, Yellow, Red, White, Brown
 
   /* todo
 COL-REFLECT	Reflected light - sets LED color to red	pct (percent)	0	1	value0: Reflected light intensity (0 to 100)

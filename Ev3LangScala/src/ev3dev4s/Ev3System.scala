@@ -10,8 +10,8 @@ import ev3dev4s.sensors.{Ev3Battery, Ev3KeyPad, Sensor, SensorPort, SensorPortSc
  */
 object Ev3System:
 
-  lazy val leftLed: Ev3Led = Ev3Led.LEFT
-  lazy val rightLed: Ev3Led = Ev3Led.RIGHT
+  lazy val leftLed: Ev3Led = Ev3Led.Left
+  lazy val rightLed: Ev3Led = Ev3Led.Right
 
   lazy val keyPad = Ev3KeyPad
   lazy val lcd = Lcd

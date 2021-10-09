@@ -29,10 +29,10 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable:
     while keepGoing do
       val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3System.keyPad.blockUntilAnyKey()
       key match
-        case (Ev3KeyPad.ENTER,Ev3KeyPad.RELEASED) => doAction()
-        case (Ev3KeyPad.ESCAPE,Ev3KeyPad.RELEASED) => stopLoop()
-        case (Ev3KeyPad.LEFT,Ev3KeyPad.RELEASED) => decrementMenu()
-        case (Ev3KeyPad.RIGHT,Ev3KeyPad.RELEASED) => incrementMenu()
+        case (Ev3KeyPad.Key.Enter,Ev3KeyPad.State.Released) => doAction()
+        case (Ev3KeyPad.Key.Escape,Ev3KeyPad.State.Released) => stopLoop()
+        case (Ev3KeyPad.Key.Left,Ev3KeyPad.State.Released) => decrementMenu()
+        case (Ev3KeyPad.Key.Right,Ev3KeyPad.State.Released) => incrementMenu()
         case _ => ;
     Log.log("end memu loop")
 

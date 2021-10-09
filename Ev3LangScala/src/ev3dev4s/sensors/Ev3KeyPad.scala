@@ -10,27 +10,21 @@ import java.io.{DataInputStream, FileInputStream}
  */
 object Ev3KeyPad extends AutoCloseable:
 
-  //todo use enum with Scala3
-  sealed case class Key(byte: Byte, name: String)
+  enum Key(val byte: Byte):
+    case Up extends Key(0x67)
+    case Down extends Key(0x6c)
+    case Left extends Key(0x69)
+    case Right extends Key(0x6a)
+    case Enter extends Key(0x1c)
+    case Escape extends Key(0x0e)
 
-  val UP: Key = Key(0x67, "Up")
-  val DOWN: Key = Key(0x6c, "Down")
-  val LEFT: Key = Key(0x69, "Left")
-  val RIGHT: Key = Key(0x6a, "Right")
-  val ENTER: Key = Key(0x1c, "Enter")
-  val ESCAPE: Key = Key(0x0e, "Escape")
-  val keys = Seq(UP, DOWN, LEFT, RIGHT, ENTER, ESCAPE)
-
-  //todo use enum with Scala3
-  sealed case class State(byte: Byte, name: String)
-
-  val PRESSED: State = State(0x01, "Pressed")
-  val RELEASED: State = State(0x00, "Released")
-  val states = Seq(PRESSED, RELEASED)
+  enum State(val byte: Byte):
+    case Pressed extends State(0x01)
+    case Released extends State(0x00)
 
   val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] =
-    val keyStates = for key <- keys
-                         state <- states yield (key, state)
+    val keyStates = for key <- Key.values
+                         state <- State.values yield (key, state)
     keyStates.map(keyState => (keyState._1.byte, keyState._2.byte) -> keyState).toMap
 
   private val keyPadEventPath = "/dev/input/by-path/platform-gpio_keys-event"

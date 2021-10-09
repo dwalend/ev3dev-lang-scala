@@ -9,28 +9,8 @@ import java.nio.file.Path
  *
  * @author David Walend
  */
-//todo Scala 3 use an enum
-object Ev3Led:
-  val darkest = 0
-  val brightest = 255
 
-  lazy val LEFT: Ev3Led = Ev3Led(0)
-  lazy val RIGHT: Ev3Led = Ev3Led(1)
-
-  def writeBothGreen(): Unit =
-    LEFT.writeGreen()
-    RIGHT.writeGreen()
-
-  def writeBothRed(): Unit =
-    LEFT.writeRed()
-    RIGHT.writeRed()
-
-  def writeBothYellow(): Unit =
-    LEFT.writeYellow()
-    RIGHT.writeYellow()
-
-sealed case class Ev3Led(side:Int) extends AutoCloseable {
-
+enum Ev3Led(side:Int) extends AutoCloseable:
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
   val redName = s"leds/led$side:red:brick-status/brightness"
@@ -54,11 +34,28 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
     greenWriter.close()
   }
 
-  import ev3dev4s.actuators.Ev3Led.darkest
-  import ev3dev4s.actuators.Ev3Led.brightest
-
+  import Ev3Led.{brightest,darkest}
   def writeOff():Unit = writeBrightness(darkest,darkest)
   def writeRed():Unit = writeBrightness(brightest,darkest)
   def writeGreen():Unit = writeBrightness(darkest,brightest)
   def writeYellow():Unit = writeBrightness(brightest,brightest)
-}
+
+  case Left extends Ev3Led(0)
+  case Right extends Ev3Led(1)
+
+
+object Ev3Led:
+  val darkest = 0
+  val brightest = 255
+
+  def writeBothGreen(): Unit =
+    Left.writeGreen()
+    Right.writeGreen()
+
+  def writeBothRed(): Unit =
+    Left.writeRed()
+    Right.writeRed()
+
+  def writeBothYellow(): Unit =
+    Left.writeYellow()
+    Right.writeYellow()

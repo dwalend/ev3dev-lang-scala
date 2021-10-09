@@ -19,7 +19,7 @@ object SensorPortScanner:
     ArraySeq.unsafeWrapArray(sensorsDir.listFiles()).map{ (sensorDir: File) =>
       //read the address to learn which port
       val addressPath = Path.of(sensorDir.getAbsolutePath,"address")
-      val port = SensorPort.namesToPorts(ChannelRereader.readString(addressPath).last)
+      val port = namesToPorts(ChannelRereader.readString(addressPath).last)
 
       //read the driver to figure out large vs medium
       val driverPath = Path.of(sensorDir.getAbsolutePath,"driver_name")
@@ -33,13 +33,10 @@ object SensorPortScanner:
     }
   }.map{sensor => sensor.port -> sensor}.toMap
 
-//todo use a Scala3 enum
-object SensorPort:
-  val One: SensorPort = SensorPort('1')
-  val Two: SensorPort = SensorPort('2')
-  val Three: SensorPort = SensorPort('3')
-  val Four: SensorPort = SensorPort('4')
+  val namesToPorts: Map[Char, SensorPort] = SensorPort.values.map{ port => port.name -> port}.toMap
 
-  val namesToPorts: Map[Char, SensorPort] = Set(One,Two,Three,Four).map{ port => port.name -> port}.toMap
-
-sealed case class SensorPort(name:Char)
+enum SensorPort(val name:Char):
+  case One extends SensorPort('1')
+  case Two extends SensorPort('2')
+  case Three extends SensorPort('3')
+  case Four extends SensorPort('4')
