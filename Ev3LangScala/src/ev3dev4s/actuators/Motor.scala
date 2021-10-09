@@ -58,7 +58,7 @@ sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoClosea
     positionReader.readAsciiInt()
   }
 
-  def readState():Seq[MotorState] = {
+  def readState(): Array[MotorState] = {
     stateReader.readString().split(' ').filterNot(_ == "").map{MotorState.stateNamesToStates(_)}
   }
 
