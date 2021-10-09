@@ -57,9 +57,9 @@ object Lcd extends AutoCloseable {
     def start(length:Int):Int
   }
 
-  val LEFT: Justify = new Justify {
+  val LEFT: Justify = new Justify 
     override def start(length: Int): Int = 0
-  }
+  
   val RIGHT: Justify = new Justify {
     override def start(length: Int): Int = Math.max(maxColumn + 1 - length,0)
   }

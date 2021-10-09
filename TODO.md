@@ -9,6 +9,14 @@ ant ssh to run the .jar - need to get a signal into the jvm from the command pro
         
 To Do:
 
+Scala 3
+          
+Handle unplug
+
+README.md
+
+Lessons
+
 Refine the LCD code even more - it's still really slow
 
 Is there another option? C interface maybe? https://github.com/theZiz/ev3c ( http://ziz.gp2x.de/ev3c_documentation/files/include/ev3c_lcd-h.html ) looks promising
