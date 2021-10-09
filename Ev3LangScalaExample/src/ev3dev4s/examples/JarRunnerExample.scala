@@ -11,18 +11,14 @@ import ev3dev4s.actuators.Ev3Led
  * @author David Walend
  * @since v0.0.0
  */
-object JarRunnerExample extends Runnable {
-  override def run(): Unit = {
+object JarRunnerExample extends Runnable:
+  override def run(): Unit =
     Ev3System.leftLed.writeOff()
     Ev3System.rightLed.writeOff()
 
-    for _ <- 1 to 10 do {
-      for b <- Ev3Led.darkest to Ev3Led.brightest do {
+    for _ <- 1 to 10 do
+      for b <- Ev3Led.darkest to Ev3Led.brightest do
         Ev3System.leftLed.writeBrightness(b,b)
         Ev3System.rightLed.writeBrightness(b,Ev3Led.brightest - b)
         Thread.sleep(10)
-      }
-    }
     
-  }
-}

@@ -30,12 +30,11 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def getVTmode: vt_mode = {
+  def getVTmode: vt_mode =
     val mode = new vt_mode
     nativeFile.ioctl(VT_GETMODE, mode.getPointer)
     mode.read()
     mode
-  }
 
   /**
    * Set current TTY mode. TTY mode is mostly about VT switching.
@@ -44,10 +43,9 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def setVTmode(mode: vt_mode): Any = {
+  def setVTmode(mode: vt_mode): Any =
     mode.write()
     nativeFile.ioctl(VT_SETMODE, mode.getPointer)
-  }
 
   /**
    * Get current TTY state.
@@ -56,12 +54,11 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def getVTstate: vt_stat = {
+  def getVTstate: vt_stat =
     val stat = new vt_stat
     nativeFile.ioctl(VT_GETSTATE, stat.getPointer)
     stat.read()
     stat
-  }
 
   /**
    * Get current keyboard mode.
@@ -70,11 +67,10 @@ final class NativeTTY(val devicePath: String, val flags: Int) extends AutoClosea
    * @throws LastErrorException when the operation fails.
    */
   @throws[LastErrorException]
-  def getKeyboardMode: Int = {
+  def getKeyboardMode: Int =
     val kbd = new IntByReference(0)
     nativeFile.ioctl(KDGKBMODE, kbd)
     kbd.getValue
-  }
 
   /**
    * Set keyboard mode.

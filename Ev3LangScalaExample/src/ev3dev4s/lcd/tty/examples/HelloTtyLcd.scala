@@ -6,11 +6,11 @@ import ev3dev4s.lcd.tty.Lcd
  * @author David Walend
  * @since v0.0.0
  */
-object HelloTtyLcd extends Runnable {
+object HelloTtyLcd extends Runnable:
 
   def main(args: Array[String]): Unit = run()
 
-  override def run(): Unit = {
+  override def run(): Unit =
     Lcd.clear()
     Lcd.set(0,0,'B')
     Lcd.set(1,1,'l')
@@ -34,6 +34,4 @@ object HelloTtyLcd extends Runnable {
     Lcd.flush()
 
     Thread.sleep(5000)
-  }
-}
 

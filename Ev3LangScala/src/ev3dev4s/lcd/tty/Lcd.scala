@@ -12,7 +12,7 @@ import java.io.{BufferedOutputStream, FileOutputStream, PrintStream}
  */
 object Lcd extends AutoCloseable {
 
-  private lazy val printStream: PrintStream = {
+  private lazy val printStream: PrintStream =
     //set everything back on shutdown
     val sttySane = new Runnable {
       override def run(): Unit = Shell.execute("stty -F /dev/tty sane")
@@ -28,7 +28,6 @@ object Lcd extends AutoCloseable {
         new FileOutputStream("/dev/tty"),64
       )
     )
-  }
 
   // 4 Rows of 11 Characters for Uni3-TerminusBold32x16
   val maxRow = 3
@@ -38,24 +37,20 @@ object Lcd extends AutoCloseable {
 
   private lazy val clearRow:Array[Char] = Array.fill(maxColumn+1)(' ')
 
-  def flush():Unit = {
+  def flush():Unit =
     printStream.print("\u001b[1;1H\u001b[0J") // tty black magic See https://en.wikipedia.org/wiki/ANSI_escape_code
     //noinspection MakeArrayToString
     rows.foreach(i => printStream.print(characters(i)) )
     printStream.flush()
-  }
 
-  def clear():Unit = {
+  def clear():Unit =
     rows.foreach(i => clearRow.copyToArray(characters(i)))
-  }
 
-  override def close(): Unit = {
+  override def close(): Unit =
     printStream.close()
-  }
 
-  sealed trait Justify {
+  sealed trait Justify:
     def start(length:Int):Int
-  }
 
   val LEFT: Justify = new Justify {
     override def start(length: Int): Int = 0
@@ -69,14 +64,12 @@ object Lcd extends AutoCloseable {
     // 11:0 10:1 9:1 8:2 7:2 6:3 5:3 4:4 3:4 2:5 1:5
   }
 
-  def set(row:Int,column:Int,char: Char):Unit = {
+  def set(row:Int,column:Int,char: Char):Unit =
     characters(row)(column) = char
-  }
 
-  def set(row:Int,string:String,justification: Justify = LEFT):Unit = {
+  def set(row:Int,string:String,justification: Justify = LEFT):Unit =
     val chars: Array[Char] = string.toCharArray
     val start = justification.start(chars.length)
     chars.copyToArray(characters(row),start)
-  }
 
 }

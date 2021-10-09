@@ -7,11 +7,11 @@ import ev3dev4s.lcd.javaframebuffer.Lcd
  * @author David Walend
  * @since v0.0.0
  */
-object HelloFrameBufferLcd extends Runnable {
+object HelloFrameBufferLcd extends Runnable:
 
   def main(args: Array[String]): Unit = run()
 
-  override def run(): Unit = {
+  override def run(): Unit =
     Log.log("start")
 
     //clear the LCD
@@ -24,8 +24,6 @@ object HelloFrameBufferLcd extends Runnable {
     Log.log("showing Hello World")
 
     Thread.sleep(10000)
-  }
-}
 
 /*
 Just after code copied over: 59901 ms from start to hello world

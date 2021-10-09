@@ -9,9 +9,9 @@ import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, Mot
  * @author David Walend
  * @since v0.0.0
  */
-object MotorExample {
+object MotorExample:
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
 
     val firstMotor: Motor = Ev3System.portsToMotors.values.head
     println(firstMotor)
@@ -42,6 +42,4 @@ object MotorExample {
 
     println(firstMotor.readPosition())
 
-  }
 
-}

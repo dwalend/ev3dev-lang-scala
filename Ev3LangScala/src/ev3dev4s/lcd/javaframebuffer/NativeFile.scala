@@ -139,11 +139,10 @@ final class NativeFile(fname: String, flags: Int, mode: Int = NativeConstants.DE
    * @throws LastErrorException when operations fails
    */
   @throws[LastErrorException]
-  def mmap(len: Long, prot: Int, flags: Int, off: Long): Pointer = {
+  def mmap(len: Long, prot: Int, flags: Int, off: Long): Pointer =
     val p = NativeLibc.mmap(new Pointer(0), new NativeLong(len), prot, flags, fd, new NativeLong(off))
     if p == new Pointer(-1) then throw new LastErrorException("mmap() failed")
     p
-  }
 
   /**
    * Unmap mapped memory region.

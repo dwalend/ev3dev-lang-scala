@@ -10,14 +10,11 @@ import ev3dev4s.Ev3System
  * @author David Walend
  * @since v0.0.0
  */
-object LED extends Runnable {
-  override def run(): Unit = {
+object LED extends Runnable:
+  override def run(): Unit =
     Ev3System.leftLed.writeYellow()
 
     System.exit(0)
-  }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     run()
-  }
-}

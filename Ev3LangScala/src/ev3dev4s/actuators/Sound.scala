@@ -22,9 +22,8 @@ object Sound {
   /**
    * Beeps once.
    */
-  def beep():Unit = {
+  def beep():Unit =
     Shell.execute("beep")
-  }
 
   /**
    * Plays a tone, given its frequency and duration.
@@ -33,10 +32,9 @@ object Sound {
    * @param duration  The duration of the tone, in milliseconds.
    * @param volume    The volume of the playback 100 corresponds to 100%
    */
-  def playTone(frequency: Int, duration: Int, volume: Int):Unit = {
+  def playTone(frequency: Int, duration: Int, volume: Int):Unit =
     this.setVolume(volume)
     this.playTone(frequency, duration)
-  }
 
   /**
    * Plays a tone, given its frequency and duration.
@@ -44,10 +42,9 @@ object Sound {
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Int, duration: Int):Unit = {
+  def playTone(frequency: Int, duration: Int):Unit =
     val cmdTone = s"beep -f $frequency -l $duration"
     Shell.execute(cmdTone)
-  }
 
   /**
    * Play a wav file. Must be mono, from 8kHz to 48kHz, and 8-bit or 16-bit.
@@ -56,10 +53,9 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-  def playSample(file: File, volume: Int):Unit = {
+  def playSample(file: File, volume: Int):Unit =
     this.setVolume(volume)
     this.playSample(file)
-  }
 
   /**
    * Play a wav file. Must be mono, from 8kHz to 48kHz, and 8-bit or 16-bit.
@@ -67,7 +63,7 @@ object Sound {
    * @param file the 8-bit or 16-bit PWM (WAV) sample file
    */
   //todo draw from .jar resources
-  def playSample(file: File):Unit = {
+  def playSample(file: File):Unit =
     val audioIn: AudioInputStream = AudioSystem.getAudioInputStream(file.toURI.toURL)
     val clip = AudioSystem.getClip
     clip.open(audioIn)
@@ -75,18 +71,16 @@ object Sound {
     Thread.sleep(clip.getMicrosecondLength)
     clip.close()
     audioIn.close()
-  }
 
   /**
    * Set the master volume level
    *
    * @param volume 0-100
    */
-  def setVolume(volume: Int):Unit = {
+  def setVolume(volume: Int):Unit =
     this.volume = volume
     val cmdVolume = s"amixer set PCM,0 $volume%"
     Shell.execute(cmdVolume)
-  }
 
   /**
    * Get the current master volume level

@@ -8,13 +8,12 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSensor(sensorDir) {
+case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSensor(sensorDir):
 
-  def reflectMode():ReflectMode = {
+  def reflectMode():ReflectMode =
     getOrElseChangeMode(ReflectMode.apply)
-  }
 
-  case class ReflectMode() extends Mode {
+  case class ReflectMode() extends Mode:
     val name = "COL-REFLECT"
 
     private lazy val reflectReader = ChannelRereader(sensorDir.resolve("value0"))
@@ -31,13 +30,11 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
     override def close(): Unit = this.synchronized{
       reflectReader.close()
     }
-  }
 
-  def ambientMode():AmbientMode = {
+  def ambientMode():AmbientMode =
     getOrElseChangeMode(AmbientMode.apply)
-  }
 
-  case class AmbientMode() extends Mode {
+  case class AmbientMode() extends Mode:
     val name = "COL-AMBIENT"
 
     private lazy val ambientReader = ChannelRereader(sensorDir.resolve("value0"))
@@ -54,13 +51,11 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
     override def close(): Unit = this.synchronized{
       ambientReader.close()
     }
-  }
 
-  def colorMode():ColorMode = {
+  def colorMode():ColorMode =
     getOrElseChangeMode(ColorMode.apply)
-  }
 
-  case class ColorMode() extends Mode {
+  case class ColorMode() extends Mode:
     val name = "COL-COLOR"
 
     private lazy val colorReader = ChannelRereader(sensorDir.resolve("value0"))
@@ -77,7 +72,6 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
     override def close(): Unit = this.synchronized{
       colorReader.close()
     }
-  }
 
 
   /* todo
@@ -105,10 +99,8 @@ value2: ???
 
 value3: ???
    */
-}
 
-object Ev3ColorSensor {
+object Ev3ColorSensor:
   val driverName = "lego-ev3-color"
-}
 
 

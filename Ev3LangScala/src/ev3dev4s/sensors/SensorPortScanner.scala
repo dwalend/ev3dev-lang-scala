@@ -12,7 +12,7 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
-object SensorPortScanner {
+object SensorPortScanner:
 
   def scanSensorsDir:Map[SensorPort,Sensor] = {
     val sensorsDir: File = new File("/sys/class/lego-sensor")
@@ -25,24 +25,21 @@ object SensorPortScanner {
       val driverPath = Path.of(sensorDir.getAbsolutePath,"driver_name")
       val driverName = ChannelRereader.readString(driverPath)
 
-      driverName match {
+      driverName match
         case Ev3Gyroscope.driverName => Ev3Gyroscope(port,Path.of(sensorDir.getAbsolutePath))
         case Ev3ColorSensor.driverName => Ev3ColorSensor(port,Path.of(sensorDir.getAbsolutePath))
         case Ev3TouchSensor.driverName => Ev3TouchSensor(port,Path.of(sensorDir.getAbsolutePath))
         case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
-      }
     }
   }.map{sensor => sensor.port -> sensor}.toMap
-}
 
 //todo use a Scala3 enum
-object SensorPort {
+object SensorPort:
   val One: SensorPort = SensorPort('1')
   val Two: SensorPort = SensorPort('2')
   val Three: SensorPort = SensorPort('3')
   val Four: SensorPort = SensorPort('4')
 
   val namesToPorts: Map[Char, SensorPort] = Set(One,Two,Three,Four).map{ port => port.name -> port}.toMap
-}
 
 sealed case class SensorPort(name:Char)

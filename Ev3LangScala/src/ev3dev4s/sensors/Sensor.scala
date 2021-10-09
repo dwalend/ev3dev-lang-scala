@@ -9,11 +9,10 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-trait Sensor extends AutoCloseable {
+trait Sensor extends AutoCloseable:
   def port: SensorPort
-}
 
-abstract class MultiModeSensor(sensorDir:Path) extends Sensor{
+abstract class MultiModeSensor(sensorDir:Path) extends Sensor:
 
   private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
 
@@ -39,17 +38,15 @@ abstract class MultiModeSensor(sensorDir:Path) extends Sensor{
     }
   }
 
-  trait Mode extends AutoCloseable {
+  trait Mode extends AutoCloseable:
     def name:String
 
     private[sensors] def init():Unit
-  }
 
   override def close(): Unit = this.synchronized {
     modeWriter.close()
     mode.foreach(_.close())
   }
-}
 
 /*
  * On unplug fails with

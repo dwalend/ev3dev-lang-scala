@@ -30,12 +30,11 @@ class NativeFramebuffer(devicePath:String, flags:Int = O_RDWR) extends AutoClose
    * @return Changeable info about the display.
    * @throws LastErrorException when operations fails
    */
-  def getVariableScreenInfo: fb_var_screeninfo = {
+  def getVariableScreenInfo: fb_var_screeninfo =
     val info = new fb_var_screeninfo
     nativeFile.ioctl(FBIOGET_VSCREENINFO, info.getPointer)
     info.read()
     info
-  }
 
   /**
    * Send variable screen info.
@@ -43,10 +42,9 @@ class NativeFramebuffer(devicePath:String, flags:Int = O_RDWR) extends AutoClose
    * @param info Changeable info about the display.
    * @throws LastErrorException when operations fails
    */
-  def setVariableScreenInfo(info: fb_var_screeninfo): Int = {
+  def setVariableScreenInfo(info: fb_var_screeninfo): Int =
     info.write()
     nativeFile.ioctl(FBIOPUT_VSCREENINFO, info.getPointer)
-  }
 
   /**
    * Identify which framebuffer is connected to a specified VT.
@@ -55,14 +53,13 @@ class NativeFramebuffer(devicePath:String, flags:Int = O_RDWR) extends AutoClose
    * @return Framebuffer number or -1 if console has no framebuffer.
    * @throws LastErrorException when operations fails
    */
-  def mapConsoleToFramebuffer(console: Int): Int = {
+  def mapConsoleToFramebuffer(console: Int): Int =
     val map = new fb_con2fbmap
     map.console = console
     map.write()
     nativeFile.ioctl(FBIOGET_CON2FBMAP, map.getPointer)
     map.read()
     map.framebuffer
-  }
 
   /**
    * Map a portion of the device into memory and return a pointer which can be

@@ -12,9 +12,9 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
-object MotorPortScanner {
+object MotorPortScanner:
 
-  def scanMotorsDir:Map[MotorPort,Motor] = {
+  def scanMotorsDir:Map[MotorPort,Motor] =
     val motorMap = {
       //noinspection SpellCheckingInspection
       val motorsDir: File = new File("/sys/class/tacho-motor")
@@ -27,11 +27,10 @@ object MotorPortScanner {
         val driverPath = Path.of(motorDir.getAbsolutePath,"driver_name")
         val driverName = ChannelRereader.readString(driverPath)
 
-        driverName match {
+        driverName match
           case Ev3LargeMotor.driverName => Ev3LargeMotor(port,Path.of(motorDir.getAbsolutePath))
           case Ev3MediumMotor.driverName => Ev3MediumMotor(port,Path.of(motorDir.getAbsolutePath))
           case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
-        }
       }
     }.map{motor => motor.port -> motor}.toMap
 
@@ -44,18 +43,15 @@ object MotorPortScanner {
     Runtime.getRuntime.addShutdownHook(new Thread(stopMotors,"stopMotorsAtShutdown"))
 
     motorMap
-  }
-}
 
 //todo use a Scala3 enum
-object MotorPort {
+object MotorPort:
   val A: MotorPort = MotorPort('A')
   val B: MotorPort = MotorPort('B')
   val C: MotorPort = MotorPort('C')
   val D: MotorPort = MotorPort('D')
 
   val namesToPorts: Map[Char, MotorPort] = Set(A,B,C,D).map{ port => port.name -> port}.toMap
-}
 
 sealed case class MotorPort(name:Char)
 

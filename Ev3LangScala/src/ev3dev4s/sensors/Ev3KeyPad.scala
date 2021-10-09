@@ -8,7 +8,7 @@ import java.io.{DataInputStream, FileInputStream}
  * @author David Walend
  * @since v0.0.0
  */
-object Ev3KeyPad extends AutoCloseable {
+object Ev3KeyPad extends AutoCloseable:
 
   //todo use enum with Scala3
   sealed case class Key(byte: Byte, name: String)
@@ -28,11 +28,10 @@ object Ev3KeyPad extends AutoCloseable {
   val RELEASED: State = State(0x00, "Released")
   val states = Seq(PRESSED, RELEASED)
 
-  val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] = {
+  val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] =
     val keyStates = for key <- keys
                          state <- states yield (key, state)
     keyStates.map(keyState => (keyState._1.byte, keyState._2.byte) -> keyState).toMap
-  }
 
   private val keyPadEventPath = "/dev/input/by-path/platform-gpio_keys-event"
   //need a DataInputStream to use readFully
@@ -51,5 +50,4 @@ object Ev3KeyPad extends AutoCloseable {
   override def close(): Unit = this.synchronized{
     keyPadInputStream.close()
   }
-}
 

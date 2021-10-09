@@ -59,7 +59,7 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
   /**
    * Cache blank image.
    */
-  private val blank:BufferedImage = {
+  private val blank:BufferedImage =
     //converting this to bytes did not make a difference in start-up time, but did move things around
     //perhaps replacing Java's BufferedImage with something simpler can save 30 seconds, but stay with this for now
     val willBeBlank = createCompatibleBuffer()
@@ -68,7 +68,6 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
     gfx.fillRect(0, 0, width, height)
     gfx.dispose()
     willBeBlank
-  }
   Log.log("JavaFramebuffer blank")
 
   //todo are these values different from what we just loaded??
@@ -79,52 +78,44 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
   device.setVariableScreenInfo(varinfo)
   Log.log("Opened JavaFramebuffer, mode " + varinfo.xres + "x" + varinfo.yres + "x" + varinfo.bits_per_pixel + "bpp") //178x128x32bpp
 
-  def close(): Unit = {
+  def close(): Unit =
     Log.log("Closing LinuxFB")
     device.munmap(videomem, bufferSize)
     device.close()
     display.releaseFramebuffer(this)
-  }
 
   def createCompatibleBuffer(): BufferedImage = createCompatibleBuffer(width, height, stride)
 
   def createCompatibleBuffer(width: Int, height: Int, stride: Int): BufferedImage = createCompatibleBuffer(width, height, stride, new Array[Byte](height * stride))
 
-  def createCompatibleBuffer(width: Int, height: Int): BufferedImage = {
+  def createCompatibleBuffer(width: Int, height: Int): BufferedImage =
     val stride = 4 * width
     createCompatibleBuffer(width, height, stride, new Array[Byte](stride * height))
-  }
 
   def createCompatibleBuffer(width: Int, height: Int, stride: Int, buffer: Array[Byte]): BufferedImage =
     ImageUtils.createXRGBImage(width, height, stride, getComponentOffsets, buffer)
 
-  def flushScreen(compatible: BufferedImage): Unit = {
-    if flushEnabled then {
+  def flushScreen(compatible: BufferedImage): Unit =
+    if flushEnabled then
       videomem.write(0, ImageUtils.getImageBytes(compatible), 0, bufferSize.toInt)
       device.msync(videomem, bufferSize, NativeConstants.MS_SYNC)
-    }
     else Log.log("Not drawing frame on framebuffer")
-  }
 
-  def setFlushEnabled(rly: Boolean): Unit = {
+  def setFlushEnabled(rly: Boolean): Unit =
     flushEnabled = rly
-  }
 
-  def storeData(): Unit = {
+  def storeData(): Unit =
     Log.log("Storing framebuffer snapshot")
     videomem.read(0, backup, 0, bufferSize.toInt)
-  }
 
-  def restoreData(): Unit = {
+  def restoreData(): Unit =
     Log.log("Restoring framebuffer snapshot")
     videomem.write(0, backup, 0, bufferSize.toInt)
     device.msync(videomem, bufferSize, NativeConstants.MS_SYNC)
-  }
 
-  def clear(): Unit = {
+  def clear(): Unit =
     Log.log("Clearing framebuffer")
     flushScreen(blank)
-  }
 
   //todo maybe delete
   def getDisplay: DisplayInterface = display
@@ -134,7 +125,7 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
    *
    * @return Offsets: { R, G, B, A }
    */
-  private def getComponentOffsets = {
+  private def getComponentOffsets =
     val offsets = new Array[Int](4)
     offsets(0) = varinfo.red.toLEByteOffset  //todo these cna be hard-coded
     offsets(1) = varinfo.green.toLEByteOffset
@@ -146,5 +137,4 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
     avail.remove(offsets(2).asInstanceOf[Integer])
     offsets(3) = avail.get(0)
     offsets
-  }
 }

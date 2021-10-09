@@ -11,30 +11,28 @@ import java.nio.file.Path
  *
  * @author David Walend
  */
-case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoCloseable {
+case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoCloseable:
   private val byteBuffer = ByteBuffer.allocate(bufferLength)
   @volatile private var channel = FileChannel.open(path)
 
   private def readBytes():Int = this.synchronized{
     byteBuffer.clear
-    try{
+    try
       channel.read(byteBuffer, 0)
-    } catch {
+    catch
       case _:ClosedChannelException =>
         channel = FileChannel.open(path)
         channel.read(byteBuffer, 0)
-    }
   }
 
   def readString(): String = this.synchronized {
     val n = readBytes()
     if (n == -1) || (n == 0) then ""
     else if n < -1 then throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
-    else {
+    else
       val bytes = byteBuffer.array
       if bytes(n - 1) == '\n' then new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
       else new String(bytes, 0, n, StandardCharsets.UTF_8)
-    }
   }
 
   def readAsciiInt(): Int = readString().toInt
@@ -42,18 +40,14 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
   override def close(): Unit = this.synchronized {
     channel.close()
   }
-}
 
-object ChannelRereader {
-  def readString(path: Path, bufferLength:Int = 32): String = {
+object ChannelRereader:
+  def readString(path: Path, bufferLength:Int = 32): String =
     val reader = ChannelRereader(path, bufferLength)
-    try {
+    try
       reader.readString()
-    } finally {
+    finally
       reader.close()
-    }
-  }
-}
 
 /*
 ev3.replay.CalibrateGyro$@1353651 finished in 266 milliseconds

@@ -8,14 +8,11 @@ import scala.annotation.tailrec
  *
  * @author David Walend
  */
-object Ev3KeyPadExample {
-  def main(args: Array[String]): Unit = {
+object Ev3KeyPadExample:
+  def main(args: Array[String]): Unit =
     printButton()
-  }
 
   @tailrec
-  def printButton():Unit = {
+  def printButton():Unit =
     println(Ev3System.keyPad.blockUntilAnyKey())
     printButton()
-  }
-}

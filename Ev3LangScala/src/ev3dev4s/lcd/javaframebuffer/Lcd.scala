@@ -19,27 +19,23 @@ import java.util.TimerTask
 /**
  * Lejos LCD reimplementation using Java2D API in Scala
  */
-object Lcd {
+object Lcd:
 
   Log.log("Start creating LCD")
   // drawable
-  private val framebuffer: JavaFramebuffer = {
-    val display: DisplayInterface = {
+  private val framebuffer: JavaFramebuffer =
+    val display: DisplayInterface =
       Log.log("initializing new real display")
       try new OwnedDisplay()
-      catch {
+      catch
         case e: LastErrorException =>
           val errno = e.getErrorCode
-          if errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO then {
+          if errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO then
             Log.log("real display init failed, but it was caused by not having a real TTY, using fake console")
             // not inside Brickman
             new StolenDisplay()
-          }
           else throw e
-      }
-    }
     display.openFramebuffer() //todo change to just open the thing
-  }
 
   Log.log(s"framebuffer is $framebuffer")
   val image: BufferedImage = framebuffer.createCompatibleBuffer()
@@ -103,27 +99,25 @@ object Lcd {
    * @param y     the y coordinate
    * @param color the pixel color (0 = white, 1 = black)
    */
-  def setPixel(x: Int, y: Int, color: Int): Unit = {
+  def setPixel(x: Int, y: Int, color: Int): Unit =
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
     val fill = if color == 0 then Color.WHITE
     else Color.BLACK
     image.setRGB(dst.x.toInt, dst.y.toInt, fill.getRGB)
-  }
 
   /**
    * @param x the x coordinate
    * @param y the y coordinate
    * @return the pixel color (0 = white, 1 = black)
-   */  def getPixel(x: Int, y: Int): Int = {
+   */  def getPixel(x: Int, y: Int): Int =
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
     val rgb = image.getRGB(dst.x.toInt, dst.y.toInt)
     if (rgb & 0x00FFFFFF) == 0x00FFFFFF then 0
     else 1
-  }
 
   /**
    * Draws the specified String using the current font and color. x and y
@@ -139,7 +133,7 @@ object Lcd {
    * @param anchor   the anchor point for positioning the text
    * @param inverted true to invert the text display.
    */
-  def drawString(str: String, x: Int, y: Int, anchor: Int, inverted: Boolean): Unit = {
+  def drawString(str: String, x: Int, y: Int, anchor: Int, inverted: Boolean): Unit =
     val oldFg = g2d.getColor
     val oldBg = g2d.getBackground
     g2d.setColor(if inverted then Color.WHITE
@@ -149,7 +143,6 @@ object Lcd {
     drawString(str, x, y, anchor)
     g2d.setColor(oldFg)
     g2d.setBackground(oldBg)
-  }
 
   /**
    * Draws the specified String using the current font and color. x and y
@@ -160,14 +153,13 @@ object Lcd {
    * @param y      the y coordinate of the anchor point
    * @param anchor the anchor point for positioning the text
    */
-  def drawString(str: String, x: Int, y: Int, anchor: Int): Unit = {
+  def drawString(str: String, x: Int, y: Int, anchor: Int): Unit =
     val metrics = g2d.getFontMetrics
     val w = metrics.stringWidth(str)
     val h = metrics.getHeight
     val x1 = adjustX(x, w, anchor)
     val y1 = adjustY(y, h, anchor)
     g2d.drawString(str, x1, y1)
-  }
 
   /**
    * Draw a substring to the graphics surface using the current color.
@@ -179,10 +171,9 @@ object Lcd {
    * @param y      the x coordinate of the anchor point
    * @param anchor the anchor point used to position the text.
    */
-  def drawSubstring(str: String, offset: Int, len: Int, x: Int, y: Int, anchor: Int): Unit = {
+  def drawSubstring(str: String, offset: Int, len: Int, x: Int, y: Int, anchor: Int): Unit =
     val sub = str.substring(offset, offset + len)
     drawString(sub, x, y, anchor)
-  }
 
   /**
    * Draw a single character to the graphics surface using the current color.
@@ -192,10 +183,9 @@ object Lcd {
    * @param y         the x coordinate of the anchor point
    * @param anchor    the anchor point used to position the text.
    */
-  def drawChar(character: Char, x: Int, y: Int, anchor: Int): Unit = {
+  def drawChar(character: Char, x: Int, y: Int, anchor: Int): Unit =
     val str = new String(Array[Char](character))
     drawString(str, x, y, anchor)
-  }
 
   /**
    * Draw a series of characters to the graphics surface using the current color.
@@ -207,10 +197,9 @@ object Lcd {
    * @param y      the x coordinate of the anchor point
    * @param anchor the anchor point used to position the text.
    */
-  def drawChars(data: Array[Char], offset: Int, length: Int, x: Int, y: Int, anchor: Int): Unit = {
+  def drawChars(data: Array[Char], offset: Int, length: Int, x: Int, y: Int, anchor: Int): Unit =
     val str = new String(data)
     drawString(str, x, y, anchor)
-  }
 
   /**
    * Constant for the <code>SOLID</code> stroke style.
@@ -233,19 +222,17 @@ object Lcd {
   /**
    * @param i new style.
    */  
-  def setStrokeStyle(i: Int): Unit = {
+  def setStrokeStyle(i: Int): Unit =
     this.stroke = i
-    val stroke:BasicStroke = if i == DOTTED then {
+    val stroke:BasicStroke = if i == DOTTED then
       val dash = Array[Float](3.0f, 3.0f)
       val dash_phase = 0.0f
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f, dash, dash_phase)
-    }
     else if i == SOLID then
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f)
     else
       throw new IllegalArgumentException("Invalid stroke")
     g2d.setStroke(stroke)
-  }
 
   val TRANS_MIRROR = 2
   val TRANS_MIRROR_ROT180 = 1
@@ -273,7 +260,7 @@ object Lcd {
    * @param anchor    type of anchor
    * @param rop       raster operation used to draw the output.
    */
-  private def drawRegionRop(src: Image, sx: Int, sy: Int, wIn: Int, hIn: Int, transform: Int, xIn: Int, yIn: Int, anchor: Int, rop: Int): Unit = {
+  private def drawRegionRop(src: Image, sx: Int, sy: Int, wIn: Int, hIn: Int, transform: Int, xIn: Int, yIn: Int, anchor: Int, rop: Int): Unit =
     var w = wIn
     var h = hIn
     val x = adjustX(xIn, w, anchor)
@@ -284,7 +271,7 @@ object Lcd {
     val tf = new AffineTransform
     tf.translate(midx, midy)
     val h0 = h
-    transform match {
+    transform match
       case TRANS_MIRROR =>
         tf.scale(-1.0, 1.0)
       case TRANS_MIRROR_ROT90 =>
@@ -313,7 +300,6 @@ object Lcd {
         w = h0
       case _ =>
         throw new RuntimeException("Bad Option")
-    }
     tf.translate(-midx, -midy)
     val op = new AffineTransformOp(tf, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     val transformed = ImageUtils.createXRGBImage(w, h)
@@ -321,7 +307,6 @@ object Lcd {
     val dstI = any2rgb(image)
     bitBlt(srcI, sx, sy, dstI, x, y, w, h, rop)
     g2d.drawImage(dstI, 0, 0, null)
-  }
   
   def drawImage(image: Image, i: Int, i1: Int, i2: Int): Unit = g2d.drawImage(image, i, i1, null)
 
@@ -340,9 +325,8 @@ object Lcd {
    * @param y      Destination y
    * @param anchor location of the anchor point of the destination.
    */
-  def copyArea(sx: Int, sy: Int, w: Int, h: Int, x: Int, y: Int, anchor: Int): Unit = {
+  def copyArea(sx: Int, sy: Int, w: Int, h: Int, x: Int, y: Int, anchor: Int): Unit =
     g2d.copyArea(sx, sy, w, h, adjustX(x, w, anchor), adjustY(y, h, anchor))
-  }
 
   /**
    * Centering text and images horizontally
@@ -396,9 +380,9 @@ object Lcd {
   /**
    * Adjust the x co-ordinate to use the translation and anchor values.
    */
-  private def adjustX(xIn: Int, w: Int, anchor: Int): Int = { //todo make functional
+  private def adjustX(xIn: Int, w: Int, anchor: Int): Int = //todo make functional
     var x = xIn
-    anchor & (LEFT | RIGHT | HCENTER) match {
+    anchor & (LEFT | RIGHT | HCENTER) match
       case LEFT =>
       case RIGHT =>
         x -= w
@@ -406,16 +390,14 @@ object Lcd {
         x -= w / 2
       case _ =>
         throw new RuntimeException("Bad Option")
-    }
     x
-  }
 
   /**
    * Adjust the y co-ordinate to use the translation and anchor values.
    */
-  private def adjustY(yIn: Int, h: Int, anchor: Int):Int = { //todo make functional
+  private def adjustY(yIn: Int, h: Int, anchor: Int):Int = //todo make functional
     var y = yIn
-    anchor & (TOP | BOTTOM | VCENTER) match {
+    anchor & (TOP | BOTTOM | VCENTER) match
       case TOP =>
       case BOTTOM =>
         y -= h
@@ -423,9 +405,7 @@ object Lcd {
         y -= h / 2
       case _ =>
         throw new RuntimeException("Bad Option")
-    }
     y
-  }
 
   def drawRoundRect(x: Int, y: Int, width: Int, height: Int, arcWidth: Int, arcHeight: Int): Unit = g2d.drawRoundRect(x, y, width, height, arcWidth, arcHeight)
 
@@ -447,14 +427,13 @@ object Lcd {
   /**
    * Clear the display.
    */
-  def clear(): Unit = {
+  def clear(): Unit =
     val tf = g2d.getTransform.clone.asInstanceOf[AffineTransform]
     g2d.getTransform.setToIdentity()
     g2d.setColor(Color.WHITE)
     g2d.fillRect(0, 0, framebuffer.width, framebuffer.height)
     flush()
     g2d.setTransform(tf)
-  }
 
   def getWidth: Int = framebuffer.width
 
@@ -481,36 +460,32 @@ object Lcd {
   /**
    * Convert from leJOS image format to Java image
    */
-  private def lejos2rgb(src: Array[Byte], width: Int, height: Int) = {
+  private def lejos2rgb(src: Array[Byte], width: Int, height: Int) =
     @SuppressWarnings(Array("SuspiciousNameCombination")) val in = ImageUtils.createBWImage(height, width, true, src)
     val out = ImageUtils.createXRGBImage(width, height)
     java_lejos_flip(in, out)
-  }
 
-  private def any2rgb(img: Image) = {
+  private def any2rgb(img: Image) =
     val copy = ImageUtils.createXRGBImage(img.getWidth(null), img.getHeight(null))
     val gfx = copy.getGraphics.asInstanceOf[Graphics2D]
     gfx.drawImage(img, 0, 0, null)
     gfx.dispose()
     copy
-  }
 
   /**
    * Convert from Java image to leJOS image format
    */
-  private def any2lejos(img: BufferedImage): Array[Byte] = {
+  private def any2lejos(img: BufferedImage): Array[Byte] =
     val out = ImageUtils.createBWImage(img.getHeight, img.getWidth, true)
     val right = java_lejos_flip(img, out)
     right.getRaster.getDataBuffer.asInstanceOf[DataBufferByte].getData
-  }
 
-  private def java_lejos_flip(in: BufferedImage, out: BufferedImage): BufferedImage = {
+  private def java_lejos_flip(in: BufferedImage, out: BufferedImage): BufferedImage =
     val tf = new AffineTransform
     tf.quadrantRotate(1)
     tf.scale(-1.0, +1.0)
     val op = new AffineTransformOp(tf, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
     op.filter(in, out)
-  }
 
   /**
    * Slow emulation of leJOS bitBlt()
@@ -530,12 +505,11 @@ object Lcd {
    * @param h   height of the area to copy
    * @param rop raster operation.
    */
-  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
+  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit =
     val srcI = lejos2rgb(src, sw, sh)
     val dstI = any2rgb(image)
     bitBlt(srcI, sx, sy, dstI, dx, dy, w, h, rop)
     g2d.drawImage(dstI, 0, 0, null)
-  }
 
   /**
    * Standard two input BitBlt function. Supports standard raster ops and
@@ -555,7 +529,7 @@ object Lcd {
    * @param h   height of the area to copy
    * @param rop raster operation.
    */
-  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dst: Array[Byte], dw: Int, dh: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
+  def bitBlt(src: Array[Byte], sw: Int, sh: Int, sx: Int, sy: Int, dst: Array[Byte], dw: Int, dh: Int, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit =
     val srcI = lejos2rgb(src, sw, sh)
     val dstI = lejos2rgb(dst, dw, dh)
     bitBlt(srcI, sx, sy, dstI, dx, dy, w, h, rop)
@@ -564,9 +538,8 @@ object Lcd {
     gfx.dispose()
     val data = any2lejos(dstI)
     System.arraycopy(data, 0, dst, 0, Math.min(data.length, dst.length))
-  }
 
-  private def bitBlt(src: BufferedImage, sx: Int, sy: Int, dst: BufferedImage, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit = {
+  private def bitBlt(src: BufferedImage, sx: Int, sy: Int, dst: BufferedImage, dx: Int, dy: Int, w: Int, h: Int, rop: Int): Unit =
     val srcR = src.getRaster
     val dstR = dst.getRaster
     val msk_dst = (0xFF & (rop >> 24)).toByte
@@ -576,28 +549,21 @@ object Lcd {
     val dstskip = msk_dst == 0 && xor_dst == 0
     val dstpix = new Array[Int](4)
     val srcpix = new Array[Int](4)
-    for vx <- 0 until w do {
-      for vy <- 0 until h do {
+    for vx <- 0 until w do
+      for vy <- 0 until h do
         val srcx = sx + vx
         val srcy = sy + vy
         val dstx = dx + vx
         val dsty = dy + vy
         srcR.getPixel(srcx, srcy, srcpix)
-        if dstskip then { // only rgb, no a
-          for s <- 0 until 3 do {
+        if dstskip then // only rgb, no a
+          for s <- 0 until 3 do
             dstpix(s) = (srcpix(s) & msk_src) ^ xor_src
-          }
-        }
-        else {
+        else
           dstR.getPixel(dstx, dsty, dstpix)
-          for s <- 0 until 3 do {
+          for s <- 0 until 3 do
             dstpix(s) = ((dstpix(s) & msk_dst) ^ xor_dst) ^ ((srcpix(s) & msk_src) ^ xor_src)
-          }
-        }
         dstR.setPixel(dstx, dsty, dstpix)
-      }
-    }
-  }
 
   // autorefresh
   //todo nothing seems to use autorefresh
@@ -605,28 +571,22 @@ object Lcd {
   private var timer_run = false
   private var timer_msec = 0
 
-  def setAutoRefresh(b: Boolean): Unit = if this.timer_run != b then {
+  def setAutoRefresh(b: Boolean): Unit = if this.timer_run != b then
     this.timer_run = b
     timerUpdate()
-  }
 
-  def setAutoRefreshPeriod(i: Int): Unit = {
+  def setAutoRefreshPeriod(i: Int): Unit =
     val old = this.timer_msec
-    if old != i then {
+    if old != i then
       this.timer_msec = i
       timerUpdate()
-    }
-  }
 
-  private def timerUpdate(): Unit = {
+  private def timerUpdate(): Unit =
     timer.cancel()
     if timer_run && timer_msec > 0 then timer.scheduleAtFixedRate(new Flusher, 0, timer_msec)
-  }
 
-  private class Flusher extends TimerTask {
+  private class Flusher extends TimerTask:
     def run(): Unit = refresh()
-  }
-}
 
 /*
 Color sensors created

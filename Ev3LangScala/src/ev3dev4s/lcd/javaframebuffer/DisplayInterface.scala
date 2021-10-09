@@ -48,23 +48,21 @@ abstract class DisplayInterface extends AutoCloseable {
    * @param fb Framebuffer to remove.
    */
     //todo never used
-  def releaseFramebuffer(fb: JavaFramebuffer):Unit = {
+  def releaseFramebuffer(fb: JavaFramebuffer):Unit =
     if fb != null && (fb eq fbInstance) then fbInstance = null
     else throw new IllegalArgumentException("Framebuffer must be non-null and identical to the builtin framebuffer")
-  }
 
   /**
    * Close the internal framebuffer.
    */
     //todo never used
-  protected def closeFramebuffer(): Unit = {
+  protected def closeFramebuffer(): Unit =
     if fbInstance != null then try fbInstance.close()
-    catch {
+    catch
       case e@(_: IOException | _: LastErrorException) =>
         System.err.println("Error occurred during framebuffer shutdown: " + e.getMessage)
         e.printStackTrace()
-    } finally fbInstance = null
-  }
+    finally fbInstance = null
 
   /**
    * Initialize new internal instance of JavaFramebuffer.
@@ -72,7 +70,7 @@ abstract class DisplayInterface extends AutoCloseable {
    * @param backend Device behind JavaFramebuffer.
    * @param enable  Whether to enable framebuffer flushing from the beginning.
    */
-  protected def initializeFramebuffer(backend: NativeFramebuffer, enable: Boolean): Unit = {
+  protected def initializeFramebuffer(backend: NativeFramebuffer, enable: Boolean): Unit =
     Log.log("Start initializeFramebuffer")
     fbInstance = new JavaFramebuffer(backend, this)
     Log.log("initializeFramebuffer made JavaFramebuffer")
@@ -82,5 +80,4 @@ abstract class DisplayInterface extends AutoCloseable {
     Log.log("initializeFramebuffer cleared")
     fbInstance.storeData()
     Log.log("initializeFramebuffer data stored")
-  }
 }

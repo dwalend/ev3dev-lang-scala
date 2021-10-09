@@ -6,7 +6,7 @@ import ev3dev4s.sysfs.Shell
 /**
  * Class to allow running programs over SSH
  */
-class StolenDisplay() extends DisplayInterface {
+class StolenDisplay() extends DisplayInterface:
   private val DISABLE_BRICKMAN_COMMAND = "sudo systemctl stop brickman"
   private val ENABLE_BRICKMAN_COMMAND = "sudo systemctl start brickman"
 
@@ -32,25 +32,20 @@ class StolenDisplay() extends DisplayInterface {
   /**
    * noop, we do not have any resources
    */
-  override def close(): Unit = {
+  override def close(): Unit =
     Log.log("Display close")
     // free objects
     closeFramebuffer()
-  }
 
-  override def openFramebuffer(): JavaFramebuffer = {
-    if fbInstance == null then {
+  override def openFramebuffer(): JavaFramebuffer =
+    if fbInstance == null then
       Log.log("Initialing framebuffer in fake console")
       initializeFramebuffer(new NativeFramebuffer("/dev/fb0"), true)
-    }
     fbInstance
-  }
 
   /**
    * Enable Brickman.
    */
-  private def restoreBrickman(): String = {
+  private def restoreBrickman(): String =
     Log.log("Enabling Brickman service")
     Shell.execute(ENABLE_BRICKMAN_COMMAND)
-  }
-}

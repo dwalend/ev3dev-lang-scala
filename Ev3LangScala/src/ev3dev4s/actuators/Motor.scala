@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoCloseable {
+sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoCloseable:
 
   private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
   private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
@@ -25,73 +25,59 @@ sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoClosea
   private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
 
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
-  def writeCommand(command: MotorCommand):Unit = {
+  def writeCommand(command: MotorCommand):Unit =
     commandWriter.writeString(command.command)
-  }
 
-  def writeStopAction(command:MotorStopCommand):Unit = {
+  def writeStopAction(command:MotorStopCommand):Unit =
     stopActionWriter.writeString(command.command)
-  }
 
-  def writeDutyCycle(percent:Int):Unit = {
+  def writeDutyCycle(percent:Int):Unit =
     dutyCycleSpWriter.writeAsciiInt(percent)
-  }
 
-  def writeSpeed(degreesPerSecond:Int):Unit = {
+  def writeSpeed(degreesPerSecond:Int):Unit =
     speedSpWriter.writeAsciiInt(degreesPerSecond)
-  }
 
-  def writePosition(degrees:Int):Unit = {
+  def writePosition(degrees:Int):Unit =
     positionWriter.writeAsciiInt(degrees)
-  }
 
-  def resetPosition():Unit = {
+  def resetPosition():Unit =
     writePosition(0)
-  }
 
   def writeGoalPosition(degrees:Int):Unit =
     goalPositionWriter.writeAsciiInt(degrees)
   /**
    * @return position in degrees todo double-check that
    */
-  def readPosition():Int = {
+  def readPosition():Int =
     positionReader.readAsciiInt()
-  }
 
-  def readState(): Array[MotorState] = {
+  def readState(): Array[MotorState] =
     stateReader.readString().split(' ').filterNot(_ == "").map{MotorState.stateNamesToStates(_)}
-  }
 
-  def readIsStalled():Boolean = {
+  def readIsStalled():Boolean =
     readState().contains(MotorState.STALLED)
-  }
 
-  def coast(): Unit = {
+  def coast(): Unit =
     writeStopAction(MotorStopCommand.COAST)
     writeCommand(MotorCommand.STOP)
-  }
 
-  def brake(): Unit = {
+  def brake(): Unit =
     writeStopAction(MotorStopCommand.BRAKE)
     writeCommand(MotorCommand.STOP)
-  }
 
-  def hold(): Unit = {
+  def hold(): Unit =
     writeStopAction(MotorStopCommand.HOLD)
     writeCommand(MotorCommand.STOP)
-  }
 
-  def runDutyCycle(percent:Int):Unit = {
+  def runDutyCycle(percent:Int):Unit =
     writeDutyCycle(percent)
     writeCommand(MotorCommand.RUN_DIRECT)
-  }
 
-  def runSpeed(degreesPerSecond:Int):Unit = {
+  def runSpeed(degreesPerSecond:Int):Unit =
     writeSpeed(degreesPerSecond)
     writeCommand(MotorCommand.RUN)
-  }
 
-  override def close(): Unit = {
+  override def close(): Unit =
     stateReader.close()
     positionReader.close()
 
@@ -101,23 +87,19 @@ sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoClosea
     dutyCycleSpWriter.close()
     commandWriter.close()
 
-  }
-}
 
 sealed case class Ev3LargeMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
 
-object Ev3LargeMotor {
+object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
-}
 
 sealed case class Ev3MediumMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
 
-object Ev3MediumMotor {
+object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"
-}
 
 //todo use a Scala3 enum
-object MotorCommand {
+object MotorCommand:
   /**
    * run-forever: Causes the motor to run until another command is sent
    */
@@ -145,7 +127,6 @@ run-timed: Run the motor for the amount of time specified in time_sp and then st
   /**
   reset: Resets all of the motor parameter attributes to their default values. This will also have the effect of stopping the motor.
    */
-}
 
 sealed case class MotorCommand(command:String)
 
@@ -153,7 +134,7 @@ sealed case class MotorCommand(command:String)
  * Determines the motors behavior when command is set to stop. Possible values are:
  */
 //todo use a Scala3 enum
-object MotorStopCommand {
+object MotorStopCommand:
   /**
    * Removes power from the motor. The motor will freely coast to a stop.
    */
@@ -168,12 +149,11 @@ object MotorStopCommand {
    * Causes the motor to actively try to hold the current position. If an external force tries to turn the motor, the motor will “push back” to maintain its position.
    */
   val HOLD: MotorStopCommand = MotorStopCommand("hold")
-}
 
 sealed case class MotorStopCommand(command:String)
 
 //todo use a Scala3 enum
-object MotorState {
+object MotorState:
   /**
   running: Power is being sent to the motor.
   */
@@ -196,6 +176,5 @@ object MotorState {
   val STALLED: MotorState = MotorState("stalled")
 
   val stateNamesToStates: Map[String, MotorState] = Seq(RUNNING,RAMPING,HOLDING,OVERLOADED,STALLED).map{ s => s.name -> s}.toMap
-}
 
 sealed case class MotorState(name:String)

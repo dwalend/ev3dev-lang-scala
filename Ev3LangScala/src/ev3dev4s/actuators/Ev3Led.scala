@@ -10,28 +10,24 @@ import java.nio.file.Path
  * @author David Walend
  */
 //todo Scala 3 use an enum
-object Ev3Led {
+object Ev3Led:
   val darkest = 0
   val brightest = 255
 
   lazy val LEFT: Ev3Led = Ev3Led(0)
   lazy val RIGHT: Ev3Led = Ev3Led(1)
 
-  def writeBothGreen(): Unit = {
+  def writeBothGreen(): Unit =
     LEFT.writeGreen()
     RIGHT.writeGreen()
-  }
 
-  def writeBothRed(): Unit = {
+  def writeBothRed(): Unit =
     LEFT.writeRed()
     RIGHT.writeRed()
-  }
 
-  def writeBothYellow(): Unit = {
+  def writeBothYellow(): Unit =
     LEFT.writeYellow()
     RIGHT.writeYellow()
-  }
-}
 
 sealed case class Ev3Led(side:Int) extends AutoCloseable {
 

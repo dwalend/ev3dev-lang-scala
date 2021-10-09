@@ -56,7 +56,7 @@ object ImageUtils {
    * @param buffer  Backing buffer.
    * @return Configured BufferedImage
    */
-  def createXRGBImage(width: Int, height: Int, stride: Int, offsets: Array[Int], buffer: Array[Byte]): BufferedImage = {
+  def createXRGBImage(width: Int, height: Int, stride: Int, offsets: Array[Int], buffer: Array[Byte]): BufferedImage =
     if buffer.length < (stride * height) then throw new IllegalArgumentException("Buffer is smaller than height*stride")
     if stride < width * 4 then throw new IllegalArgumentException("Stride is smaller than width * 4")
 
@@ -71,7 +71,6 @@ object ImageUtils {
     val wr = Raster.createWritableRaster(sm, db, null)
     // glue everything together
     new BufferedImage(cm, wr, false, null)
-  }
 
   /**
    * Get default XRGB component offsets.
@@ -88,10 +87,9 @@ object ImageUtils {
    * @param zeroBlack Whether black color is represented by the 0 bit value.
    * @return Configured BufferedImage.
    */
-  def createBWImage(width: Int, height: Int, zeroBlack: Boolean): BufferedImage = {
+  def createBWImage(width: Int, height: Int, zeroBlack: Boolean): BufferedImage =
     val stride = (width + 7) / 8
     createBWImage(width, height, stride, zeroBlack, new Array[Byte](stride * height))
-  }
 
   /**
    * Create new BW image backed by existing data.
@@ -102,10 +100,9 @@ object ImageUtils {
    * @param backed    Backing byte buffer.
    * @return Configured BufferedImage.
    */
-  def createBWImage(width: Int, height: Int, zeroBlack: Boolean, backed: Array[Byte]): BufferedImage = {
+  def createBWImage(width: Int, height: Int, zeroBlack: Boolean, backed: Array[Byte]): BufferedImage =
     val stride = (width + 7) / 8
     createBWImage(width, height, stride, zeroBlack, backed)
-  }
 
   /**
    * Create new BW image.
@@ -128,7 +125,7 @@ object ImageUtils {
    * @param backed    Backing byte buffer.
    * @return Configured BufferedImage.
    */
-  def createBWImage(width: Int, height: Int, stride: Int, zeroBlack: Boolean, backed: Array[Byte]): BufferedImage = {
+  def createBWImage(width: Int, height: Int, stride: Int, zeroBlack: Boolean, backed: Array[Byte]): BufferedImage =
     if backed.length < (stride * height) then throw new IllegalArgumentException("Buffer is smaller than height*stride")
     if stride < width / 8 then throw new IllegalArgumentException("Stride is smaller than width/8")
 
@@ -142,7 +139,6 @@ object ImageUtils {
                     else Array[Byte](0xFF.toByte, 0x00.toByte)
     val cm = new IndexColorModel(1, mapPixels.length, mapPixels, mapPixels, mapPixels)
     new BufferedImage(cm, wr, false, null)
-  }
 
   /**
    * Convert image to the underlying byte buffer.
@@ -150,9 +146,8 @@ object ImageUtils {
    * @param image Configured BufferedImage.
    * @return Byte array.
    */
-  def getImageBytes(image: BufferedImage): Array[Byte] = {
+  def getImageBytes(image: BufferedImage): Array[Byte] =
     val rst = image.getRaster
     val buf = rst.getDataBuffer
     buf.asInstanceOf[DataBufferByte].getData
-  }
 }
