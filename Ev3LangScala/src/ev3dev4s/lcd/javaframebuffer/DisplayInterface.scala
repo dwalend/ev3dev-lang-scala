@@ -49,7 +49,7 @@ abstract class DisplayInterface extends AutoCloseable {
    */
     //todo never used
   def releaseFramebuffer(fb: JavaFramebuffer):Unit = {
-    if (fb != null && (fb eq fbInstance)) fbInstance = null
+    if fb != null && (fb eq fbInstance) then fbInstance = null
     else throw new IllegalArgumentException("Framebuffer must be non-null and identical to the builtin framebuffer")
   }
 
@@ -58,7 +58,7 @@ abstract class DisplayInterface extends AutoCloseable {
    */
     //todo never used
   protected def closeFramebuffer(): Unit = {
-    if (fbInstance != null) try fbInstance.close()
+    if fbInstance != null then try fbInstance.close()
     catch {
       case e@(_: IOException | _: LastErrorException) =>
         System.err.println("Error occurred during framebuffer shutdown: " + e.getMessage)

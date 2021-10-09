@@ -26,7 +26,7 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
     Ev3System.rightLed.writeGreen()
 
     Log.log("start menu loop")
-    while (keepGoing) {
+    while keepGoing do {
       val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3System.keyPad.blockUntilAnyKey()
       key match {
         case (Ev3KeyPad.ENTER,Ev3KeyPad.RELEASED) => doAction()
@@ -52,13 +52,13 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable {
   }
 
   def decrementMenu():Unit = {
-    index = if (index == 0) actions.length -1
+    index = if index == 0 then actions.length -1
     else index - 1
     drawScreen()
   }
 
   def incrementMenu():Unit = {
-    index = if (index == actions.length -1) 0
+    index = if index == actions.length -1 then 0
     else index + 1
     drawScreen()
   }

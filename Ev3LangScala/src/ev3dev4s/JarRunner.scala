@@ -21,7 +21,7 @@ object JarRunner {
     val className = args(1)
 
     try {
-      while (keepGoing) {
+      while keepGoing do {
         println(s"Reloading and rerunning $className from $jarFile")
         val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
         classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()

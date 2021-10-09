@@ -30,7 +30,7 @@ object Lcd {
       catch {
         case e: LastErrorException =>
           val errno = e.getErrorCode
-          if (errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO) {
+          if errno == NativeConstants.ENOTTY || errno == NativeConstants.ENXIO then {
             Log.log("real display init failed, but it was caused by not having a real TTY, using fake console")
             // not inside Brickman
             new StolenDisplay()
@@ -107,7 +107,7 @@ object Lcd {
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
-    val fill = if (color == 0) Color.WHITE
+    val fill = if color == 0 then Color.WHITE
     else Color.BLACK
     image.setRGB(dst.x.toInt, dst.y.toInt, fill.getRGB)
   }
@@ -121,7 +121,7 @@ object Lcd {
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
     val rgb = image.getRGB(dst.x.toInt, dst.y.toInt)
-    if ((rgb & 0x00FFFFFF) == 0x00FFFFFF) 0
+    if (rgb & 0x00FFFFFF) == 0x00FFFFFF then 0
     else 1
   }
 
@@ -142,9 +142,9 @@ object Lcd {
   def drawString(str: String, x: Int, y: Int, anchor: Int, inverted: Boolean): Unit = {
     val oldFg = g2d.getColor
     val oldBg = g2d.getBackground
-    g2d.setColor(if (inverted) Color.WHITE
+    g2d.setColor(if inverted then Color.WHITE
     else Color.BLACK)
-    g2d.setBackground(if (inverted) Color.BLACK
+    g2d.setBackground(if inverted then Color.BLACK
     else Color.WHITE)
     drawString(str, x, y, anchor)
     g2d.setColor(oldFg)
@@ -235,12 +235,12 @@ object Lcd {
    */  
   def setStrokeStyle(i: Int): Unit = {
     this.stroke = i
-    val stroke:BasicStroke = if (i == DOTTED) {
+    val stroke:BasicStroke = if i == DOTTED then {
       val dash = Array[Float](3.0f, 3.0f)
       val dash_phase = 0.0f
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f, dash, dash_phase)
     }
-    else if (i == SOLID)
+    else if i == SOLID then
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0.0f)
     else
       throw new IllegalArgumentException("Invalid stroke")
@@ -576,21 +576,21 @@ object Lcd {
     val dstskip = msk_dst == 0 && xor_dst == 0
     val dstpix = new Array[Int](4)
     val srcpix = new Array[Int](4)
-    for (vx <- 0 until w) {
-      for (vy <- 0 until h) {
+    for vx <- 0 until w do {
+      for vy <- 0 until h do {
         val srcx = sx + vx
         val srcy = sy + vy
         val dstx = dx + vx
         val dsty = dy + vy
         srcR.getPixel(srcx, srcy, srcpix)
-        if (dstskip) { // only rgb, no a
-          for (s <- 0 until 3) {
+        if dstskip then { // only rgb, no a
+          for s <- 0 until 3 do {
             dstpix(s) = (srcpix(s) & msk_src) ^ xor_src
           }
         }
         else {
           dstR.getPixel(dstx, dsty, dstpix)
-          for (s <- 0 until 3) {
+          for s <- 0 until 3 do {
             dstpix(s) = ((dstpix(s) & msk_dst) ^ xor_dst) ^ ((srcpix(s) & msk_src) ^ xor_src)
           }
         }
@@ -605,14 +605,14 @@ object Lcd {
   private var timer_run = false
   private var timer_msec = 0
 
-  def setAutoRefresh(b: Boolean): Unit = if (this.timer_run != b) {
+  def setAutoRefresh(b: Boolean): Unit = if this.timer_run != b then {
     this.timer_run = b
     timerUpdate()
   }
 
   def setAutoRefreshPeriod(i: Int): Unit = {
     val old = this.timer_msec
-    if (old != i) {
+    if old != i then {
       this.timer_msec = i
       timerUpdate()
     }
@@ -620,7 +620,7 @@ object Lcd {
 
   private def timerUpdate(): Unit = {
     timer.cancel()
-    if (timer_run && timer_msec > 0) timer.scheduleAtFixedRate(new Flusher, 0, timer_msec)
+    if timer_run && timer_msec > 0 then timer.scheduleAtFixedRate(new Flusher, 0, timer_msec)
   }
 
   private class Flusher extends TimerTask {

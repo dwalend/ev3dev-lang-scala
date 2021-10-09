@@ -15,7 +15,7 @@ object Ev3ColorSensorExample {
     val colorSensor = Ev3System.portsToSensors.values.collectFirst { case s: Ev3ColorSensor => s }.get
 
     val headingMode1 = colorSensor.reflectMode()
-    for (_ <- 1 to 20) {
+    for _ <- 1 to 20 do {
       println(headingMode1.readReflect())
       Thread.sleep(100)
     }

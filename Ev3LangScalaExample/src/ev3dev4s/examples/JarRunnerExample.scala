@@ -16,8 +16,8 @@ object JarRunnerExample extends Runnable {
     Ev3System.leftLed.writeOff()
     Ev3System.rightLed.writeOff()
 
-    for(_ <- 1 to 10){
-      for(b <- Ev3Led.darkest to Ev3Led.brightest) {
+    for _ <- 1 to 10 do {
+      for b <- Ev3Led.darkest to Ev3Led.brightest do {
         Ev3System.leftLed.writeBrightness(b,b)
         Ev3System.rightLed.writeBrightness(b,Ev3Led.brightest - b)
         Thread.sleep(10)

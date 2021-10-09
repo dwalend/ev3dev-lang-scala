@@ -29,8 +29,8 @@ object Ev3KeyPad extends AutoCloseable {
   val states = Seq(PRESSED, RELEASED)
 
   val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] = {
-    val keyStates = for {key <- keys
-                         state <- states} yield (key, state)
+    val keyStates = for key <- keys
+                         state <- states yield (key, state)
     keyStates.map(keyState => (keyState._1.byte, keyState._2.byte) -> keyState).toMap
   }
 

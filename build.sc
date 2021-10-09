@@ -1,12 +1,15 @@
-import Ev3LangScalaExample.{artifactName, assembly}
-import coursier.Repository
 import mill._
 import scalalib._
 import coursier.maven.MavenRepository
+import coursier.Repository
 import mill.api.Loose
 import mill.api.Result
 import mill.define.{Command, Target}
 import os.{CommandResult, Path}
+
+object Shared {
+  val scalacOptions = Seq("-deprecation", "-source:3.0", "-new-syntax", "-rewrite")
+}
 
 object Ev3LangScala extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScala"
@@ -14,7 +17,7 @@ object Ev3LangScala extends ScalaModule {
   def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
-  override def scalacOptions = Seq("-deprecation", "-source:3.0-migration")
+  override def scalacOptions = Shared.scalacOptions
 
   //not needed after LCDs are in this library
   /*
@@ -50,7 +53,7 @@ object Ev3LangScala extends ScalaModule {
   /**
    * Update the millw script.
    */
-  def millw() = T.command {
+  def millw(): Command[PathRef] = T.command {
     val target = mill.modules.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
     val millw = millSourcePath / "millw"
     os.copy.over(target.path, millw)
@@ -67,7 +70,7 @@ object Ev3LangScalaExample extends ScalaModule {
   def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
-  override def scalacOptions = Seq("-deprecation", "-source:3.0-migration")
+  override def scalacOptions = Shared.scalacOptions
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 

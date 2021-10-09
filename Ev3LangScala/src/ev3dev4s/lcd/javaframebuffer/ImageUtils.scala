@@ -57,8 +57,8 @@ object ImageUtils {
    * @return Configured BufferedImage
    */
   def createXRGBImage(width: Int, height: Int, stride: Int, offsets: Array[Int], buffer: Array[Byte]): BufferedImage = {
-    if (buffer.length < (stride * height)) throw new IllegalArgumentException("Buffer is smaller than height*stride")
-    if (stride < width * 4) throw new IllegalArgumentException("Stride is smaller than width * 4")
+    if buffer.length < (stride * height) then throw new IllegalArgumentException("Buffer is smaller than height*stride")
+    if stride < width * 4 then throw new IllegalArgumentException("Stride is smaller than width * 4")
 
     //todo if any of these take a while just do them once
     val db = new DataBufferByte(buffer, buffer.length)
@@ -129,8 +129,8 @@ object ImageUtils {
    * @return Configured BufferedImage.
    */
   def createBWImage(width: Int, height: Int, stride: Int, zeroBlack: Boolean, backed: Array[Byte]): BufferedImage = {
-    if (backed.length < (stride * height)) throw new IllegalArgumentException("Buffer is smaller than height*stride")
-    if (stride < width / 8) throw new IllegalArgumentException("Stride is smaller than width/8")
+    if backed.length < (stride * height) then throw new IllegalArgumentException("Buffer is smaller than height*stride")
+    if stride < width / 8 then throw new IllegalArgumentException("Stride is smaller than width/8")
 
     // initialize backing store
     val db = new DataBufferByte(backed, backed.length)
@@ -138,7 +138,7 @@ object ImageUtils {
     val packing = new MultiPixelPackedSampleModel(DataBuffer.TYPE_BYTE, width, height, 1, stride, 0)
     // initialize raster
     val wr = Raster.createWritableRaster(packing, db, null)
-    val mapPixels = if (zeroBlack) Array[Byte](0x00.toByte, 0xFF.toByte)
+    val mapPixels = if zeroBlack then Array[Byte](0x00.toByte, 0xFF.toByte)
                     else Array[Byte](0xFF.toByte, 0x00.toByte)
     val cm = new IndexColorModel(1, mapPixels.length, mapPixels, mapPixels, mapPixels)
     new BufferedImage(cm, wr, false, null)

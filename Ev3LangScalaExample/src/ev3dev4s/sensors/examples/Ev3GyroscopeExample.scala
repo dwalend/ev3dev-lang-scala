@@ -15,7 +15,7 @@ object Ev3GyroscopeExample {
     val gyroscope = Ev3System.portsToSensors.values.collectFirst { case s: Ev3Gyroscope => s }.get
 
     val headingMode1 = gyroscope.headingMode()
-    for (_ <- 1 to 10) {
+    for _ <- 1 to 10 do {
       println(headingMode1.readHeading())
       Thread.sleep(100)
     }
@@ -23,7 +23,7 @@ object Ev3GyroscopeExample {
     gyroscope.calibrateMode()
 
     val headingMode2 = gyroscope.headingMode()
-    for (_ <- 1 to 10) {
+    for _ <- 1 to 10 do {
       println(headingMode2.readHeading())
       Thread.sleep(100)
     }

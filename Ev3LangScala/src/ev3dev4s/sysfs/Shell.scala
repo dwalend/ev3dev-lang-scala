@@ -18,10 +18,10 @@ object Shell {
     val output = new ByteArrayOutputStream
     val buffer = new Array[Byte](1024)
     var length = 0
-    while ( {
+    while  {
       length = p.getInputStream.read(buffer)
       length != -1
-    } ) output.write(buffer, 0, length)
+    }  do output.write(buffer, 0, length)
 
     p.getInputStream.close()
     output.toString("UTF-8")

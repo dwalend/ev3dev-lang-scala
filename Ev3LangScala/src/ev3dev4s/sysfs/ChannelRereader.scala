@@ -28,11 +28,11 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
 
   def readString(): String = this.synchronized {
     val n = readBytes()
-    if ((n == -1) || (n == 0)) ""
-    else if (n < -1) throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
+    if (n == -1) || (n == 0) then ""
+    else if n < -1 then throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
     else {
       val bytes = byteBuffer.array
-      if (bytes(n - 1) == '\n') new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
+      if bytes(n - 1) == '\n' then new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
       else new String(bytes, 0, n, StandardCharsets.UTF_8)
     }
   }

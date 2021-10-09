@@ -99,7 +99,7 @@ class JavaFramebuffer(val device: NativeFramebuffer, val display: DisplayInterfa
     ImageUtils.createXRGBImage(width, height, stride, getComponentOffsets, buffer)
 
   def flushScreen(compatible: BufferedImage): Unit = {
-    if (flushEnabled) {
+    if flushEnabled then {
       videomem.write(0, ImageUtils.getImageBytes(compatible), 0, bufferSize.toInt)
       device.msync(videomem, bufferSize, NativeConstants.MS_SYNC)
     }

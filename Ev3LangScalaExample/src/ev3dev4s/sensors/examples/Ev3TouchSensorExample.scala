@@ -13,7 +13,7 @@ object Ev3TouchSensorExample {
 
   def main(args: Array[String]): Unit = {
     val touchSensor = Ev3System.portsToSensors.values.collectFirst { case s: Ev3TouchSensor => s }.get
-    for (_ <- 1 to 20) {
+    for _ <- 1 to 20 do {
       println(touchSensor.readTouch())
       Thread.sleep(100)
     }

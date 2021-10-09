@@ -44,12 +44,12 @@ class OwnedDisplay() extends DisplayInterface {
   private val fbn = framebuffer0.mapConsoleToFramebuffer(activeVT) //todo make this a static call - make the right frame buffer the first time - cut that to just one call
 
   Log.log("map vt" + activeVT + " -> fb " + fbn)
-  if (fbn < 0) {
+  if fbn < 0 then {
     Log.log("No framebuffer for current TTY")
     throw new IOException("No framebuffer device for the current VT")
   }
   private val fbPath: String = "/dev/fb" + fbn
-  private val fbfd: NativeFramebuffer = if (fbn != 0) {
+  private val fbfd: NativeFramebuffer = if fbn != 0 then {
     Log.log("Redirected to FB " + fbn)
     framebuffer0.close()
     new NativeFramebuffer(fbPath)
@@ -61,7 +61,7 @@ class OwnedDisplay() extends DisplayInterface {
   Runtime.getRuntime.addShutdownHook(deinitializer)
   switchToTextMode()
 
-  override def close(): Unit = if (ttyfd.isOpen) {
+  override def close(): Unit = if ttyfd.isOpen then {
     deinitialize()
     Runtime.getRuntime.removeShutdownHook(deinitializer)
   }
@@ -120,7 +120,7 @@ class OwnedDisplay() extends DisplayInterface {
       case e: LastErrorException =>
         throw new RuntimeException("Switch to graphics mode failed", e)
     }
-    if (fbInstance != null) {
+    if fbInstance != null then {
       fbInstance.restoreData()
       Log.log("Switching finished if block")
     }
@@ -136,7 +136,7 @@ class OwnedDisplay() extends DisplayInterface {
    */
   override def switchToTextMode(): Unit = {
     Log.log("Switching console to text mode")
-    if (fbInstance != null) {
+    if fbInstance != null then {
       fbInstance.setFlushEnabled(false)
       fbInstance.storeData()
     }
@@ -165,7 +165,7 @@ class OwnedDisplay() extends DisplayInterface {
    */
     //todo is there any time you wouldn't just open the frame buffer??
   override def openFramebuffer(): JavaFramebuffer = {
-    if (fbInstance == null) {
+    if fbInstance == null then {
       Log.log("Initialing framebuffer in system console")
       switchToGraphicsMode()
       //todo another option is to just reuse the native frame buffer from the initialization here

@@ -25,8 +25,8 @@ object Ev3LedExample {
     Ev3System.rightLed.writeGreen()
     Thread.sleep(500)
 
-    for(_ <- 1 to 3) {
-      for (i <- Ev3Led.darkest to Ev3Led.brightest) {
+    for _ <- 1 to 3 do {
+      for i <- Ev3Led.darkest to Ev3Led.brightest do {
         Ev3System.leftLed.writeBrightness(i, Ev3Led.brightest - i)
         Ev3System.rightLed.writeBrightness(Ev3Led.brightest - i, i)
         Thread.sleep(10)
