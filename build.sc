@@ -8,7 +8,7 @@ import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
 object Shared {
-  val scalacOptions = Seq("-deprecation", "-source:3.0", "-indent", "-rewrite")
+  val scalacOptions = Seq("-deprecation", "-source:future")
 }
 
 object Ev3LangScala extends ScalaModule {

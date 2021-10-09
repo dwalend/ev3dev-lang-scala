@@ -64,4 +64,4 @@ java.nio.channels.ClosedChannelException
 	at ev3.replay.Sorties$.run(Sorties.scala:43)
 	at ev3dev4s.JarRunner$.main(JarRunner.scala:27)
 	at ev3dev4s.JarRunner.main(JarRunner.scala)
- */
+*/

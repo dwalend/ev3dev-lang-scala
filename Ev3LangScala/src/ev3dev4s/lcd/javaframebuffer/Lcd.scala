@@ -111,7 +111,8 @@ object Lcd:
    * @param x the x coordinate
    * @param y the y coordinate
    * @return the pixel color (0 = white, 1 = black)
-   */  def getPixel(x: Int, y: Int): Int =
+   */
+  def getPixel(x: Int, y: Int): Int =
     val in = new Point2D.Float(x.toFloat, y.toFloat) //todo use Point2D.Integer ??
     val dst = new Point2D.Float
     g2d.getTransform.transform(in, dst)
@@ -632,5 +633,4 @@ Starting the screen updater
 1618845978583 flushScreen bytes is a 91136 array of -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 1618845978648 Command: beep
 Starting the WileyMenu loop true
-
- */
+*/
