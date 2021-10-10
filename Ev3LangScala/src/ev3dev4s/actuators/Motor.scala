@@ -15,26 +15,26 @@ import java.nio.file.AccessDeniedException
  */
 sealed abstract class Motor(val port:MotorPort,@volatile private var motorDevice: Option[MotorFS]) extends AutoCloseable:
 
-  def writeCommand(command: MotorCommand):Unit = checkPlug(_.writeCommand(command))
+  def writeCommand(command: MotorCommand):Unit = checkPort(_.writeCommand(command))
 
-  def writeStopAction(command:MotorStopCommand):Unit = checkPlug(_.writeStopAction(command))
+  def writeStopAction(command:MotorStopCommand):Unit = checkPort(_.writeStopAction(command))
 
-  def writeDutyCycle(percent:Int):Unit = checkPlug(_.writeDutyCycle(percent))
-  
-  def writeSpeed(degreesPerSecond:Int):Unit = checkPlug(_.writeSpeed(degreesPerSecond))
+  def writeDutyCycle(percent:Int):Unit = checkPort(_.writeDutyCycle(percent))
 
-  def writePosition(degrees:Int):Unit = checkPlug(_.writePosition(degrees))
+  def writeSpeed(degreesPerSecond:Int):Unit = checkPort(_.writeSpeed(degreesPerSecond))
+
+  def writePosition(degrees:Int):Unit = checkPort(_.writePosition(degrees))
 
   def resetPosition():Unit = writePosition(0)
 
-  def writeGoalPosition(degrees:Int):Unit = checkPlug(_.writeGoalPosition(degrees))
+  def writeGoalPosition(degrees:Int):Unit = checkPort(_.writeGoalPosition(degrees))
 
   /**
    * @return position in degrees
    */
-  def readPosition():Int = checkPlug(_.readPosition())
+  def readPosition():Int = checkPort(_.readPosition())
 
-  def readState(): Array[MotorState] = checkPlug(_.readState())
+  def readState(): Array[MotorState] = checkPort(_.readState())
 
   def readIsStalled():Boolean =
     readState().contains(MotorState.STALLED)
@@ -59,7 +59,9 @@ sealed abstract class Motor(val port:MotorPort,@volatile private var motorDevice
     writeSpeed(degreesPerSecond)
     writeCommand(MotorCommand.RUN)
 
-  def checkPlug[A](action:MotorFS => A):A =
+  //todo generalize, move to sysfs, and immitate for sensors - tomorrow!
+  //todo checkPort could take a type parameter FS instead of MotorFS , and a parameter of Option[FS], and something interesting for MotorPortScanner - PortScanner[FS]
+  def checkPort[A](action:MotorFS => A):A =
     def handleException(t:Throwable):Nothing =
       motorDevice.foreach(_.close())
       motorDevice = None //set to None so that next time this will try again
