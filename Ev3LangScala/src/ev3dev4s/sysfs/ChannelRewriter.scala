@@ -13,20 +13,8 @@ import scala.annotation.tailrec
  * @author David Walend
  */
 case class ChannelRewriter(path: Path,bufferLength:Int = 32) extends AutoCloseable {
-
-  @tailrec
-  private def keepTryingFileChannel(path: Path):FileChannel =
-
-    try
-      FileChannel.open(path,StandardOpenOption.WRITE)
-    catch
-      case x:AccessDeniedException =>
-        val openRetryDelay = 10
-
-        println(s"${x.getClass.getSimpleName} while opening $path. Will retry in $openRetryDelay ms")
-        Thread.sleep(openRetryDelay)
-        keepTryingFileChannel(path)
-  private val channel = keepTryingFileChannel(path)
+  
+  private val channel = FileChannel.open(path,StandardOpenOption.WRITE)
   private val byteBuffer = ByteBuffer.allocate(bufferLength)
 
   def writeString(string: String):Unit = this.synchronized{

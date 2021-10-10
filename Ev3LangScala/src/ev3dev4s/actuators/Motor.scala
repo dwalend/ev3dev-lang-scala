@@ -4,56 +4,37 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter}
 
 import java.nio.file.Path
 
+import java.io.IOException
+import java.nio.file.AccessDeniedException
+
 /**
  *
  *
  * @author David Walend
  * @since v0.0.0
  */
-sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoCloseable:
+sealed abstract class Motor(val port:MotorPort,@volatile private var motorDevice: Option[MotorFS]) extends AutoCloseable:
 
-  private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
-  private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
+  def writeCommand(command: MotorCommand):Unit = checkPlug(_.writeCommand(command))
 
-  private val dutyCycleSpWriter = ChannelRewriter(motorDir.resolve("duty_cycle_sp"))
-  private val speedSpWriter = ChannelRewriter(motorDir.resolve("speed_sp"))
-  private val positionWriter = ChannelRewriter(motorDir.resolve("position"))
+  def writeStopAction(command:MotorStopCommand):Unit = checkPlug(_.writeStopAction(command))
 
-  private val positionReader = ChannelRereader(motorDir.resolve("position"))
-  private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
+  def writeDutyCycle(percent:Int):Unit = checkPlug(_.writeDutyCycle(percent))
+  
+  def writeSpeed(degreesPerSecond:Int):Unit = checkPlug(_.writeSpeed(degreesPerSecond))
 
-  private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
+  def writePosition(degrees:Int):Unit = checkPlug(_.writePosition(degrees))
 
-  //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
-  def writeCommand(command: MotorCommand):Unit =
-    commandWriter.writeString(command.command)
+  def resetPosition():Unit = writePosition(0)
 
-  def writeStopAction(command:MotorStopCommand):Unit =
-    stopActionWriter.writeString(command.command)
+  def writeGoalPosition(degrees:Int):Unit = checkPlug(_.writeGoalPosition(degrees))
 
-  def writeDutyCycle(percent:Int):Unit =
-    dutyCycleSpWriter.writeAsciiInt(percent)
-
-  def writeSpeed(degreesPerSecond:Int):Unit =
-    speedSpWriter.writeAsciiInt(degreesPerSecond)
-
-  def writePosition(degrees:Int):Unit =
-    positionWriter.writeAsciiInt(degrees)
-
-  def resetPosition():Unit =
-    writePosition(0)
-
-  def writeGoalPosition(degrees:Int):Unit =
-    goalPositionWriter.writeAsciiInt(degrees)
   /**
-   * @return position in degrees todo double-check that
+   * @return position in degrees
    */
-  def readPosition():Int =
-    positionReader.readAsciiInt()
+  def readPosition():Int = checkPlug(_.readPosition())
 
-  val stateNamesToStates: Map[String, MotorState] = MotorState.values.map{ s => s.name -> s}.toMap
-  def readState(): Array[MotorState] =
-    stateReader.readString().split(' ').filterNot(_ == "").map{stateNamesToStates(_)}
+  def readState(): Array[MotorState] = checkPlug(_.readState())
 
   def readIsStalled():Boolean =
     readState().contains(MotorState.STALLED)
@@ -78,23 +59,40 @@ sealed abstract class Motor(val port:MotorPort,motorDir:Path) extends AutoClosea
     writeSpeed(degreesPerSecond)
     writeCommand(MotorCommand.RUN)
 
+  def checkPlug[A](action:MotorFS => A):A =
+    def handleException(t:Throwable):Nothing =
+      motorDevice.foreach(_.close())
+      motorDevice = None //set to None so that next time this will try again
+      throw UnpluggedMotorException(port,t)
+
+    try
+      motorDevice.orElse { //see if the motor is plugged back in
+        motorDevice = MotorPortScanner.findMotorDevice(port)
+        motorDevice
+      }.fold[A]{ //if still not plugged in
+        throw UnpluggedMotorException(port,MotorNotFoundException(port))
+      }{ //otherwise do the action
+        action(_)
+      }
+    catch //todo generalize, move to sysfs, and immitate for sensors - tomorrow!
+      case iox:IOException if iox.getMessage() == "No such device" => handleException(iox)
+      case adx:AccessDeniedException => handleException(adx)
+
   override def close(): Unit =
-    stateReader.close()
-    positionReader.close()
+    motorDevice.foreach(_.close())
+    motorDevice = None
 
-    goalPositionWriter.close()
-    positionWriter.close()
-    stopActionWriter.close()
-    dutyCycleSpWriter.close()
-    commandWriter.close()
+case class UnpluggedMotorException(port: MotorPort,cause:Throwable) extends Exception(s"Motor in $port unplugged",cause)
 
+case class MotorNotFoundException(port:MotorPort) extends Exception(s"Scan for $port found no motor")
 
-sealed case class Ev3LargeMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
+//todo so far no need for different classes for different motors
+sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md)
 
 object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
 
-sealed case class Ev3MediumMotor(override val port:MotorPort,motorDir:Path) extends Motor(port,motorDir)
+sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md)
 
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"
