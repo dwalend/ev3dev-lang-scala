@@ -6,6 +6,9 @@ import java.io.File
 import java.nio.file.Path
 import scala.collection.immutable.ArraySeq
 
+import ev3dev4s.sysfs.Port
+
+
 /**
  *
  *
@@ -43,7 +46,7 @@ object MotorPortScanner:
     scanMotors.values.foreach(_.brake())
   },"stopMotorsAtShutdown"))
 
-enum MotorPort(val name:Char):
+enum MotorPort(val name:Char) extends Port:
   case A extends MotorPort('A')
   case B extends MotorPort('B')
   case C extends MotorPort('C')

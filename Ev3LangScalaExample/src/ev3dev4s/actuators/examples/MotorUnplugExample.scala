@@ -1,7 +1,8 @@
 package ev3dev4s.actuators.examples
 
 import ev3dev4s.Ev3System
-import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand, UnpluggedMotorException}
+import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
+import ev3dev4s.sysfs.UnpluggedException
 
 /**
  * Unplung and plug in the motor to see the behavior
@@ -24,4 +25,4 @@ object MotorUnplugExample:
         firstMotor.brake()
         println("firstMotor.brake()")
       catch
-        case x:UnpluggedMotorException => x.printStackTrace()
+        case x:UnpluggedException => x.printStackTrace()

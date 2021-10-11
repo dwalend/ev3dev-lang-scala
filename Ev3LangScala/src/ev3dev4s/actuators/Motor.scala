@@ -1,6 +1,6 @@
 package ev3dev4s.actuators
 
-import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter}
+import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget}
 
 import java.nio.file.Path
 
@@ -13,7 +13,9 @@ import java.nio.file.AccessDeniedException
  * @author David Walend
  * @since v0.0.0
  */
-sealed abstract class Motor(val port:MotorPort,@volatile private var motorDevice: Option[MotorFS]) extends AutoCloseable:
+sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gadget(port,motorFS):
+
+  def findGadgetFS():Option[MotorFS] = MotorPortScanner.findMotorDevice(port) //todo check that its still the same kind of gadget
 
   def writeCommand(command: MotorCommand):Unit = checkPort(_.writeCommand(command))
 
@@ -58,35 +60,6 @@ sealed abstract class Motor(val port:MotorPort,@volatile private var motorDevice
   def runSpeed(degreesPerSecond:Int):Unit =
     writeSpeed(degreesPerSecond)
     writeCommand(MotorCommand.RUN)
-
-  //todo generalize, move to sysfs, and immitate for sensors - tomorrow!
-  //todo checkPort could take a type parameter FS instead of MotorFS , and a parameter of Option[FS], and something interesting for MotorPortScanner - PortScanner[FS]
-  def checkPort[A](action:MotorFS => A):A =
-    def handleException(t:Throwable):Nothing =
-      motorDevice.foreach(_.close())
-      motorDevice = None //set to None so that next time this will try again
-      throw UnpluggedMotorException(port,t)
-
-    try
-      motorDevice.orElse { //see if the motor is plugged back in
-        motorDevice = MotorPortScanner.findMotorDevice(port)
-        motorDevice
-      }.fold[A]{ //if still not plugged in
-        throw UnpluggedMotorException(port,MotorNotFoundException(port))
-      }{ //otherwise do the action
-        action(_)
-      }
-    catch //todo generalize, move to sysfs, and immitate for sensors - tomorrow!
-      case iox:IOException if iox.getMessage() == "No such device" => handleException(iox)
-      case adx:AccessDeniedException => handleException(adx)
-
-  override def close(): Unit =
-    motorDevice.foreach(_.close())
-    motorDevice = None
-
-case class UnpluggedMotorException(port: MotorPort,cause:Throwable) extends Exception(s"Motor in $port unplugged",cause)
-
-case class MotorNotFoundException(port:MotorPort) extends Exception(s"Scan for $port found no motor")
 
 //todo so far no need for different classes for different motors
 sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md)

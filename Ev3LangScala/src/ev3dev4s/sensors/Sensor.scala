@@ -47,22 +47,3 @@ abstract class MultiModeSensor(sensorDir:Path) extends Sensor:
     modeWriter.close()
     mode.foreach(_.close())
   }
-
-/*
- * On unplug fails with
- *
- * Exception in thread "Thread-0" java.io.IOException: No such device
-	at java.base/sun.nio.ch.FileDispatcherImpl.pread0(Native Method)
-	at java.base/sun.nio.ch.FileDispatcherImpl.pread(FileDispatcherImpl.java:54)
-	at java.base/sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:274)
-	at java.base/sun.nio.ch.IOUtil.read(IOUtil.java:245)
-	at java.base/sun.nio.ch.FileChannelImpl.readInternal(FileChannelImpl.java:811)
-	at java.base/sun.nio.ch.FileChannelImpl.read(FileChannelImpl.java:796)
-	at ev3dev4s.sysfs.ChannelRereader.readBytes(ChannelRereader.scala:21)
-	at ev3dev4s.sysfs.ChannelRereader.readString(ChannelRereader.scala:30)
-	at ev3dev4s.sysfs.ChannelRereader.readAsciiInt(ChannelRereader.scala:40)
-	at ev3dev4s.sensors.Ev3Gyroscope$HeadingMode.readRawHeading(Ev3Gyroscope.scala:46)
-
-*
-* Maybe provide a stream of ChannelRereaders and ChannelRewriters as a general solution ??
- */

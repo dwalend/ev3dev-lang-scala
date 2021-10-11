@@ -1,6 +1,6 @@
 package ev3dev4s.actuators
 
-import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter}
+import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 
 import java.nio.file.Path
 
@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-private[actuators] case class MotorFS(motorDir:Path) extends AutoCloseable:
+private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
 
   private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
   private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
@@ -54,7 +54,7 @@ private[actuators] case class MotorFS(motorDir:Path) extends AutoCloseable:
   val stateNamesToStates: Map[String, MotorState] = MotorState.values.map{ s => s.name -> s}.toMap
   def readState(): Array[MotorState] =
     stateReader.readString().split(' ').filterNot(_ == "").map{stateNamesToStates(_)}
-  
+
   override def close(): Unit =
     //todo likely don't care if any of these throws an exception
     stateReader.close()
