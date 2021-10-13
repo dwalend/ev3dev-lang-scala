@@ -42,7 +42,9 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
 
 trait GadgetFS extends AutoCloseable
 
-trait Port
+trait Port {
+  def name:Char
+}
 
 case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"Gadget in $port unplugged",cause)
 

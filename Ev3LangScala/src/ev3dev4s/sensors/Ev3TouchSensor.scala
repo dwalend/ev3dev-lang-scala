@@ -15,7 +15,7 @@ case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[P
   override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
   //todo change to findSensorPath, then just build the Ev3TouchSensorFS from the path
   //todo maybe do the same for motors
-    SensorPortScanner.findSensorDir(port,Ev3TouchSensor.driverName)
+    SensorPortScanner.findGadgetDir(port,Ev3TouchSensor.driverName)
       .map(Ev3TouchSensor.Ev3TouchSensorFS(_))
 
   def readTouch(): Boolean = checkPort(_.readTouch())
