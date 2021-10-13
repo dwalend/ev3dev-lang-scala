@@ -15,8 +15,6 @@ import java.nio.file.AccessDeniedException
  */
 sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gadget(port,motorFS):
 
-  def findGadgetFS():Option[MotorFS] = MotorPortScanner.findMotorDevice(port) //todo check that its still the same kind of gadget
-
   def writeCommand(command: MotorCommand):Unit = checkPort(_.writeCommand(command))
 
   def writeStopAction(command:MotorStopCommand):Unit = checkPort(_.writeStopAction(command))
@@ -61,13 +59,18 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeSpeed(degreesPerSecond)
     writeCommand(MotorCommand.RUN)
 
-//todo so far no need for different classes for different motors
-sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md)
+sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md):
+  override def findGadgetFS(): Option[MotorFS] =
+    MotorPortScanner.findGadgetDir(port,Ev3LargeMotor.driverName)
+      .map(MotorFS(_))
 
 object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
 
-sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md)
+sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md):
+  override def findGadgetFS(): Option[MotorFS] =
+    MotorPortScanner.findGadgetDir(port,Ev3MediumMotor.driverName)
+      .map(MotorFS(_))
 
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"

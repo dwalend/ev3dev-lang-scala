@@ -13,8 +13,6 @@ case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[P
   extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS(_))):
 
   override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
-  //todo change to findSensorPath, then just build the Ev3TouchSensorFS from the path
-  //todo maybe do the same for motors
     SensorPortScanner.findGadgetDir(port,Ev3TouchSensor.driverName)
       .map(Ev3TouchSensor.Ev3TouchSensorFS(_))
 
