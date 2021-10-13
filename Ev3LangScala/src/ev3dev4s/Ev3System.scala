@@ -19,4 +19,4 @@ object Ev3System:
   lazy val battery = Ev3Battery
 
   lazy val portsToMotors: Map[MotorPort, Motor] = MotorPortScanner.scanMotors
-  lazy val portsToSensors: Map[SensorPort, Sensor] = SensorPortScanner.scanSensorsDir
+  lazy val portsToSensors: Map[SensorPort, Sensor[_]] = SensorPortScanner.scanSensors

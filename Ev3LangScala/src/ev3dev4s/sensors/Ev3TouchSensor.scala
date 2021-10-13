@@ -9,15 +9,26 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-case class Ev3TouchSensor(port:SensorPort,sensorDir:Path) extends Sensor:
+case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[Path])
+  extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS(_))):
 
-  private val touchReader = ChannelRereader(sensorDir.resolve("value0"))
+  override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
+  //todo change to findSensorPath, then just build the Ev3TouchSensorFS from the path
+  //todo maybe do the same for motors
+    SensorPortScanner.findSensorDir(port,Ev3TouchSensor.driverName)
+      .map(Ev3TouchSensor.Ev3TouchSensorFS(_))
 
-  def readTouch(): Boolean = touchReader.readString().toInt == 1
+  def readTouch(): Boolean = checkPort(_.readTouch())
 
-  override def close(): Unit =
-    touchReader.close()
-
-object Ev3TouchSensor {
+object Ev3TouchSensor:
   val driverName = "lego-ev3-touch"
-}
+
+  case class Ev3TouchSensorFS(sensorDir:Path) extends SensorFS:
+    //todo could be the common thing is to read value0, and the readTouch logic can just use that value
+    private val touchReader = ChannelRereader(sensorDir.resolve("value0"))
+
+    def readTouch(): Boolean = touchReader.readString().toInt == 1
+
+    override def close(): Unit =
+      touchReader.close()
+

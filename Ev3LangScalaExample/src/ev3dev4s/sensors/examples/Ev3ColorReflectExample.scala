@@ -9,6 +9,7 @@ import ev3dev4s.sensors.Ev3ColorSensor
  * @author David Walend
  * @since v0.0.0
  */
+/*todo
 object Ev3ColorSensorExample:
 
   def main(args: Array[String]): Unit =
@@ -18,3 +19,4 @@ object Ev3ColorSensorExample:
     for _ <- 1 to 20 do
       println(headingMode1.readReflect())
       Thread.sleep(100)
+*/

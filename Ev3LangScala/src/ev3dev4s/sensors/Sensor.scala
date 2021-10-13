@@ -1,6 +1,6 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.ChannelRewriter
+import ev3dev4s.sysfs.{ChannelRewriter,Gadget,GadgetFS}
 
 import java.nio.file.Path
 import scala.reflect.ClassTag
@@ -9,10 +9,13 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-trait Sensor extends AutoCloseable:
+@deprecated
+trait NonGAdgetSensor extends AutoCloseable:
   def port: SensorPort
 
-abstract class MultiModeSensor(sensorDir:Path) extends Sensor:
+abstract class Sensor[SFS <: SensorFS](port:SensorPort,initialSensorFS: Option[SFS]) extends Gadget(port,initialSensorFS)
+
+abstract class MultiModeSensor(sensorDir:Path) extends NonGAdgetSensor:
 
   private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
 
@@ -47,3 +50,5 @@ abstract class MultiModeSensor(sensorDir:Path) extends Sensor:
     modeWriter.close()
     mode.foreach(_.close())
   }
+
+trait SensorFS extends GadgetFS

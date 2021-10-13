@@ -18,7 +18,7 @@ case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends MultiModeSensor(
   def rateMode():HeadingMode =
     getOrElseChangeMode(HeadingMode.apply)
 
-  //todo this doesn't seem to work. delete?
+  //todo calibrate for two seconds, then switch back to the previous mode. see https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
   def calibrateMode():CalibrateMode =
     getOrElseChangeMode(CalibrateMode.apply)
 
@@ -75,7 +75,9 @@ case class Ev3Gyroscope(port:SensorPort,sensorDir:Path) extends MultiModeSensor(
   //todo calibrate via GYRO-RATE, then GYRO-ANG as a separate method - if it works
 
   /**
-   * Calibration
+   * Calibrate the gyroscope
+   *
+   * Note that it needs to sit in CAL for at least two seconds according to https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
    */
   case class CalibrateMode() extends Mode:
     override def name: String = "GYRO-CAL"
