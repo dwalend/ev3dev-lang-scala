@@ -1,6 +1,6 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.{ChannelRewriter,Gadget,GadgetFS}
+import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget, GadgetFS}
 
 import java.nio.file.Path
 import scala.reflect.ClassTag
@@ -15,14 +15,10 @@ trait NonGAdgetSensor extends AutoCloseable:
 
 abstract class Sensor[SFS <: SensorFS](port:SensorPort,initialSensorFS: Option[SFS]) extends Gadget(port,initialSensorFS)
 
-abstract class MultiModeSensor(sensorDir:Path) extends NonGAdgetSensor:
+trait SensorFS extends GadgetFS
 
-  private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
-
-  private def writeMode(mode: Mode):Mode = this.synchronized {
-    modeWriter.writeString(mode.name)
-    mode
-  }
+abstract class MultiModeSensor[SFS <: MultiModeSensorFS](port:SensorPort,initialSensorFS: Option[SFS])
+  extends Sensor(port,initialSensorFS):
 
   private var mode:Option[Mode] = None
 
@@ -30,25 +26,51 @@ abstract class MultiModeSensor(sensorDir:Path) extends NonGAdgetSensor:
     mode
   }
 
+  private[sensors] def writeMode = this.synchronized {
+    checkPort(_.writeMode)
+  }
+
   private[sensors] def getOrElseChangeMode[M <: Mode: ClassTag](create:() => M):M = this.synchronized {
     mode.collect{case m:M => m}.getOrElse{
       val toMode = create()
-      mode.foreach(_.close())
       writeMode(toMode)
-      toMode.init()
       mode = Option(toMode)
       toMode
     }
   }
 
-  trait Mode extends AutoCloseable:
-    def name:String
+trait Mode:
+  def name:String
 
-    private[sensors] def init():Unit
+trait MultiModeSensorFS extends SensorFS:
+  private[sensors] def writeMode(mode: Mode):Unit
 
-  override def close(): Unit = this.synchronized {
-    modeWriter.close()
-    mode.foreach(_.close())
-  }
+object MultiModeSensorFS:
 
-trait SensorFS extends GadgetFS
+  case class Value0SensorFS(sensorDir:Path) extends MultiModeSensorFS:
+    private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
+    private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
+
+    private[sensors] def writeMode(mode: Mode):Unit = modeWriter.writeString(mode.name)
+
+    def readValue0Int(): Int = value0Reader.readAsciiInt()
+
+    override def close(): Unit =
+      value0Reader.close()
+      modeWriter.close()
+
+  case class Value012SensorFS(sensorDir:Path) extends MultiModeSensorFS:
+    private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
+    private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
+    private val value1Reader = ChannelRereader(sensorDir.resolve("value1"))
+    private val value2Reader = ChannelRereader(sensorDir.resolve("value1"))
+
+    private[sensors] def writeMode(mode: Mode):Unit = modeWriter.writeString(mode.name)
+
+    def readValue0Int(): Int = value0Reader.readAsciiInt()
+
+    override def close(): Unit =
+      value2Reader.close()
+      value1Reader.close()
+      value0Reader.close()
+      modeWriter.close()

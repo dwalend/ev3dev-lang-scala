@@ -8,7 +8,13 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
-case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSensor(sensorDir):
+case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[Path])
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS(_))):
+
+  override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
+    SensorPortScanner.findGadgetDir(port,Ev3ColorSensor.driverName)
+      .map(MultiModeSensorFS.Value012SensorFS(_))
+
 
   def reflectMode():ReflectMode =
     getOrElseChangeMode(ReflectMode.apply)
@@ -16,19 +22,12 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
   case class ReflectMode() extends Mode:
     val name = "COL-REFLECT"
 
-    private lazy val reflectReader = ChannelRereader(sensorDir.resolve("value0"))
-    override private[sensors] def init():Unit = reflectReader.path
-
     /**
      * Reflected light
      * @return Reflected light intensity (0 to 100)
      */
     def readReflect():Int = this.synchronized{
-      reflectReader.readAsciiInt()
-    }
-
-    override def close(): Unit = this.synchronized{
-      reflectReader.close()
+      checkPort(_.readValue0Int())
     }
 
   def ambientMode():AmbientMode =
@@ -37,19 +36,12 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
   case class AmbientMode() extends Mode:
     val name = "COL-AMBIENT"
 
-    private lazy val ambientReader = ChannelRereader(sensorDir.resolve("value0"))
-    override private[sensors] def init():Unit = ambientReader.path
-
     /**
      * Ambient light
      * @return Ambient light intensity (0 to 100)
      */
     def readAmbient():Int = this.synchronized{
-      ambientReader.readAsciiInt()
-    }
-
-    override def close(): Unit = this.synchronized{
-      ambientReader.close()
+      checkPort(_.readValue0Int())
     }
 
   def colorMode():ColorMode =
@@ -58,20 +50,12 @@ case class Ev3ColorSensor(port:SensorPort,sensorDir:Path) extends MultiModeSenso
   case class ColorMode() extends Mode:
     val name = "COL-COLOR"
 
-    private lazy val colorReader = ChannelRereader(sensorDir.resolve("value0"))
-    override private[sensors] def init():Unit = colorReader.path
-
     /**
      * Ambient light
      * @return color detected
      */
     def readColor():Color = this.synchronized {
-      Color.values(colorReader.readAsciiInt())
-    }
-
-
-    override def close(): Unit = this.synchronized{
-      colorReader.close()
+      Color.values(checkPort(_.readValue0Int()))
     }
 
     /**

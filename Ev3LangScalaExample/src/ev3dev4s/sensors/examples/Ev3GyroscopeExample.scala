@@ -9,7 +9,6 @@ import ev3dev4s.sensors.Ev3Gyroscope
  * @author David Walend
  * @since v0.0.0
  */
-/* todo
 object Ev3GyroscopeExample:
 
   def main(args: Array[String]): Unit =
@@ -26,4 +25,3 @@ object Ev3GyroscopeExample:
     for _ <- 1 to 10 do
       println(headingMode2.readHeading())
       Thread.sleep(100)
-*/

@@ -16,17 +16,16 @@ case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[P
     SensorPortScanner.findGadgetDir(port,Ev3TouchSensor.driverName)
       .map(Ev3TouchSensor.Ev3TouchSensorFS(_))
 
-  def readTouch(): Boolean = checkPort(_.readTouch())
+  def readTouch(): Boolean = checkPort(_.readValue0Int() == 1)
 
 object Ev3TouchSensor:
   val driverName = "lego-ev3-touch"
 
+  //special class because the touch sensor doesn't have modes
   case class Ev3TouchSensorFS(sensorDir:Path) extends SensorFS:
-    //todo could be the common thing is to read value0, and the readTouch logic can just use that value
-    private val touchReader = ChannelRereader(sensorDir.resolve("value0"))
+    private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
 
-    def readTouch(): Boolean = touchReader.readString().toInt == 1
+    def readValue0Int(): Int = value0Reader.readAsciiInt()
 
     override def close(): Unit =
-      touchReader.close()
-
+      value0Reader.close()

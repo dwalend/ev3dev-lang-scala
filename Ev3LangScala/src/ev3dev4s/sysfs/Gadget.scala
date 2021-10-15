@@ -32,6 +32,7 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
       }
     catch //exceptions that indicate the gadget is unplugged
       case iox: IOException if iox.getMessage() == "No such device" => handleUnpluggedGadget(iox)
+      case iox: IOException if iox.getMessage() == "No such device or address" => handleUnpluggedGadget(iox)
       case adx: AccessDeniedException => handleUnpluggedGadget(adx) //happens just after plug-back-in
   }
 
