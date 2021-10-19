@@ -22,7 +22,7 @@ abstract class MultiModeSensor[SFS <: MultiModeSensorFS](port:SensorPort,initial
 
   private var mode:Option[Mode] = None
 
-  def getCurrentMode:Option[Mode] = this.synchronized {
+  def currentMode:Option[Mode] = this.synchronized {
     mode
   }
 
@@ -30,9 +30,8 @@ abstract class MultiModeSensor[SFS <: MultiModeSensorFS](port:SensorPort,initial
     checkPort(_.writeMode)
   }
 
-  private[sensors] def getOrElseChangeMode[M <: Mode: ClassTag](create:() => M):M = this.synchronized {
+  private[sensors] def setMaybeWriteMode[M <: Mode: ClassTag](toMode: M):M = this.synchronized {
     mode.collect{case m:M => m}.getOrElse{
-      val toMode = create()
       writeMode(toMode)
       mode = Option(toMode)
       toMode

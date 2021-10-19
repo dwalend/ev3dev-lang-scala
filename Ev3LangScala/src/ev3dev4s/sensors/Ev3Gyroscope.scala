@@ -17,16 +17,25 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
     SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName)
       .map(MultiModeSensorFS.Value0SensorFS(_))
 
+  private lazy val onlyHeadingMode = HeadingMode()
   def headingMode():HeadingMode =
-    getOrElseChangeMode(HeadingMode.apply)
+    setMaybeWriteMode(onlyHeadingMode)
 
+  private lazy val onlyRateMode = RateMode()
   def rateMode():RateMode =
-    getOrElseChangeMode(RateMode.apply)
+    setMaybeWriteMode(onlyRateMode)
 
-  //todo calibrate() for two seconds, then switch back to the previous mode. see https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
+  private lazy val onlyCalibrateMode = CalibrateMode()
   def calibrateMode():CalibrateMode =
-    getOrElseChangeMode(CalibrateMode.apply)
+    setMaybeWriteMode(onlyCalibrateMode)
 
+  //calibrate() for two seconds, then switch back to the previous mode. see https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
+  def calibrate():Unit =
+    val foundMode: Option[Mode] = currentMode
+    calibrateMode()
+    Thread.sleep(2000)
+    foundMode.map{m => setMaybeWriteMode(m)}
+  
   /**
    * Angle in degrees
    */

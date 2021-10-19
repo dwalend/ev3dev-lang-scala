@@ -10,7 +10,7 @@ import ev3dev4s.sensors.Ev3KeyPad
  * @author David Walend
  * @since v0.0.0
  */
-case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable:
+case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:(TtyMenu => Unit)) extends Runnable:
 
   @volatile var index = 0
   @volatile var keepGoing = true
@@ -58,16 +58,15 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction]) extends Runnable:
 
   def drawScreen(): Unit = this.synchronized{
     Lcd.clear()
-    drawActionRow()
-    Lcd.set(3,drawCount.toString,Lcd.CENTER)
-    drawCount = drawCount+1
+    setLcd(this)
     Lcd.flush()
+    drawCount = drawCount+1
   }
 
-  def drawActionRow(): Unit =
-    Lcd.set(2,actions(index).label,Lcd.CENTER)
-    Lcd.set(2,0,'<')
-    Lcd.set(2,10,'>')
+  def setActionRow(row:Int): Unit =
+    Lcd.set(row,actions(index).label,Lcd.CENTER)
+    Lcd.set(row,0,'<')
+    Lcd.set(row,10,'>')
 
 
 trait TtyMenuAction:
@@ -80,7 +79,11 @@ object TtyMenu extends Runnable:
     run()
 
   object Reload extends TtyMenuAction:
-    override def run(menu: TtyMenu): Unit = menu.stopLoop()
+    override def run(ttyMenu: TtyMenu): Unit = ttyMenu.stopLoop()
+
+  def setLcd(ttyMenu: TtyMenu):Unit =
+    ttyMenu.setActionRow(2)
+    Lcd.set(3,ttyMenu.drawCount.toString,Lcd.CENTER)
 
   override def run(): Unit =
     val actions: Array[TtyMenuAction] = Array(
@@ -98,7 +101,7 @@ object TtyMenu extends Runnable:
       }),
       Reload
     )
-    TtyMenu(actions).run()
+    TtyMenu(actions,setLcd).run()
 
 case class LedAction(aLabel:String,action:() => Unit) extends TtyMenuAction {
   override def label: String = aLabel

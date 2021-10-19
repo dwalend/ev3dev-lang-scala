@@ -16,8 +16,9 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
       .map(MultiModeSensorFS.Value012SensorFS(_))
 
 
+  private lazy val onlyReflectMode = ReflectMode()
   def reflectMode():ReflectMode =
-    getOrElseChangeMode(ReflectMode.apply)
+    setMaybeWriteMode(onlyReflectMode)
 
   case class ReflectMode() extends Mode:
     val name = "COL-REFLECT"
@@ -30,8 +31,9 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
       checkPort(_.readValue0Int())
     }
 
+  private lazy val onlyAmbientMode = AmbientMode()
   def ambientMode():AmbientMode =
-    getOrElseChangeMode(AmbientMode.apply)
+    setMaybeWriteMode(onlyAmbientMode)
 
   case class AmbientMode() extends Mode:
     val name = "COL-AMBIENT"
@@ -44,8 +46,9 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
       checkPort(_.readValue0Int())
     }
 
+  private lazy val onlyColorMode = ColorMode()
   def colorMode():ColorMode =
-    getOrElseChangeMode(ColorMode.apply)
+    setMaybeWriteMode(onlyColorMode)
 
   case class ColorMode() extends Mode:
     val name = "COL-COLOR"
