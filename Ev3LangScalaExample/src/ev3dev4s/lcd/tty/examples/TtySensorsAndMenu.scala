@@ -14,36 +14,51 @@ object TtySensorDisplay extends Runnable:
   def main(args: Array[String]): Unit =
     run()
 
-  object Reload extends TtyMenuAction:
-    override def run(ttyMenu: TtyMenu): Unit = ttyMenu.stopLoop()
-
   override def run(): Unit =
+    val timeThread = new Thread(UpdateScreen)
+    timeThread.setDaemon(true)
+    timeThread.start()
+
+    ttyMenu.run()
+
+  val ttyMenu =
     val actions: Array[TtyMenuAction] = Array(
-      LedAction("Green",{() =>
+      LedAction("Green", { () =>
         Ev3System.leftLed.writeGreen()
         Ev3System.rightLed.writeGreen()
       }),
-      LedAction("Yellow",{() =>
+      LedAction("Yellow", { () =>
         Ev3System.leftLed.writeYellow()
         Ev3System.rightLed.writeYellow()
       }),
-      LedAction("Red",{() =>
+      LedAction("Red", { () =>
         Ev3System.leftLed.writeRed()
         Ev3System.rightLed.writeRed()
       }),
-      TtyMenu.Reload,
-      FixGyro
+      FixGyro,
+      TtyMenu.Reload
     )
-    TtyMenu(actions,setLcd).run()
+    TtyMenu(actions, setLcd)
 
   def setLcd(ttyMenu: TtyMenu):Unit =
     ttyMenu.setActionRow(2)
     setSensorRows()
 
+  var startTime = System.currentTimeMillis()
+  def elapsedTime = (System.currentTimeMillis() - startTime)/1000
+
   val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
+
   def setSensorRows():Unit =
+    Lcd.set(0,s"${elapsedTime}s",Lcd.RIGHT)
     val heading = gyroscope.headingMode().readHeading()
-    Lcd.set(1,heading.toString,Lcd.CENTER)
+    Lcd.set(0,s"${heading}d",Lcd.LEFT)
+
+  object UpdateScreen extends Runnable:
+    override def run(): Unit =
+      while(true)
+        if(!ttyMenu.doingAction) ttyMenu.drawScreen()
+        Thread.sleep(500)
 
 object FixGyro extends TtyMenuAction:
 
