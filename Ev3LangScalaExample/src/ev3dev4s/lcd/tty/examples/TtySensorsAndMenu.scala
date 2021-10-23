@@ -3,6 +3,7 @@ package ev3dev4s.lcd.tty.examples
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
+import ev3dev4s.sysfs.UnpluggedException
 
 /**
  *
@@ -20,6 +21,8 @@ object TtySensorDisplay extends Runnable:
     timeThread.start()
 
     ttyMenu.run()
+
+    UpdateScreen.keepGoing = false
 
   val ttyMenu =
     val actions: Array[TtyMenuAction] = Array(
@@ -51,12 +54,14 @@ object TtySensorDisplay extends Runnable:
 
   def setSensorRows():Unit =
     Lcd.set(0,s"${elapsedTime}s",Lcd.RIGHT)
-    val heading = gyroscope.headingMode().readHeading()
-    Lcd.set(0,s"${heading}d",Lcd.LEFT)
+    val heading = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading()}d")
+    Lcd.set(0,heading,Lcd.LEFT)
 
   object UpdateScreen extends Runnable:
+    @volatile var keepGoing = true
+
     override def run(): Unit =
-      while(true)
+      while(keepGoing)
         if(!ttyMenu.doingAction) ttyMenu.drawScreen()
         Thread.sleep(500)
 

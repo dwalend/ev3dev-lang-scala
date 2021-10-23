@@ -1,8 +1,10 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.ChannelRereader
+import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException, ChannelRewriter}
 
+import java.io.File
 import java.nio.file.Path
+import scala.collection.immutable.ArraySeq
 
 /**
  *
@@ -25,17 +27,41 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   def rateMode():RateMode =
     setMaybeWriteMode(onlyRateMode)
 
-  private lazy val onlyCalibrateMode = CalibrateMode()
-  def calibrateMode():CalibrateMode =
-    setMaybeWriteMode(onlyCalibrateMode)
-
-  //calibrate() for two seconds, then switch back to the previous mode. see https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
+  /**
+   * Simulate unplugging then plugging in the gyroscope - in software
+   * to recalibrate it and stop it spinning
+   *
+   * @see https://www.aposteriori.com.sg/ev3dev-research-notes/
+   * @see https://github.com/ev3dev/ev3dev/issues/1387
+   */
   def calibrate():Unit =
     val foundMode: Option[Mode] = currentMode
-    calibrateMode()
-    Thread.sleep(2000)
+    //scan the /sys/class/lego-port/port*/address ('ev3-ports:in2' format)  for the right SensorPort ending
+    val legoPortsDir:File = new File("/sys/class/lego-port")
+    val legoPortDir:Path = ArraySeq.unsafeWrapArray(legoPortsDir.listFiles()).map { (dir: File) =>
+      //read the address to learn which port
+      val addressPath = dir.toPath.resolve("address")
+      val portChar: Char = ChannelRereader.readString(addressPath).last
+      (portChar -> dir.toPath)
+    }.toMap.get(port.name).getOrElse(throw UnpluggedException(port))
+
+    //todo maybe : https://www.aposteriori.com.sg/ev3dev-research-notes/ tries this 10 times with an awkward timeout
+
+    //write  "auto" to the right port in /sys/class/lego-port/port1/mode
+    val writer: ChannelRewriter = ChannelRewriter(legoPortDir.resolve("mode"))
+    writer.writeString("auto")
+    writer.close
+
+    //sensor should appear unplugged, but timing is tricky
+    Thread.sleep(1000)
+    //sleepy loop for the other side of unplugged
+    while(SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName).isEmpty) do
+      System.gc()
+      Thread.sleep(200)
+
+    //set the mode back to what it was before
     foundMode.map{m => setMaybeWriteMode(m)}
-  
+
   /**
    * Angle in degrees
    */
@@ -70,17 +96,9 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
       checkPort(_.readValue0Int())
     }
 
-  //todo calibrate via GYRO-RATE, then GYRO-ANG as a separate method - if it works
-
-  /**
-   * Calibrate the gyroscope
-   *
-   * Note that it needs to sit in CAL for at least two seconds according to https://github.com/ev3dev/ev3dev-lang-python/blob/f84152ca9b952a7a47a3f477542f878f3b69b824/ev3dev2/sensor/lego.py
-   */
-  case class CalibrateMode() extends Mode:
-    override def name: String = "GYRO-CAL"
-
   /* todo
+GYRO-CAL - does not work. Not sure what does do, but it doesn't recalibrate the gyro
+
 GYRO-RATE	Rotational Speed	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [22]
 GYRO-FAS	Rotational Speed	none	0	1	value0: Rotational Speed (-1464 to 1535) [22]
 GYRO-G&A [23]	Angle and Rotational Speed	none	0	2

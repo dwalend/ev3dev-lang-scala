@@ -51,3 +51,9 @@ case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"Ga
 
 object UnpluggedException:
   def apply(port:Port):UnpluggedException = UnpluggedException(port,null)
+
+  def safeString(readSensorToString:(() => String)):String =
+    try
+      readSensorToString()
+    catch
+      case _:UnpluggedException => "UnP"
