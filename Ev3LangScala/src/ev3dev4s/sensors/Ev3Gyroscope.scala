@@ -1,6 +1,7 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException, ChannelRewriter}
+import ev3dev4s.Ev3System
+import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, UnpluggedException}
 
 import java.io.File
 import java.nio.file.Path
@@ -36,6 +37,10 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
    */
   def calibrate():Unit =
     val foundMode: Option[Mode] = currentMode
+
+    Ev3System.leftLed.writeRed()
+    Ev3System.rightLed.writeRed()
+
     //scan the /sys/class/lego-port/port*/address ('ev3-ports:in2' format)  for the right SensorPort ending
     val legoPortsDir:File = new File("/sys/class/lego-port")
     val legoPortDir:Path = ArraySeq.unsafeWrapArray(legoPortsDir.listFiles()).map { (dir: File) =>
@@ -55,12 +60,19 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
     //sensor should appear unplugged, but timing is tricky
     Thread.sleep(1000)
     //sleepy loop for the other side of unplugged
+
+    Ev3System.leftLed.writeYellow()
+    Ev3System.rightLed.writeYellow()
+
     while(SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName).isEmpty) do
       System.gc()
       Thread.sleep(200)
 
     //set the mode back to what it was before
     foundMode.map{m => setMaybeWriteMode(m)}
+
+    Ev3System.leftLed.writeGreen()
+    Ev3System.rightLed.writeGreen()
 
   /**
    * Angle in degrees
