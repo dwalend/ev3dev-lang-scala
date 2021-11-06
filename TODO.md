@@ -1,23 +1,26 @@
 To Test:
 
 
-In progress:
+In reportProgress:
+      
+gyro calibratiuon
+
 
 ant scp to copy up the .jar
 ant ssh to run the .jar - need to get a signal into the jvm from the command prompt
 
         
 To Do:
+              
+File polling for a reload - how can you know when a file is complete via scp? (Maybe send the file size as meta info first??)
 
-Scala 3
-          
-Handle unplug
+Investigate jlink and jdeps for a smaller .jar file - faster start? - use ant tasks? (and the build file as an analogy for programming the robot)
+                  
+Units as types - how to make Millimeters / Seconds into MillimetersPerSecond as Value Classes
 
 README.md
 
 Lessons
-
-Refine the LCD code even more - it's still really slow
 
 Is there another option? C interface maybe? https://github.com/theZiz/ev3c ( http://ziz.gp2x.de/ev3c_documentation/files/include/ev3c_lcd-h.html ) looks promising
                         
@@ -48,28 +51,3 @@ Lesson plan
 mill and mdoc and examples
 
 Set up
-
-
-Done:
-
-Convert rewriter
-Use LEDs
-
-Convert rereader
-Use Buttons
-
-Scan for sensors
-Use sensors
-
-Scan for motors
-Use motors
-
-Define robot from scans of ports
-
-Assess options for LCD
-
-Command-line sound
-
-Battery
-
-Touch sensor

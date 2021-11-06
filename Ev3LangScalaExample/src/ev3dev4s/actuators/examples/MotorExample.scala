@@ -36,7 +36,7 @@ object MotorExample:
     Thread.sleep(1000)
 
 
-    firstMotor.runSpeed(500)
+    firstMotor.run(500)
     Thread.sleep(1000)
     firstMotor.brake()
 

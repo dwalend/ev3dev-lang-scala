@@ -32,3 +32,10 @@ case class ChannelRewriter(path: Path,bufferLength:Int = 32) extends AutoCloseab
     channel.close()
   }
 }
+
+object ChannelRewriter:
+
+  def writeString(path:Path,string: String,bufferLength:Int = 32):Unit =
+    val rewriter = ChannelRewriter(path,bufferLength)
+    rewriter.writeString(string)
+    rewriter.close()

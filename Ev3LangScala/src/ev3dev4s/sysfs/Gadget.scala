@@ -1,7 +1,9 @@
 package ev3dev4s.sysfs
 
 import java.io.IOException
-import java.nio.file.AccessDeniedException
+import java.nio.file.{AccessDeniedException,NoSuchFileException}
+
+import ev3dev4s.Log
 
 /**
  * Motors and Sensors that get plugged into Ports
@@ -15,9 +17,17 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
 
   def findGadgetFS():Option[GFS]
 
+  protected def unsetGadgetFS():Unit = synchronized{
+    gadgetFS = None
+  }
+
   def checkPort[A](action:GFS => A):A = synchronized {
     def handleUnpluggedGadget(t: Throwable): Nothing =
-      gadgetFS.foreach(_.close)
+      try {
+        gadgetFS.foreach(_.close) }
+      catch
+        case iox: IOException => //don't care - just recover from the unplug
+
       gadgetFS = None //set to None so that next time this will try to find something in the port
       throw UnpluggedException(port, t)
 
@@ -30,10 +40,11 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
       } { //otherwise do the action
         action(_)
       }
-    catch //exceptions that indicate the gadget is unplugged
-      case iox: IOException if iox.getMessage() == "No such device" => handleUnpluggedGadget(iox)
-      case iox: IOException if iox.getMessage() == "No such device or address" => handleUnpluggedGadget(iox)
-      case adx: AccessDeniedException => handleUnpluggedGadget(adx) //happens just after plug-back-in
+    catch 
+      case GadgetUnplugged(x) => handleUnpluggedGadget(x)
+      case x: Throwable =>
+        Log.log(s"caught $x with '${x.getMessage()}'",x)
+        throw x
   }
 
   override def close(): Unit = synchronized {
@@ -57,3 +68,20 @@ object UnpluggedException:
       readSensorToString()
     catch
       case _:UnpluggedException => "UnP"
+
+object GadgetUnplugged:
+  /**
+   * Returns true if the provided `Throwable` is to be considered non-fatal, or false if it is to be considered fatal
+   */
+  def apply(t: Throwable): Boolean = t match {
+    // VirtualMachineError includes OutOfMemoryError and other fatal errors
+    case _: NoSuchFileException | _: AccessDeniedException  => true
+    case iox: IOException if iox.getMessage() == "No such device" => true
+    case iox: IOException if iox.getMessage() == "No such device or address" => true
+    case iox: IOException if iox.getMessage() == "Device or resource busy" => true
+    case _ => false
+  }
+  /**
+   * Returns Some(t) if NonFatal(t) == true, otherwise None
+   */
+  def unapply(t: Throwable): Option[Throwable] = if (apply(t)) Some(t) else None

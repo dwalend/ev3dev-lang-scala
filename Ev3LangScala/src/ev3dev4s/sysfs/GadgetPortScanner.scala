@@ -1,7 +1,7 @@
 package ev3dev4s.sysfs
 
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.{Path,NoSuchFileException}
 import scala.collection.immutable.ArraySeq
 
 /**
@@ -23,12 +23,15 @@ abstract class GadgetPortScanner[P <: Port](gadgetDir:File,ports:Array[P]):
     }.toMap
 
   def findGadgetDir(port:P,expectedDriverName:String):Option[Path] =
-    scanGadgetDirs.get(port)
-      .map{dir =>
-        val foundDriverName = ChannelRereader.readString(dir.resolve("driver_name") )
-        if(foundDriverName == expectedDriverName) dir
-        else throw WrongGadgetInPortException(port,expectedDriverName,foundDriverName)
-      }
+    try
+      scanGadgetDirs.get(port)
+        .map{dir =>
+          val foundDriverName = ChannelRereader.readString(dir.resolve("driver_name") )
+          if(foundDriverName == expectedDriverName) dir
+          else throw WrongGadgetInPortException(port,expectedDriverName,foundDriverName)
+        }
+    catch
+      case nsfx:NoSuchFileException => None
 
 case class WrongGadgetInPortException(port:Port,expectedDriverName:String,foundDriverName:String)
   extends Exception(s"Expected $expectedDriverName in $port but found $foundDriverName")

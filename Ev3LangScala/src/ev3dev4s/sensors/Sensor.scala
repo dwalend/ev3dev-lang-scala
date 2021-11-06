@@ -1,6 +1,7 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget, GadgetFS}
+import ev3dev4s.Log
 
 import java.nio.file.Path
 import scala.reflect.ClassTag
@@ -9,10 +10,6 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-@deprecated
-trait NonGAdgetSensor extends AutoCloseable:
-  def port: SensorPort
-
 abstract class Sensor[SFS <: SensorFS](port:SensorPort,initialSensorFS: Option[SFS]) extends Gadget(port,initialSensorFS)
 
 trait SensorFS extends GadgetFS
@@ -47,10 +44,12 @@ trait MultiModeSensorFS extends SensorFS:
 object MultiModeSensorFS:
 
   case class Value0SensorFS(sensorDir:Path) extends MultiModeSensorFS:
-    private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
-    private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
+    private lazy val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
+    private lazy val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
 
-    private[sensors] def writeMode(mode: Mode):Unit = modeWriter.writeString(mode.name)
+    private[sensors] def writeMode(mode: Mode):Unit =
+      val file = sensorDir.resolve("mode").toFile
+      modeWriter.writeString(mode.name)
 
     def readValue0Int(): Int = value0Reader.readAsciiInt()
 
@@ -62,7 +61,7 @@ object MultiModeSensorFS:
     private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
     private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
     private val value1Reader = ChannelRereader(sensorDir.resolve("value1"))
-    private val value2Reader = ChannelRereader(sensorDir.resolve("value1"))
+    private val value2Reader = ChannelRereader(sensorDir.resolve("value2"))
 
     private[sensors] def writeMode(mode: Mode):Unit = modeWriter.writeString(mode.name)
 
