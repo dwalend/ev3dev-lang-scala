@@ -94,79 +94,60 @@ object GyroDriveStraight extends Runnable:
       Robot.leftMotor.writeDutyCycle(leftDutyCycle)
       Robot.rightMotor.writeDutyCycle(rightDutyCycle)
 
-
-      /**
-       * Drive in an arc to a goal heading
-       *
-       * This method writes the instructions to the motors once.
-       * It is closed-loop, and uses feedback. It returns when the robot has driven in an arc.
-       *
-       * @param goalHeading Heading to finish with
-       * @param goalSpeed in degrees/second
-       * @param centerArcLengthMm Distance to drive around the arc
-       */
-  def driveArcGyroFeedback(
-                               goalHeading: Int,
-                               goalSpeed: Int,
-                               centerArcLengthMm: Int
-                             ):Unit =
-    val startTac:Float  = (Robot.leftMotor.readPosition()+Robot.rightMotor.readPosition()).toFloat/2
-    val goalTac: Float = startTac + (360 * centerArcLengthMm) / Robot.driveWheelCircumference
-    
-
-    val changeTac: Float = goalTac - startTac
-    var remainingTac: Float = changeTac
-    while {
-      val tac = (Robot.leftMotor.readPosition() + Robot.rightMotor.readPosition()) / 2
-      remainingTac = goalTac - tac
-      Math.abs(remainingTac) > 1
-    } do
-      driveArc(goalHeading,goalSpeed,(centerArcLengthMm*remainingTac/changeTac).round)
-
+  val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
   /**
-   * Drive in an arc to a goal heading
    *
-   * This method writes the instructions to the motors once.
-   * It is open-loop and maybe more appropriate for something with control feedback.
-   * It retruns as soon as the commands are written; it does not wait.
    *
-   * @param goalHeading Heading to finish with
-   * @param goalSpeed in degrees/second
-   * @param centerArcLengthMm Distance to drive around the arc
+   * @param goalHeading
+   * @param goalSpeed
+   * @param fineSpeed
+   * @param centerArcLengthMm
    */
-  def driveArc(
-                   goalHeading: Int,
-                   goalSpeed: Int,
-                   centerArcLengthMm: Int
-                 ):Unit =
-    val heading: Int = Robot.headingMode.readHeading()
-    val headingDelta: Int = goalHeading - heading
-    val correction: Float = (Math.PI.toFloat * Robot.robotWheelbase * headingDelta)/360
-    //left wheel faster for positive
-    val leftDistance: Float = centerArcLengthMm.toFloat + correction
-    val rightDistance: Float = centerArcLengthMm.toFloat - correction
-    val leftDegrees:Int = ((360 * leftDistance) / Robot.driveWheelCircumference).round
-    val rightDegrees:Int = ((360 * rightDistance) / Robot.driveWheelCircumference).round
-
-    val leftSpeed:Int = ((leftDistance*goalSpeed)/centerArcLengthMm).round
-    val rightSpeed:Int = ((rightDistance*goalSpeed)/centerArcLengthMm).round
-
-    Log.log(s"$leftDegrees $rightDegrees $leftSpeed $rightSpeed ${Robot.leftMotor.readPosition()} ${Robot.rightMotor.readPosition()}")
-
-    Robot.leftMotor.writeGoalPosition(leftDegrees)
-    Robot.rightMotor.writeGoalPosition(rightDegrees)
-    Robot.leftMotor.writeSpeed(leftSpeed)
-    Robot.rightMotor.writeSpeed(rightSpeed)
-    Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
-    Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
-
-    Log.log(s"${Robot.leftMotor.readPosition()} ${Robot.rightMotor.readPosition()}")
-
   def driveArcAbsoluteDistanceGyroSpeedFeedback(
                                                  goalHeading: Int,
                                                  goalSpeed: Int,
+                                                 fineSpeed: Int,
                                                  centerArcLengthMm: Int
                                                ):Unit =
+    val (insideGoalTac,insideMotor) = driveArcWriteGoalPositions(goalHeading,centerArcLengthMm)
+    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
+
+    while {
+        Robot.leftMotor.readState().contains(MotorState.RUNNING) ||
+        Robot.rightMotor.readState().contains(MotorState.RUNNING)
+    } do
+      if(Math.abs(leftGoalTac - Robot.leftMotor.readPosition()) > fiftyMmDegrees )
+        driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
+        //if the distance left is < 50 mm then just let the motors run the last command open-loop
+        //but poll them to see when they stop running
+
+  /**
+   *
+   * @param goalHeading
+   * @param goalSpeed
+   * @param fineSpeed
+   * @param centerArcLengthMm
+   */
+  def driveArcOpenLoop(
+                        goalHeading: Int,
+                        goalSpeed: Int,
+                        fineSpeed: Int,
+                        centerArcLengthMm: Int
+                      ):Unit =
+    val (insideGoalTac,insideMotor) = driveArcWriteGoalPositions(goalHeading,centerArcLengthMm)
+    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
+
+  /**
+   *
+   *
+   * @param goalHeading
+   * @param centerArcLengthMm
+   * @return the inside motor for the turn. If both motors are to travel the same length then it returns the right motor.
+   */
+  private def driveArcWriteGoalPositions(
+                                          goalHeading: Int,
+                                          centerArcLengthMm: Int
+                                        ): (Int,Motor) =
     val leftStartTac: Int = Robot.leftMotor.readPosition()
     val rightStartTac: Int = Robot.rightMotor.readPosition()
 
@@ -179,45 +160,66 @@ object GyroDriveStraight extends Runnable:
     val rightDistance: Float = centerArcLengthMm.toFloat - correction
     val leftGoalDegrees:Int = ((360 * leftDistance) / Robot.driveWheelCircumference).round
     val rightGoalDegrees:Int = ((360 * rightDistance) / Robot.driveWheelCircumference).round
-
     val leftGoalTac: Int = leftStartTac + leftGoalDegrees
     val rightGoalTac: Int = rightStartTac + rightGoalDegrees
 
-    val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
-
     Robot.leftMotor.writeGoalPosition(leftGoalTac)
     Robot.rightMotor.writeGoalPosition(rightGoalTac)
-    var firstPass = true
-    while {
-      firstPass ||
-        Robot.leftMotor.readState().contains(MotorState.RUNNING) ||
-        Robot.rightMotor.readState().contains(MotorState.RUNNING)
-    } do
-      val heading: Int = Robot.headingMode.readHeading()
-      val steerAdjust: Int =
-        if(heading == goalHeading) 0
-        else
-          //about 1% per degree off seems good - but it should really care about wheel base width
-          val proportionalSteerAdjust = (goalHeading - heading) * goalSpeed / 100
-          // return adjustments of at minimum 1
-          if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
-          else if (proportionalSteerAdjust > 0) 1
-          else -1
-      Log.log(s"$goalSpeed $steerAdjust ${Robot.leftMotor.readState().mkString(",")}")
-      if(firstPass || Math.abs(leftGoalTac - Robot.leftMotor.readPosition()) > fiftyMmDegrees *2 )
-        Robot.leftMotor.writeSpeed(goalSpeed + steerAdjust)
-        Robot.rightMotor.writeSpeed(goalSpeed - steerAdjust)
-        Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
-        Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
-        firstPass = false
-      else if(firstPass || Math.abs(leftGoalTac - Robot.leftMotor.readPosition()) > fiftyMmDegrees )
-        Robot.leftMotor.writeSpeed(100)  //todo rework the proper speed calculation
-        Robot.rightMotor.writeSpeed(100)
-        Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
-        Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
-        firstPass = false
+
+    if(leftGoalDegrees < rightGoalDegrees) (leftGoalTac,Robot.leftMotor)
+    else (rightGoalTac,Robot.rightMotor)
 
 
+  /**
+   * Adjust the speed based on the current gyro heading to drive in an arc.
+   * This method assumes the goal absolute postions have already been written
+   *
+   * @param goalHeading
+   * @param goalSpeed
+   */
+  private def driveArcHeadingAdjust(
+                                   goalHeading: Int,
+                                   goalSpeed: Int,
+                                 ):Unit =
+  val heading: Int = Robot.headingMode.readHeading()
+  val steerAdjust: Int =
+    if(heading == goalHeading) 0
+    else
+      //about 1% per degree off seems good - but it should really care about wheel base width
+      val proportionalSteerAdjust = (goalHeading - heading) * goalSpeed / 100
+      // return adjustments of at minimum 1
+      if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
+      else if (proportionalSteerAdjust > 0) 1
+      else -1
+  Robot.leftMotor.writeSpeed(goalSpeed + steerAdjust)
+  Robot.rightMotor.writeSpeed(goalSpeed - steerAdjust)
+  Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+  Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+
+  /**
+   *
+   * @param goalSpeed
+   * @param fineSpeed
+   * @param goalTac
+   * @param motor
+   * @return speed for motors in an ideal world
+   */
+  def selectSpeed(
+                   goalSpeed: Int,
+                   fineSpeed: Int,
+                   goalTac:Int,
+                   motor:Motor
+                 ):Int =
+    val currentTac = motor.readPosition()
+    val minusOneIfBackward = if(goalTac < currentTac) -1
+    else 1
+
+    val absoluteSpeed = if(Math.abs(goalTac - currentTac) > fiftyMmDegrees *2) goalSpeed
+    else if (Math.abs(goalTac - currentTac) > fiftyMmDegrees)
+    //todo ramp down maybe
+      fineSpeed
+    else fineSpeed
+    absoluteSpeed * minusOneIfBackward
 
 object Robot:
 
