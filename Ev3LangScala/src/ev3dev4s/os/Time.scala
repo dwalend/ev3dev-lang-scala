@@ -14,6 +14,6 @@ object Time:
     val deadline = now() + milliseconds
     System.gc()
     val sleepTime = deadline - now()
-    Thread.sleep(sleepTime)
+    if(sleepTime > 0) Thread.sleep(sleepTime)
 
 
