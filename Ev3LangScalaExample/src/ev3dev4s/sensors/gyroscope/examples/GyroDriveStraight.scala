@@ -24,7 +24,7 @@ object GyroDriveStraight extends Runnable:
 
 //    driveArcGyroFeedback(0,500,400)
 
-    driveArcAbsoluteDistanceGyroSpeedFeedback(0,500,400)
+    driveArcAbsoluteDistanceGyroSpeedFeedback(0,500,100,800)
 //    driveArcAbsoluteDistanceGyroSpeedFeedback(0,100,100)
     Robot.hold()
     Log.log(s"holding motors - waiting for button")
@@ -94,6 +94,22 @@ object GyroDriveStraight extends Runnable:
       Robot.leftMotor.writeDutyCycle(leftDutyCycle)
       Robot.rightMotor.writeDutyCycle(rightDutyCycle)
 
+  /**
+   *
+   * @param goalHeading
+   * @param goalSpeed
+   * @param fineSpeed
+   * @param centerArcLengthMm
+   */
+  def driveArcOpenLoop(
+                        goalHeading: Int,
+                        goalSpeed: Int,
+                        fineSpeed: Int,
+                        centerArcLengthMm: Int
+                      ):Unit =
+    val (insideGoalTac,insideMotor) = driveArcWriteGoalPositions(goalHeading,centerArcLengthMm)
+    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor)._1)
+
   val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
   /**
    *
@@ -110,32 +126,16 @@ object GyroDriveStraight extends Runnable:
                                                  centerArcLengthMm: Int
                                                ):Unit =
     val (insideGoalTac,insideMotor) = driveArcWriteGoalPositions(goalHeading,centerArcLengthMm)
-    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
+    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor)._1)
 
     while {
         Robot.leftMotor.readState().contains(MotorState.RUNNING) ||
         Robot.rightMotor.readState().contains(MotorState.RUNNING)
     } do
-      if(Math.abs(leftGoalTac - Robot.leftMotor.readPosition()) > fiftyMmDegrees )
-        driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
-        //if the distance left is < 50 mm then just let the motors run the last command open-loop
-        //but poll them to see when they stop running
-
-  /**
-   *
-   * @param goalHeading
-   * @param goalSpeed
-   * @param fineSpeed
-   * @param centerArcLengthMm
-   */
-  def driveArcOpenLoop(
-                        goalHeading: Int,
-                        goalSpeed: Int,
-                        fineSpeed: Int,
-                        centerArcLengthMm: Int
-                      ):Unit =
-    val (insideGoalTac,insideMotor) = driveArcWriteGoalPositions(goalHeading,centerArcLengthMm)
-    driveArcHeadingAdjust(goalHeading,selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor))
+      val (speed,update) = selectSpeed(goalSpeed,fineSpeed,insideGoalTac,insideMotor)
+      if(update) driveArcHeadingAdjust(goalHeading,speed)
+      //if the distance left is < 50 mm then just let the motors run the last command open-loop
+      //but poll them to see when they stop running
 
   /**
    *
@@ -181,20 +181,20 @@ object GyroDriveStraight extends Runnable:
                                    goalHeading: Int,
                                    goalSpeed: Int,
                                  ):Unit =
-  val heading: Int = Robot.headingMode.readHeading()
-  val steerAdjust: Int =
-    if(heading == goalHeading) 0
-    else
-      //about 1% per degree off seems good - but it should really care about wheel base width
-      val proportionalSteerAdjust = (goalHeading - heading) * goalSpeed / 100
-      // return adjustments of at minimum 1
-      if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
-      else if (proportionalSteerAdjust > 0) 1
-      else -1
-  Robot.leftMotor.writeSpeed(goalSpeed + steerAdjust)
-  Robot.rightMotor.writeSpeed(goalSpeed - steerAdjust)
-  Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
-  Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+    val heading: Int = Robot.headingMode.readHeading()
+    val steerAdjust: Int =
+      if(heading == goalHeading) 0
+      else
+        //about 1% per degree off seems good - but it should really care about wheel base width
+        val proportionalSteerAdjust = (goalHeading - heading) * goalSpeed / 100
+        // return adjustments of at minimum 1
+        if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
+        else if (proportionalSteerAdjust > 0) 1
+        else -1
+    Robot.leftMotor.writeSpeed(goalSpeed + steerAdjust)
+    Robot.rightMotor.writeSpeed(goalSpeed - steerAdjust)
+    Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+    Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
 
   /**
    *
@@ -209,17 +209,17 @@ object GyroDriveStraight extends Runnable:
                    fineSpeed: Int,
                    goalTac:Int,
                    motor:Motor
-                 ):Int =
+                 ):(Int,Boolean) =
     val currentTac = motor.readPosition()
     val minusOneIfBackward = if(goalTac < currentTac) -1
     else 1
 
-    val absoluteSpeed = if(Math.abs(goalTac - currentTac) > fiftyMmDegrees *2) goalSpeed
+    val (absoluteSpeed,update) = if(Math.abs(goalTac - currentTac) > fiftyMmDegrees *2) (goalSpeed,true)
     else if (Math.abs(goalTac - currentTac) > fiftyMmDegrees)
     //todo ramp down maybe
-      fineSpeed
-    else fineSpeed
-    absoluteSpeed * minusOneIfBackward
+      (fineSpeed,true)
+    else (fineSpeed,false)
+    (absoluteSpeed * minusOneIfBackward,update)
 
 object Robot:
 
