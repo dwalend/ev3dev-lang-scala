@@ -12,7 +12,7 @@ ant ssh to run the .jar - need to get a signal into the jvm from the command pro
         
 To Do:
               
-File polling for a reload - how can you know when a file is complete via scp? (Maybe send the file size as meta info first??)
+File polling for a reload - how can you know when a file is complete via scp? (Maybe send the file size and checksum as meta info first??)
 
 Investigate jlink and jdeps for a smaller .jar file - faster start? - use ant tasks? (and the build file as an analogy for programming the robot)
                   

@@ -1,7 +1,7 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.os.Time
-import ev3dev4s.{Ev3System, Log}
+import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
 
 import java.io.File
@@ -87,6 +87,7 @@ TILT-RATE [24]	Rotational Speed (2nd axis)	d/s (degrees per second)	0	1	value0: 
 TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767) [25]
    */
 
+  import ev3dev4s.Ev3System
   val ledProgress: Seq[() => Any] = Seq(() =>
     Ev3System.leftLed.writeRed()
       Ev3System.rightLed.writeRed(),
@@ -139,7 +140,6 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
             //read value0, which should have something when the gyro is ready
             val value0 = ChannelRereader.readString(sensorPath.resolve("value0"))
             Log.log(s"Read $value0 from $sensorPath")
-            //todo restore the original mode
             ChannelRewriter.writeString(sensorPath.resolve("mode"),"GYRO-ANG")
             Log.log(s"Wrote mode to $sensorPath")
             found = true
@@ -158,6 +158,8 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
       found
     end scanForSensor
 
+    val maybeOldMode = currentMode
+
     Log.log(s"despin $this at $port")
     unsetGadgetFS()
 
@@ -175,9 +177,11 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
     do
       Time.pause()
 
+    maybeOldMode.map(setMaybeWriteMode(_))
+
     reportProgress(3)()
-    val heading = headingMode().readHeading() //todo set it to the original mode
-    Log.log(s"Successfully calibrated. Heading is $heading")
+
+    Log.log(s"Successfully despun")
   end despin
 
 object Ev3Gyroscope:

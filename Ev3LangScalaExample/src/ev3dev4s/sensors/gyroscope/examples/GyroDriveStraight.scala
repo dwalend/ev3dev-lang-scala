@@ -24,7 +24,7 @@ object GyroDriveStraight extends Runnable:
 
 //    driveArcGyroFeedback(0,500,400)
 
-    driveArcAbsoluteDistanceGyroSpeedFeedback(0,500,100,800)
+    driveArcAbsoluteDistanceGyroSpeedFeedback(goalHeading = 0,cruiseSpeed = 500,fineSpeed = 100,centerArcLengthMm = 800)
 //    driveArcAbsoluteDistanceGyroSpeedFeedback(0,100,100)
     Robot.hold()
     Log.log(s"holding motors - waiting for button")
@@ -204,10 +204,14 @@ object GyroDriveStraight extends Runnable:
     val steerAdjust: Int =
       if(heading == goalHeading) 0
       else
-        //about 1% per degree off seems good - but it should really care about wheel base width
-        val proportionalSteerAdjust = (goalHeading - heading) * averageSpeed / 100
+        //todo about 1% per degree off seems good - but it should really care about wheel base width
+        //val proportionalSteerAdjust = (goalHeading - heading) * averageSpeed / 100
+        val headingDelta = goalHeading - heading
+        val proportionalSteerAdjust:Float =
+          (averageSpeed * Math.PI.toFloat * Robot.robotWheelbase * headingDelta)/
+            (360*Robot.driveWheelDiameter) // d/s
         // return adjustments of at minimum 1
-        if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
+        if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust.round
         else if (proportionalSteerAdjust > 0) 1
         else -1
     Robot.leftMotor.writeSpeed(averageSpeed + steerAdjust)

@@ -38,7 +38,7 @@ object TtySensorDisplay extends Runnable:
         Ev3System.leftLed.writeRed()
         Ev3System.rightLed.writeRed()
       }),
-      FixGyro,
+      DespinGyro,
       TtyMenu.Reload
     )
     TtyMenu(actions, setLcd)
@@ -65,14 +65,9 @@ object TtySensorDisplay extends Runnable:
         if(!ttyMenu.doingAction) ttyMenu.drawScreen()
         Thread.sleep(500)
 
-object FixGyro extends TtyMenuAction:
+object DespinGyro extends TtyMenuAction:
 
   val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
 
-  override def run(menu: TtyMenu): Unit = {
-    Ev3System.rightLed.writeRed()
-    Ev3System.leftLed.writeRed()
-    gyroscope.calibrate()
-    Ev3System.rightLed.writeGreen()
-    Ev3System.leftLed.writeGreen()
-  }
+  override def run(menu: TtyMenu): Unit =
+    gyroscope.despin()

@@ -88,4 +88,6 @@ object Sound {
    * @return the current master volume 0-100
    */
   def getVolume:Int = volume
+
+  //todo text to speech from https://www.ev3dev.org/docs/tutorials/using-ev3-speaker/
 }

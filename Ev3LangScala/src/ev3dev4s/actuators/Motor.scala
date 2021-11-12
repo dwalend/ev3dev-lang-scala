@@ -2,6 +2,8 @@ package ev3dev4s.actuators
 
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget}
 
+import ev3dev4s.Log
+
 import java.nio.file.Path
 
 import java.io.IOException
@@ -21,7 +23,16 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeDutyCycle(percent:Int):Unit = checkPort(_.writeDutyCycle(percent))
 
-  def writeSpeed(degreesPerSecond:Int):Unit = checkPort(_.writeSpeed(degreesPerSecond))
+
+  def maxSpeed:Int
+
+  def writeSpeed(degreesPerSecond:Int):Unit =
+    val safeSpeed = if(Math.abs(degreesPerSecond) < maxSpeed ) degreesPerSecond
+                    else
+                      Log.log(s"requested speed $degreesPerSecond is greater than $maxSpeed - using $maxSpeed")
+                      if(degreesPerSecond > 0) maxSpeed
+                      else -maxSpeed
+    checkPort(_.writeSpeed(safeSpeed))
 
   def writePosition(degrees:Int):Unit = checkPort(_.writePosition(degrees))
 
@@ -74,6 +85,8 @@ sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]
     MotorPortScanner.findGadgetDir(port,Ev3LargeMotor.driverName)
       .map(MotorFS(_))
 
+  override val maxSpeed: Int = 1050
+
 object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
 
@@ -81,6 +94,8 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port,Ev3MediumMotor.driverName)
       .map(MotorFS(_))
+
+  override val maxSpeed:Int = 1560
 
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"
