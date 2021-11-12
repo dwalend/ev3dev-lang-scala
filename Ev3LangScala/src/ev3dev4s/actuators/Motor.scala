@@ -106,7 +106,6 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"
 
-//todo sane camelcase names
 enum MotorCommand(val command:String):
   /**
    * run-forever: Causes the motor to run until another command is sent
