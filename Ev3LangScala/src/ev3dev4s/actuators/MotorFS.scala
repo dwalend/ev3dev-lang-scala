@@ -17,13 +17,14 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
 
   private val dutyCycleSpWriter = ChannelRewriter(motorDir.resolve("duty_cycle_sp"))
   private val speedSpWriter = ChannelRewriter(motorDir.resolve("speed_sp"))
+  private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
+  private val timeWriter = ChannelRewriter(motorDir.resolve("time_sp"))
+
   private val positionWriter = ChannelRewriter(motorDir.resolve("position"))
 
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
   private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
-
-  private val goalPositionWriter = ChannelRewriter(motorDir.resolve("position_sp"))
-
+  
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
   def writeCommand(command: MotorCommand):Unit =
     commandWriter.writeString(command.command)
@@ -45,6 +46,10 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
 
   def writeGoalPosition(degrees:Int):Unit =
     goalPositionWriter.writeAsciiInt(degrees)
+    
+  def writeDuration(milliseconds:Int):Unit =
+    timeWriter.writeAsciiInt(milliseconds)
+    
   /**
    * @return position in degrees todo double-check that
    */
@@ -65,3 +70,4 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
     stopActionWriter.close()
     dutyCycleSpWriter.close()
     commandWriter.close()
+    timeWriter.close()

@@ -23,7 +23,6 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeDutyCycle(percent:Int):Unit = checkPort(_.writeDutyCycle(percent))
 
-
   def maxSpeed:Int
 
   def writeSpeed(degreesPerSecond:Int):Unit =
@@ -39,6 +38,8 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   def resetPosition():Unit = writePosition(0)
 
   def writeGoalPosition(degrees:Int):Unit = checkPort(_.writeGoalPosition(degrees))
+
+  def writeDuration(milliseconds:Int):Unit = checkPort(_.writeDuration(milliseconds))
 
   /**
    * @return position in degrees
@@ -80,6 +81,11 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
 
+  def runForDuration(degreesPerSecond:Int,milliseconds:Int):Unit =
+    writeSpeed(degreesPerSecond)
+    writeDuration(milliseconds)
+    writeCommand(MotorCommand.RUN_TIME)
+
 sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md):
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port,Ev3LargeMotor.driverName)
@@ -116,9 +122,11 @@ enum MotorCommand(val command:String):
 run-to-rel-pos: Runs the motor to a position relative to the current position value. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
   case RUN_TO_RELATIVE_POSITION extends MotorCommand("run-to-rel-pos")  
   
-  /** todo
+  /**
 run-timed: Run the motor for the amount of time specified in time_sp and then stops the motor using the command specified by stop_action.
    */
+  case RUN_TIME extends MotorCommand("run-timed")
+
   /**
    * run-direct: Runs the motor using the duty cycle specified by duty_cycle_sp. Unlike other run commands, changing duty_cycle_sp while running will take effect immediately.
    */
