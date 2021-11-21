@@ -7,6 +7,8 @@ import mill.api.Result
 import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
+import $ivy.`org.apache.ant:ant:1.10.12`, org.apache.tools.ant.taskdefs.Checksum
+
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
 }
@@ -91,6 +93,16 @@ object Ev3LangScalaExample extends ScalaModule {
 
     result
   }
+  
+  def checkSumJar(): Target[Unit] = T {
+
+    val checkSumTask = new Checksum()
+    checkSumTask.setFile(jar().path.toIO)
+    checkSumTask.setTodir() //todo some new file in out ?
+
+    checkSumTask.execute()
+    //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
+  }
 }
 
 object Ev3LangScalaExperimental extends ScalaModule {
@@ -124,3 +136,5 @@ object Ev3LangScalaExperimental extends ScalaModule {
     result
   }
 }
+
+
