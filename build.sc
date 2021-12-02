@@ -93,8 +93,8 @@ object Ev3LangScalaExample extends ScalaModule {
 
     result
   }
-  
-  def checkSumJar(): Target[Unit] = T {
+  /*
+  def checkSumJar: Target[Unit] = T {
 
     val checkSumTask = new Checksum()
     checkSumTask.setFile(jar().path.toIO)
@@ -103,6 +103,7 @@ object Ev3LangScalaExample extends ScalaModule {
     checkSumTask.execute()
     //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
   }
+  */
 }
 
 object Ev3LangScalaExperimental extends ScalaModule {

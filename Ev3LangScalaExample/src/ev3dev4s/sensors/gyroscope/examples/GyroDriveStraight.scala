@@ -99,7 +99,9 @@ object GyroDriveStraight extends Runnable:
 
       Robot.leftMotor.writeDutyCycle(leftDutyCycle)
       Robot.rightMotor.writeDutyCycle(rightDutyCycle)
+      Thread.`yield`()
 
+  val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
   /**
    * Drive in an arc - read the heading at the beginning, then travel open-loop
    *
@@ -121,9 +123,8 @@ object GyroDriveStraight extends Runnable:
     while {
       Robot.leftMotor.readState().contains(MotorState.RUNNING) ||
       Robot.rightMotor.readState().contains(MotorState.RUNNING)
-    } do ()
+    } do Thread.`yield`()
 
-  val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
   /**
    * Drive in an arc with feedback from the gyroscope.
    *
@@ -218,6 +219,7 @@ object GyroDriveStraight extends Runnable:
     Robot.rightMotor.writeSpeed(averageSpeed - steerAdjust)
     Robot.leftMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
     Robot.rightMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+    Thread.`yield`()
 
   /**
    *
