@@ -3,14 +3,27 @@ package ev3dev4s.sensors.gyroscope.examples
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
+import ev3dev4s.measure.Lego._
 
+import coulomb.accepted._
+import coulomb.CoulombExtendWithUnits
+import coulomb.Quantity
+import spire.std.int._
+import spire.std.any._ 
+import coulomb._
+
+import shapeless._
+import coulomb.define._
+import coulomb.unitops._
 /**
  *
  *
  * @author David Walend
  * @since v0.0.0
  */
+
 object GyroDriveStraight extends Runnable:
+  
   def main(args: Array[String]): Unit =
     run()
 
@@ -24,7 +37,7 @@ object GyroDriveStraight extends Runnable:
 
 //    driveArcGyroFeedback(0,500,400)
 
-    driveArcAbsoluteDistanceGyroSpeedFeedback(goalHeading = 0,cruiseSpeed = 500,fineSpeed = 100,centerArcLengthMm = 800)
+//    driveArcAbsoluteDistanceGyroSpeedFeedback(goalHeading = 0.withUnit[Degree],cruiseSpeed = 500,fineSpeed = 100,centerArcLengthMm = 800)
 //    driveArcAbsoluteDistanceGyroSpeedFeedback(0,100,100)
     Robot.hold()
     Log.log(s"holding motors - waiting for button")
@@ -39,8 +52,8 @@ object GyroDriveStraight extends Runnable:
    * @param distanceMm distance to travel
    */
   def driveGyroFeedbackDistance(
-                                 goalHeading: Int,
-                                 dutyCycle: Int,
+                                 goalHeading: Degrees,
+                                 dutyCycle: Percents,
                                  distanceMm: Int
                            ): Unit =
     val startTac = Robot.leftMotor.readPosition()
@@ -63,30 +76,31 @@ object GyroDriveStraight extends Runnable:
    * @param keepGoing false when time to stop
    */
   def driveGyroFeedback(
-                         goalHeading: Int,
-                         dutyCycle: Int,
+                         goalHeading: Quantity[Int,Degree],//Degrees,
+                         dutyCycle: Quantity[Int,Degree],//Percents,
                          keepGoing: () => Boolean
                         ): Unit =
 
-    Robot.leftMotor.runDutyCycle(0)
-    Robot.rightMotor.runDutyCycle(0)
+    Robot.leftMotor.runDutyCycle(0.percent)
+    Robot.rightMotor.runDutyCycle(0.percent)
 
     while (keepGoing())
-      val heading: Int = Robot.headingMode.readHeading()
-      val steerAdjust: Int =
-        if(heading == goalHeading) 0
-        else {
+      val heading: Quantity[Int,Degree] = Robot.headingMode.readHeading()
+      val steerAdjust: Quantity[Int,Percent] = //todo give this units
+        if(heading == goalHeading) 0.percent
+        else 
           //about 1% per degree off seems good - but it should really care about wheel base width
-          val proportionalSteerAdjust = (goalHeading - heading) * dutyCycle / 100
+          import shapeless._, coulomb._, coulomb.si._, coulomb.siprefix._, coulomb.define._ //todo which import matters?
+          val proportionalSteerAdjust = (goalHeading - heading) * dutyCycle / 100//.withUnit[Degree]
           // return adjustments of at minimum 1
-          if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust
-          else if (proportionalSteerAdjust > 0) 1
-          else -1
-        }
+          if (Math.abs(proportionalSteerAdjust.value) > 1) proportionalSteerAdjust
+          else if (proportionalSteerAdjust > 0.percent) 1.percent
+          else -1.percent
+        
 
       def dutyCyclesFromAdjust():(Int,Int) =
-        val leftIdeal = (dutyCycle + steerAdjust)/10
-        val rightIdeal = (dutyCycle - steerAdjust)/10
+        val leftIdeal:Percents = (dutyCycle + steerAdjust)/10
+        val rightIdeal:Percents = (dutyCycle - steerAdjust)/10
         val (leftSteering, rightSteering) =
           if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
           else if(steerAdjust > 0) (leftIdeal+1,rightIdeal)
@@ -97,9 +111,10 @@ object GyroDriveStraight extends Runnable:
 
       val (leftDutyCycle,rightDutyCycle) = dutyCyclesFromAdjust()
 
-      Robot.leftMotor.writeDutyCycle(leftDutyCycle)
-      Robot.rightMotor.writeDutyCycle(rightDutyCycle)
+      Robot.leftMotor.writeDutyCycle(leftDutyCycle.percent)
+      Robot.rightMotor.writeDutyCycle(rightDutyCycle.percent)
       Thread.`yield`()
+/*
 
   val fiftyMmDegrees: Int = ((360.toFloat * 50f) / Robot.driveWheelCircumference).round
   /**
@@ -111,7 +126,7 @@ object GyroDriveStraight extends Runnable:
    * @param centerArcLengthMm distance to travel
    */
   def driveArcOpenLoop(
-                        goalHeading: Int,
+                        goalHeading: Degrees,
                         cruiseSpeed: Int,
                         fineSpeed: Int,
                         centerArcLengthMm: Int,
@@ -138,7 +153,7 @@ object GyroDriveStraight extends Runnable:
    * @param openLoopMm distance from the end to switch to open-loop
    */
   def driveArcAbsoluteDistanceGyroSpeedFeedback(
-                                                  goalHeading: Int,
+                                                  goalHeading: Degrees,
                                                   cruiseSpeed: Int,
                                                   fineSpeed: Int,
                                                   centerArcLengthMm: Int,
@@ -165,15 +180,15 @@ object GyroDriveStraight extends Runnable:
    * @return the inside motor for the turn. If both motors are to travel the same length then it returns the right motor.
    */
   private def driveArcWriteGoalPositions(
-                                          goalHeading: Int,
+                                          goalHeading: Degrees,
                                           centerArcLengthMm: Int
                                         ): (Int,Motor) =
     val leftStartTac: Int = Robot.leftMotor.readPosition()
     val rightStartTac: Int = Robot.rightMotor.readPosition()
 
     val goalTacChange: Float = (360.toFloat * centerArcLengthMm) / Robot.driveWheelCircumference
-    val heading: Int = Robot.headingMode.readHeading()
-    val headingDelta: Int = goalHeading - heading
+    val heading: Degrees = Robot.headingMode.readHeading()
+    val headingDelta: Degrees = goalHeading - heading
     val correction: Float = (Math.PI.toFloat * Robot.robotWheelbase * headingDelta)/360
     //left wheel faster for positive
     val leftDistance: Float = centerArcLengthMm.toFloat + correction
@@ -198,10 +213,10 @@ object GyroDriveStraight extends Runnable:
    * @param averageSpeed degrees/second for moving the robot quickly
    */
   private def driveArcHeadingAdjust(
-                                     goalHeading: Int,
+                                     goalHeading: Degrees,
                                      averageSpeed: Int,
                                  ):Unit =
-    val heading: Int = Robot.headingMode.readHeading()
+    val heading: Degrees = Robot.headingMode.readHeading()
     val steerAdjust: Int =
       if(heading == goalHeading) 0
       else
@@ -248,7 +263,7 @@ object GyroDriveStraight extends Runnable:
       (fineSpeed,true)
     else (fineSpeed,false)
     (absoluteSpeed * minusOneIfBackward,update)
-
+*/
 object Robot:
 
   val driveWheelDiameter = 88 //millimeters

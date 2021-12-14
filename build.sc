@@ -19,6 +19,15 @@ object Ev3LangScala extends ScalaModule {
   def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
   def javaVersion = "11.0.10"
 
+  override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
+    ivy"eu.timepit:singleton-ops_2.13:0.5.2",
+    ivy"org.typelevel:spire_2.13:0.17.0",
+    ivy"com.manyangled:coulomb_2.13:0.5.7",
+    ivy"com.manyangled:coulomb-si-units_2.13:0.5.7",
+    ivy"com.manyangled:coulomb-accepted-units_2.13:0.5.7",
+    ivy"com.manyangled:coulomb-time-units_2.13:0.5.7"
+  )
+
   override def scalacOptions = Shared.scalacOptions
 
   def scpAssembly():Command[CommandResult] = T.command {
@@ -115,7 +124,7 @@ object Ev3LangScalaExperimental extends ScalaModule {
   override def scalacOptions = Shared.scalacOptions
 
   override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
-    ivy"net.java.dev.jna:jna:4.5.2" //todo sna?
+    ivy"net.java.dev.jna:jna:4.5.2" //todo sna? Or that new call-c-from-scala
   )
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)

@@ -8,6 +8,12 @@ import java.io.File
 import java.nio.file.Path
 import scala.collection.immutable.ArraySeq
 
+import coulomb.accepted.Degree
+import coulomb.CoulombExtendWithUnits
+import spire.std.int._
+import spire.std.any._ 
+import coulomb.Quantity
+
 /**
  *
  *
@@ -44,22 +50,27 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   case class HeadingMode() extends Mode:
     val name = "GYRO-ANG"
 
-    @volatile var offset = 0
+    import ev3dev4s.measure.Lego.Degrees
+    @volatile var offset:Degrees = 0.withUnit[Degree]
     zero()
 
     /**
      * @return Angle (-32768 to 32767)
      */
-    def readRawHeading():Int = this.synchronized{
-      checkPort(_.readValue0Int())
+    def readRawHeading():Degrees = this.synchronized{
+      checkPort(_.readValue0Int()).withUnit[Degree]
     }
 
-    def readHeading():Int = this.synchronized{
+    def readHeading():Degrees = this.synchronized{
       readRawHeading() - offset
     }
 
-    def zero():Unit = this.synchronized{
-      offset = readRawHeading()
+    def zero():Unit = 
+      setHeading(0.withUnit[Degree])
+    
+
+    def setHeading(heading:Degrees):Unit = this.synchronized{
+      offset = readRawHeading() + heading
     }
 
   /**
@@ -73,7 +84,7 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
     }
 
   /* todo
-GYRO-CAL - does not work. Not sure what does do, but it doesn't recalibrate the gyro
+GYRO-CAL - does not work. Not sure what it does do, but it doesn't recalibrate the gyro
 
 GYRO-RATE	Rotational Speed	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [22]
 GYRO-FAS	Rotational Speed	none	0	1	value0: Rotational Speed (-1464 to 1535) [22]
@@ -152,7 +163,6 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
           case x:UnpluggedException =>
             Log.log(s"Failed with $x")
             System.currentTimeMillis() < deadline // try again if there's time
-
       do
         Time.pause()
       found
