@@ -11,22 +11,15 @@ import $ivy.`org.apache.ant:ant:1.10.12`, org.apache.tools.ant.taskdefs.Checksum
 
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
+  val scalaVersion = "3.0.2"//"2.13.7"//todo "3.1.0"
+  val javaVersion = "11.0.10" //todo new release?
 }
 
 object Ev3LangScala extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScala"
 
-  def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
-  def javaVersion = "11.0.10"
-
-  override def ivyDeps: Target[Loose.Agg[Dep]] = Agg(
-    ivy"eu.timepit:singleton-ops_2.13:0.5.2",
-    ivy"org.typelevel:spire_2.13:0.17.0",
-    ivy"com.manyangled:coulomb_2.13:0.5.7",
-    ivy"com.manyangled:coulomb-si-units_2.13:0.5.7",
-    ivy"com.manyangled:coulomb-accepted-units_2.13:0.5.7",
-    ivy"com.manyangled:coulomb-time-units_2.13:0.5.7"
-  )
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
 
@@ -63,8 +56,8 @@ object Ev3LangScalaExample extends ScalaModule {
 
   override def artifactName: T[String] = "Ev3LangScalaExample"
 
-  def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
-  def javaVersion = "11.0.10"
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
 
@@ -118,8 +111,8 @@ object Ev3LangScalaExample extends ScalaModule {
 object Ev3LangScalaExperimental extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScalaExperimental"
 
-  def scalaVersion = "3.0.2"//"2.13.5"//"3.0.0-RC2"//
-  def javaVersion = "11.0.10"
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
 

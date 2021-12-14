@@ -9,7 +9,7 @@ import java.nio.file.Path
 import java.io.IOException
 import java.nio.file.AccessDeniedException
 
-import ev3dev4s.measure.Lego.Percents
+import ev3dev4s.measure.Percent
 
 /**
  *
@@ -23,7 +23,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeStopAction(command:MotorStopCommand):Unit = checkPort(_.writeStopAction(command))
 
-  def writeDutyCycle(percent:Percents):Unit = checkPort(_.writeDutyCycle(percent))
+  def writeDutyCycle(percent:Percent):Unit = checkPort(_.writeDutyCycle(percent))
 
   def maxSpeed:Int
 
@@ -65,7 +65,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeStopAction(MotorStopCommand.HOLD)
     writeCommand(MotorCommand.STOP)
 
-  def runDutyCycle(percent:Percents):Unit =
+  def runDutyCycle(percent:Percent):Unit =
     writeDutyCycle(percent)
     writeCommand(MotorCommand.RUN_DIRECT)
 

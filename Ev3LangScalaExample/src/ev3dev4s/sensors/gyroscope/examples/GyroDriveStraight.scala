@@ -3,18 +3,9 @@ package ev3dev4s.sensors.gyroscope.examples
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.measure.Lego._
+import ev3dev4s.measure.{Degrees,Percent}
+import ev3dev4s.measure.Lego.*
 
-import coulomb.accepted._
-import coulomb.CoulombExtendWithUnits
-import coulomb.Quantity
-import spire.std.int._
-import spire.std.any._ 
-import coulomb._
-
-import shapeless._
-import coulomb.define._
-import coulomb.unitops._
 /**
  *
  *
@@ -53,7 +44,7 @@ object GyroDriveStraight extends Runnable:
    */
   def driveGyroFeedbackDistance(
                                  goalHeading: Degrees,
-                                 dutyCycle: Percents,
+                                 dutyCycle: Percent,
                                  distanceMm: Int
                            ): Unit =
     val startTac = Robot.leftMotor.readPosition()
@@ -76,8 +67,8 @@ object GyroDriveStraight extends Runnable:
    * @param keepGoing false when time to stop
    */
   def driveGyroFeedback(
-                         goalHeading: Quantity[Int,Degree],//Degrees,
-                         dutyCycle: Quantity[Int,Degree],//Percents,
+                         goalHeading: Degrees,
+                         dutyCycle: Percent,
                          keepGoing: () => Boolean
                         ): Unit =
 
@@ -85,26 +76,25 @@ object GyroDriveStraight extends Runnable:
     Robot.rightMotor.runDutyCycle(0.percent)
 
     while (keepGoing())
-      val heading: Quantity[Int,Degree] = Robot.headingMode.readHeading()
-      val steerAdjust: Quantity[Int,Percent] = //todo give this units
+      val heading: Degrees = Robot.headingMode.readHeading()
+      val steerAdjust: Percent = //todo give this units
         if(heading == goalHeading) 0.percent
         else 
           //about 1% per degree off seems good - but it should really care about wheel base width
-          import shapeless._, coulomb._, coulomb.si._, coulomb.siprefix._, coulomb.define._ //todo which import matters?
-          val proportionalSteerAdjust = (goalHeading - heading) * dutyCycle / 100//.withUnit[Degree]
+          val proportionalSteerAdjust = (goalHeading.value - heading.value) * dutyCycle.value / 100//.withUnit[Degree]
           // return adjustments of at minimum 1
-          if (Math.abs(proportionalSteerAdjust.value) > 1) proportionalSteerAdjust
-          else if (proportionalSteerAdjust > 0.percent) 1.percent
+          if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust.percent
+          else if (proportionalSteerAdjust > 0) 1.percent
           else -1.percent
         
 
       def dutyCyclesFromAdjust():(Int,Int) =
-        val leftIdeal:Percents = (dutyCycle + steerAdjust)/10
-        val rightIdeal:Percents = (dutyCycle - steerAdjust)/10
+        val leftIdeal = (dutyCycle.value + steerAdjust.value)/10
+        val rightIdeal = (dutyCycle.value - steerAdjust.value)/10
         val (leftSteering, rightSteering) =
           if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
-          else if(steerAdjust > 0) (leftIdeal+1,rightIdeal)
-          else if(steerAdjust < 0) (leftIdeal,rightIdeal+1)
+          else if(steerAdjust.value > 0) (leftIdeal+1,rightIdeal)
+          else if(steerAdjust.value < 0) (leftIdeal,rightIdeal+1)
           else (leftIdeal,rightIdeal)
         if(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
         else (leftSteering+10,rightSteering+10)

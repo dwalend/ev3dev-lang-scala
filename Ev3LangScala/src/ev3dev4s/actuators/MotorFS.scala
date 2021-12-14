@@ -4,7 +4,7 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 
 import java.nio.file.Path
 
-import ev3dev4s.measure.Lego.Percents
+import ev3dev4s.measure.Percent
 
 /**
  *
@@ -34,7 +34,7 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   def writeStopAction(command:MotorStopCommand):Unit =
     stopActionWriter.writeString(command.command)
 
-  def writeDutyCycle(percent:Percents):Unit =
+  def writeDutyCycle(percent:Percent):Unit =
     dutyCycleSpWriter.writeAsciiInt(percent.value)
 
   def writeSpeed(degreesPerSecond:Int):Unit =

@@ -4,17 +4,10 @@ import ev3dev4s.sensors.gyroscope.examples.{Robot,GyroDriveStraight}
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 
-import ev3dev4s.measure.Lego.{Degrees,Percents}
-
-import coulomb.CoulombExtendWithUnits
-import spire.std.int._
-import spire.std.any._ 
-import coulomb.Quantity
-
+import ev3dev4s.measure.{Degrees,Percent}
+import ev3dev4s.measure.Lego.*
 
 import ev3dev4s.sensors.Ev3KeyPad
-import coulomb.accepted.Degree
-import coulomb.accepted.Percent
 
 /**
  * A test of time to run a reasonable control loop for various comparisons
@@ -30,10 +23,10 @@ object GyroFeedbackLoop extends Runnable:
   override def run(): Unit =
 //    Robot.gyroscope.despin()
     Robot.headingMode.zero()
-    driveGyroFeedbackTime(0.withUnit[Degree],0.withUnit[Percent],20000)
+    driveGyroFeedbackTime(0.degrees,0.percent,20000)
 
     Robot.hold()
-    driveGyroFeedbackTime(0.withUnit[Degree],0.withUnit[Percent],60000)
+    driveGyroFeedbackTime(0.degrees,0.percent,60000)
 
     Robot.hold()
     Robot.hold()
@@ -51,7 +44,7 @@ object GyroFeedbackLoop extends Runnable:
    */
   def driveGyroFeedbackTime(
                                  goalHeading: Degrees,
-                                 dutyCycle: Percents,
+                                 dutyCycle: Percent,
                                  milliseconds: Int
                            ): Unit =
     val startTime = Time.now()

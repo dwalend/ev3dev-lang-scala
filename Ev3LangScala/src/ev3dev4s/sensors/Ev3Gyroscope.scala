@@ -3,16 +3,12 @@ package ev3dev4s.sensors
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
+import ev3dev4s.measure.{Degrees,Percent}
+import ev3dev4s.measure.Lego.*
 
 import java.io.File
 import java.nio.file.Path
 import scala.collection.immutable.ArraySeq
-
-import coulomb.accepted.Degree
-import coulomb.CoulombExtendWithUnits
-import spire.std.int._
-import spire.std.any._ 
-import coulomb.Quantity
 
 /**
  *
@@ -50,27 +46,26 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   case class HeadingMode() extends Mode:
     val name = "GYRO-ANG"
 
-    import ev3dev4s.measure.Lego.Degrees
-    @volatile var offset:Degrees = 0.withUnit[Degree]
+    @volatile var offset:Degrees = 0.degrees
     zero()
 
     /**
      * @return Angle (-32768 to 32767)
      */
     def readRawHeading():Degrees = this.synchronized{
-      checkPort(_.readValue0Int()).withUnit[Degree]
+      checkPort(_.readValue0Int()).degrees
     }
 
     def readHeading():Degrees = this.synchronized{
-      readRawHeading() - offset
+      (readRawHeading().value - offset.value).degrees
     }
 
     def zero():Unit = 
-      setHeading(0.withUnit[Degree])
+      setHeading(0.degrees)
     
 
     def setHeading(heading:Degrees):Unit = this.synchronized{
-      offset = readRawHeading() + heading
+      offset = (readRawHeading().value + heading.value).degrees
     }
 
   /**
