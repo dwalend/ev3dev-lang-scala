@@ -5,6 +5,8 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 import java.nio.file.Path
 
 import ev3dev4s.measure.Percent
+import ev3dev4s.measure.Degrees
+import ev3dev4s.measure.Lego.*
 
 /**
  *
@@ -55,8 +57,8 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   /**
    * @return position in degrees 
    */
-  def readPosition():Int =
-    positionReader.readAsciiInt()
+  def readPosition():Degrees =
+    positionReader.readAsciiInt().degrees
 
   val stateNamesToStates: Map[String, MotorState] = MotorState.values.map{ s => s.name -> s}.toMap
   def readState(): Array[MotorState] =

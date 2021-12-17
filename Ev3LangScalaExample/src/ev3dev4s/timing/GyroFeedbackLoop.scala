@@ -12,9 +12,11 @@ import ev3dev4s.sensors.Ev3KeyPad
 /**
  * A test of time to run a reasonable control loop for various comparisons
  * 
- * First test - before messing with unit-based numbers in controls
- * 
+ * Baseline - before messing with unit-based numbers in controls
  * 1638416904531 13929 loop closures in 60000 for 4.30756 milliseconds per loop closure
+ * 
+ * With my own units for Degrees and Percent (duty cyle)
+ * 1639715964387 14436 loop closures in 60000 for 4.1562757 milliseconds per loop closure
  */ 
 object GyroFeedbackLoop extends Runnable:
   def main(args: Array[String]): Unit =

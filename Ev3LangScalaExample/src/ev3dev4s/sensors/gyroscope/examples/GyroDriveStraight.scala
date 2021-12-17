@@ -5,6 +5,7 @@ import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.measure.{Degrees,Percent}
 import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.DegreesPerSecond
 
 /**
  *
@@ -47,12 +48,12 @@ object GyroDriveStraight extends Runnable:
                                  dutyCycle: Percent,
                                  distanceMm: Int
                            ): Unit =
-    val startTac = Robot.leftMotor.readPosition()
-    val goalTac = startTac + (360 * distanceMm) / Robot.driveWheelCircumference
+    val startTac: Degrees = Robot.leftMotor.readPosition()
+    val goalTac = (startTac.value + (360 * distanceMm) / Robot.driveWheelCircumference).degrees
 
     def notThereYet():Boolean =
       val tac = Robot.leftMotor.readPosition()
-      tac < goalTac
+      tac.value < goalTac.value
 
     driveGyroFeedback(goalHeading,dutyCycle,notThereYet)
 
@@ -272,7 +273,7 @@ object Robot:
   leftMotor.writeStopAction(MotorStopCommand.BRAKE)
   rightMotor.writeStopAction(MotorStopCommand.BRAKE)
 
-  def drive(leftSpeed: Int, rightSpeed: Int): Unit =
+  def drive(leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit =
     leftMotor.writeSpeed(leftSpeed)
     rightMotor.writeSpeed(rightSpeed)
     leftMotor.writeCommand(MotorCommand.RUN)

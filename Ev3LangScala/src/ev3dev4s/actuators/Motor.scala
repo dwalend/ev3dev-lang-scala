@@ -10,6 +10,9 @@ import java.io.IOException
 import java.nio.file.AccessDeniedException
 
 import ev3dev4s.measure.Percent
+import ev3dev4s.measure.DegreesPerSecond
+import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Degrees
 
 /**
  *
@@ -25,15 +28,15 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeDutyCycle(percent:Percent):Unit = checkPort(_.writeDutyCycle(percent))
 
-  def maxSpeed:Int
+  def maxSpeed:DegreesPerSecond
 
-  def writeSpeed(degreesPerSecond:Int):Unit =
-    val safeSpeed = if(Math.abs(degreesPerSecond) < maxSpeed ) degreesPerSecond
+  def writeSpeed(speed:DegreesPerSecond):Unit =
+    val safeSpeed = if(Math.abs(speed.value) < maxSpeed.value ) speed
                     else
-                      Log.log(s"requested speed $degreesPerSecond is greater than $maxSpeed - using $maxSpeed")
-                      if(degreesPerSecond > 0) maxSpeed
-                      else -maxSpeed
-    checkPort(_.writeSpeed(safeSpeed))
+                      Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
+                      if(speed.value > 0) maxSpeed
+                      else (-maxSpeed.value).degreesPerSecond
+    checkPort(_.writeSpeed(safeSpeed.value))
 
   def writePosition(degrees:Int):Unit = checkPort(_.writePosition(degrees))
 
@@ -46,7 +49,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   /**
    * @return position in degrees
    */
-  def readPosition():Int = checkPort(_.readPosition())
+  def readPosition():Degrees = checkPort(_.readPosition())
 
   def readState(): Array[MotorState] = checkPort(_.readState())
 
@@ -69,22 +72,22 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeDutyCycle(percent)
     writeCommand(MotorCommand.RUN_DIRECT)
 
-  def run(degreesPerSecond:Int):Unit =
-    writeSpeed(degreesPerSecond)
+  def run(speed:DegreesPerSecond):Unit =
+    writeSpeed(speed)
     writeCommand(MotorCommand.RUN)
     
-  def runToAbsolutePosition(degreesPerSecond:Int,degrees:Int):Unit =
-    writeSpeed(degreesPerSecond)
+  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Int):Unit =
+    writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
     
-  def runToRelativePosition(degreesPerSecond:Int,degrees:Int):Unit =
-    writeSpeed(degreesPerSecond)
+  def runToRelativePosition(speed:DegreesPerSecond,degrees:Int):Unit =
+    writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
 
-  def runForDuration(degreesPerSecond:Int,milliseconds:Int):Unit =
-    writeSpeed(degreesPerSecond)
+  def runForDuration(speed:DegreesPerSecond,milliseconds:Int):Unit =
+    writeSpeed(speed)
     writeDuration(milliseconds)
     writeCommand(MotorCommand.RUN_TIME)
 
@@ -93,7 +96,7 @@ sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]
     MotorPortScanner.findGadgetDir(port,Ev3LargeMotor.driverName)
       .map(MotorFS(_))
 
-  override val maxSpeed: Int = 1050
+  override val maxSpeed: DegreesPerSecond = 1050.degreesPerSecond
 
 object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
@@ -103,7 +106,7 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
     MotorPortScanner.findGadgetDir(port,Ev3MediumMotor.driverName)
       .map(MotorFS(_))
 
-  override val maxSpeed:Int = 1560
+  override val maxSpeed:DegreesPerSecond = 1560.degreesPerSecond
 
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"
