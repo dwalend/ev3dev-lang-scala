@@ -31,12 +31,11 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   def maxSpeed:DegreesPerSecond
 
   def writeSpeed(speed:DegreesPerSecond):Unit =
-    val safeSpeed = if(Math.abs(speed.value) < maxSpeed.value ) speed
+    val safeSpeed = if(speed.abs < maxSpeed ) speed
                     else
                       Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
-                      if(speed.value > 0) maxSpeed
-                      else (-maxSpeed.value).degreesPerSecond
-    checkPort(_.writeSpeed(safeSpeed.value))
+                      (speed.sign * maxSpeed).degreesPerSecond
+    checkPort(_.writeSpeed(safeSpeed))
 
   def writePosition(degrees:Int):Unit = checkPort(_.writePosition(degrees))
 

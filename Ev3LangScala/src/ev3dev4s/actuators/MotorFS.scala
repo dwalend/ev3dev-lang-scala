@@ -7,6 +7,7 @@ import java.nio.file.Path
 import ev3dev4s.measure.Percent
 import ev3dev4s.measure.Degrees
 import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.DegreesPerSecond
 
 /**
  *
@@ -39,8 +40,8 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   def writeDutyCycle(percent:Percent):Unit =
     dutyCycleSpWriter.writeAsciiInt(percent.value)
 
-  def writeSpeed(degreesPerSecond:Int):Unit =
-    speedSpWriter.writeAsciiInt(degreesPerSecond)
+  def writeSpeed(speed:DegreesPerSecond):Unit =
+    speedSpWriter.writeAsciiInt(speed.value)
 
   def writePosition(degrees:Int):Unit =
     positionWriter.writeAsciiInt(degrees)

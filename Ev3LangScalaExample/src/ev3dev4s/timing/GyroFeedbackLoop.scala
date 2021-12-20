@@ -17,6 +17,9 @@ import ev3dev4s.sensors.Ev3KeyPad
  * 
  * With my own units for Degrees and Percent (duty cyle)
  * 1639715964387 14436 loop closures in 60000 for 4.1562757 milliseconds per loop closure
+ * 
+ * With my own universal trait for the arithmetic operations
+ * 1640018240566 19308 loop closures in 60000 for 3.10752 milliseconds per loop closure
  */ 
 object GyroFeedbackLoop extends Runnable:
   def main(args: Array[String]): Unit =

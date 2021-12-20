@@ -29,7 +29,7 @@ object GyroDriveStraight extends Runnable:
 
 //    driveArcGyroFeedback(0,500,400)
 
-//    driveArcAbsoluteDistanceGyroSpeedFeedback(goalHeading = 0.withUnit[Degree],cruiseSpeed = 500,fineSpeed = 100,centerArcLengthMm = 800)
+//    driveArcAbsoluteDistanceGyroSpeedFeedback(goalHeading = 0.degree,cruiseSpeed = 500,fineSpeed = 100,centerArcLengthMm = 800)
 //    driveArcAbsoluteDistanceGyroSpeedFeedback(0,100,100)
     Robot.hold()
     Log.log(s"holding motors - waiting for button")
@@ -53,7 +53,7 @@ object GyroDriveStraight extends Runnable:
 
     def notThereYet():Boolean =
       val tac = Robot.leftMotor.readPosition()
-      tac.value < goalTac.value
+      tac < goalTac
 
     driveGyroFeedback(goalHeading,dutyCycle,notThereYet)
 
@@ -82,28 +82,31 @@ object GyroDriveStraight extends Runnable:
         if(heading == goalHeading) 0.percent
         else 
           //about 1% per degree off seems good - but it should really care about wheel base width
-          val proportionalSteerAdjust = (goalHeading.value - heading.value) * dutyCycle.value / 100//.withUnit[Degree]
-          // return adjustments of at minimum 1
-          if (Math.abs(proportionalSteerAdjust) > 1) proportionalSteerAdjust.percent
-          else if (proportionalSteerAdjust > 0) 1.percent
+          val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).percent
+          if (proportionalSteerAdjust.abs > 1.percent) proportionalSteerAdjust
+          else if (proportionalSteerAdjust == 0.percent) 0.percent
+          else if (proportionalSteerAdjust > 0.percent) 1.percent
           else -1.percent
         
 
-      def dutyCyclesFromAdjust():(Int,Int) =
-        val leftIdeal = (dutyCycle.value + steerAdjust.value)/10
-        val rightIdeal = (dutyCycle.value - steerAdjust.value)/10
-        val (leftSteering, rightSteering) =
-          if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
-          else if(steerAdjust.value > 0) (leftIdeal+1,rightIdeal)
-          else if(steerAdjust.value < 0) (leftIdeal,rightIdeal+1)
-          else (leftIdeal,rightIdeal)
-        if(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
-        else (leftSteering+10,rightSteering+10)
+      def dutyCyclesFromAdjust():(Percent,Percent) =
+        val leftIdeal = ((dutyCycle + steerAdjust)/10.unitless).percent
+        val rightIdeal = ((dutyCycle - steerAdjust)/10.unitless).percent
+        (leftIdeal,rightIdeal)
+        //todo for fractions 
+        //val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)
+          //todo for fractions 
+          //if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
+          //else if(steerAdjust.value > 0) (leftIdeal+1,rightIdeal)
+          //else if(steerAdjust.value < 0) (leftIdeal,rightIdeal+1)
+          //else (leftIdeal,rightIdeal)
+        //todo speed up very slow movement by 10. Not sure this is usefulif(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
+        //todo speed up very slow movement by 10. Not sure this is useful else (leftSteering+10,rightSteering+10) 
 
       val (leftDutyCycle,rightDutyCycle) = dutyCyclesFromAdjust()
 
-      Robot.leftMotor.writeDutyCycle(leftDutyCycle.percent)
-      Robot.rightMotor.writeDutyCycle(rightDutyCycle.percent)
+      Robot.leftMotor.writeDutyCycle(leftDutyCycle)
+      Robot.rightMotor.writeDutyCycle(rightDutyCycle)
       Thread.`yield`()
 /*
 
