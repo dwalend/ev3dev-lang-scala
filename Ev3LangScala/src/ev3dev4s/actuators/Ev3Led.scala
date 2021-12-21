@@ -24,6 +24,7 @@ enum Ev3Led(side:Int) extends AutoCloseable:
   private val greenWriter = ChannelRewriter(greenPath)
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
+  //todo do we want Intensity (0 to 255) instead of an Int?
   def writeBrightness(red:Int,green:Int):Unit = this.synchronized {
     redWriter.writeAsciiInt(red)
     greenWriter.writeAsciiInt(green)

@@ -2,6 +2,9 @@ package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.ChannelRereader
 
+import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Percent
+
 import java.nio.file.Path
 
 /**
@@ -27,8 +30,8 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
      * Reflected light
      * @return Reflected light intensity (0 to 100)
      */
-    def readReflect():Int = this.synchronized{
-      checkPort(_.readValue0Int())
+    def readReflect():Percent = this.synchronized{
+      checkPort(_.readValue0Int().percent)
     }
 
   private lazy val onlyAmbientMode = AmbientMode()
@@ -42,8 +45,8 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
      * Ambient light
      * @return Ambient light intensity (0 to 100)
      */
-    def readAmbient():Int = this.synchronized{
-      checkPort(_.readValue0Int())
+    def readAmbient():Percent = this.synchronized{
+      checkPort(_.readValue0Int().percent)
     }
 
   private lazy val onlyColorMode = ColorMode()

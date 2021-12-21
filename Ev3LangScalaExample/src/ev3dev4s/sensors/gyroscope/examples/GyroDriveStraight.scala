@@ -4,7 +4,7 @@ import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, Mot
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.measure.{Degrees,Percent}
-import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Conversions.*
 import ev3dev4s.measure.DegreesPerSecond
 
 /**

@@ -7,6 +7,8 @@ import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import java.io.File
 
+import ev3dev4s.measure.{MilliSeconds,Percent}
+import ev3dev4s.measure.Conversions.*
 
 /**
  * drives sound via shelling out
@@ -17,22 +19,12 @@ import java.io.File
 //todo maybe just Toolkit.getDefaultToolkit().beep()
 
 object Sound {
-  private var volume = 0
+  private var volume = 50.percent
 
-  /**
-   * Beeps once.
-   */
   def beep():Unit =
     Shell.execute("beep")
 
-  /**
-   * Plays a tone, given its frequency and duration.
-   *
-   * @param frequency The frequency of the tone in Hertz (Hz).
-   * @param duration  The duration of the tone, in milliseconds.
-   * @param volume    The volume of the playback 100 corresponds to 100%
-   */
-  def playTone(frequency: Int, duration: Int, volume: Int):Unit =
+  def playTone(frequency: Int, duration: MilliSeconds, volume: Percent):Unit =
     this.setVolume(volume)
     this.playTone(frequency, duration)
 
@@ -42,7 +34,7 @@ object Sound {
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Int, duration: Int):Unit =
+  def playTone(frequency: Int, duration: MilliSeconds):Unit =
     val cmdTone = s"beep -f $frequency -l $duration"
     Shell.execute(cmdTone)
 
@@ -53,7 +45,7 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-  def playSample(file: File, volume: Int):Unit =
+  def playSample(file: File, volume: Percent):Unit =
     this.setVolume(volume)
     this.playSample(file)
 
@@ -77,17 +69,15 @@ object Sound {
    *
    * @param volume 0-100
    */
-  def setVolume(volume: Int):Unit =
+  def setVolume(volume: Percent):Unit =
     this.volume = volume
     val cmdVolume = s"amixer set PCM,0 $volume%"
     Shell.execute(cmdVolume)
 
   /**
    * Get the current master volume level
-   *
-   * @return the current master volume 0-100
-   */
-  def getVolume:Int = volume
+   */ 
+  def getVolume:Percent = volume
 
   //todo text to speech from https://www.ev3dev.org/docs/tutorials/using-ev3-speaker/
 }

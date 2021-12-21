@@ -5,7 +5,7 @@ import ev3dev4s.os.Time
 import ev3dev4s.Log
 
 import ev3dev4s.measure.{Degrees,Percent}
-import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Conversions.*
 
 import ev3dev4s.sensors.Ev3KeyPad
 

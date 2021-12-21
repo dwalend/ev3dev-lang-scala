@@ -3,7 +3,7 @@ package ev3dev4s.actuators.examples
 import ev3dev4s.Ev3System
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
 
-import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Conversions.*
 
 /**
  *

@@ -11,8 +11,9 @@ import java.nio.file.AccessDeniedException
 
 import ev3dev4s.measure.Percent
 import ev3dev4s.measure.DegreesPerSecond
-import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Conversions.*
 import ev3dev4s.measure.Degrees
+import ev3dev4s.measure.MilliSeconds
 
 /**
  *
@@ -37,13 +38,13 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
                       (speed.sign * maxSpeed).degreesPerSecond
     checkPort(_.writeSpeed(safeSpeed))
 
-  def writePosition(degrees:Int):Unit = checkPort(_.writePosition(degrees))
+  def writePosition(degrees:Degrees):Unit = checkPort(_.writePosition(degrees))
 
-  def resetPosition():Unit = writePosition(0)
+  def resetPosition():Unit = writePosition(0.degrees)
 
-  def writeGoalPosition(degrees:Int):Unit = checkPort(_.writeGoalPosition(degrees))
+  def writeGoalPosition(degrees:Degrees):Unit = checkPort(_.writeGoalPosition(degrees))
 
-  def writeDuration(milliseconds:Int):Unit = checkPort(_.writeDuration(milliseconds))
+  def writeDuration(milliseconds:MilliSeconds):Unit = checkPort(_.writeDuration(milliseconds))
 
   /**
    * @return position in degrees
@@ -75,17 +76,17 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeSpeed(speed)
     writeCommand(MotorCommand.RUN)
     
-  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Int):Unit =
+  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Degrees):Unit =
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
     
-  def runToRelativePosition(speed:DegreesPerSecond,degrees:Int):Unit =
+  def runToRelativePosition(speed:DegreesPerSecond,degrees:Degrees):Unit =
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
 
-  def runForDuration(speed:DegreesPerSecond,milliseconds:Int):Unit =
+  def runForDuration(speed:DegreesPerSecond,milliseconds:MilliSeconds):Unit =
     writeSpeed(speed)
     writeDuration(milliseconds)
     writeCommand(MotorCommand.RUN_TIME)

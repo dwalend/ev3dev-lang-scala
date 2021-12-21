@@ -1,6 +1,8 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.ChannelRereader
+import ev3dev4s.measure.Microvolts
+import ev3dev4s.measure.Conversions.*
 
 import java.io.File
 import java.nio.file.Path
@@ -15,8 +17,7 @@ object Ev3Battery extends AutoCloseable:
   private lazy val voltageRereader: ChannelRereader = ChannelRereader(Path.of(batteryDir.getAbsolutePath,"voltage_now"))
   private lazy val currentRereader: ChannelRereader = ChannelRereader(Path.of(batteryDir.getAbsolutePath,"current_now"))
 
-  def readMicrovolts(): Int = voltageRereader.readString().toInt
-  def readMillivolts(): Int = readMicrovolts() / 1000
+  def readMicrovolts(): Microvolts = voltageRereader.readAsciiInt().microvolts
 
   def readMicoramps(): Int = currentRereader.readString().toInt
 

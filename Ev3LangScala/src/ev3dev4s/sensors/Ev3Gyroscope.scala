@@ -4,7 +4,7 @@ import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
 import ev3dev4s.measure.{Degrees,Percent}
-import ev3dev4s.measure.Lego.*
+import ev3dev4s.measure.Conversions.*
 
 import java.io.File
 import java.nio.file.Path
@@ -128,7 +128,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
       //write  "auto" to the right port in /sys/class/lego-port/port1/mode
       Log.log(s"Restart sensor in $legoPortDir by writing auto to mode")
       ChannelRewriter.writeString(legoPortDir.resolve("mode"),"auto")
-      Time.pause(2000L)
+      Time.pause(2000.milliseconds)
     end restartSensorSoftBoot
 
     def scanForSensor(port:SensorPort):Boolean =
