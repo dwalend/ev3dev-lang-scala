@@ -43,7 +43,7 @@ The robot plows the blue chest into home
 
 The robot backs past the cargo plane and opens it with it's arm. Dangly bits on the arm scrape the grey container into home. 
 
-* Helicopter
+* Helicopter (other team's)
 
 Scrape the packet off the helicopter with that big arm. Recover the robot.
 
@@ -77,11 +77,19 @@ Use the arm to slide the second truck forward and hook it to the first truck.
 
 * Train Cargo
 
-Another "portable loading dock" - attaches to the train, not the tracks - this one wide enough to deliver a container to each car on the train. 
+A "portable loading dock" - attaches to the train, not the tracks - this one wide enough to deliver a container to each car on the train. It may travel with the train.
 
 * Train Repair
 
 Back pivot on right wheel, then use the arm to repair the tracks. Drive forward
+
+* Sorting center - blue container
+
+Pivot to face the sorting center. Use the fork to pick up the blue container
+
+* Blue circle
+
+Back up to escape the sorting center. Continue backwards to get enough room to pivot around and line up on the blue circle. Drive to the blue circle, maybe measuring off the back wall. Retract the tines to deliver the blue container.
 
 * Helicopter
 
@@ -89,31 +97,23 @@ Bump the helicopter to release the food packet.
 
 * Train Driving
 
-Lower an arm to catch the train, then slide the robot backward to move the grain.
+Allign to be parallel to the train tracks. Lower an arm to catch the train, then slide the robot backward to move the grain.
 
-* Sorting center
+* Sorting center - green container
 
-Pivot to face the sorting center. Use the fork to pick up the green container, then the blue container
-
-* Blue circle
-
-Retract the fork to drop off the blue container in the blue circle
+Pivot to face the sorting center. Use the fork to pick up the green container
 
 * Drawbridge
 
-Drive backward west. Use the arm to lower the drawbridge
+Escape the sorting center. Drive backward west. Use the arm to knock down the east drawbridge
 
 * Green circle
 
-Drive forward to the green circle. Retract the fork all the way to drop off the green container
+Drive forward to the green circle. Retract the fork all the way to drop off the green container.
 
-* Little plane
+* Little plane (if not part of an earlier sortie)
 
 Back out of the green circle. Use the arm to move the little plane. Head for home. Recover the robot.
-
-
-
-
 
 
 

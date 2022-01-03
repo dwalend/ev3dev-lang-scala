@@ -4,11 +4,11 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 
 import java.nio.file.Path
 
-import ev3dev4s.measure.Percent
 import ev3dev4s.measure.Degrees
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.measure.MilliSeconds
+import ev3dev4s.measure.DutyCycle
 
 /**
  *
@@ -38,8 +38,8 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   def writeStopAction(command:MotorStopCommand):Unit =
     stopActionWriter.writeString(command.command)
 
-  def writeDutyCycle(percent:Percent):Unit =
-    dutyCycleSpWriter.writeAsciiInt(percent.value)
+  def writeDutyCycle(dutyCycle:DutyCycle):Unit =
+    dutyCycleSpWriter.writeAsciiInt(dutyCycle.value)
 
   def writeSpeed(speed:DegreesPerSecond):Unit =
     speedSpWriter.writeAsciiInt(speed.value)

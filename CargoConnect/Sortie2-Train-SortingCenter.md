@@ -30,7 +30,7 @@ Route
 ** Hybred gyro-line follow (right side color sensor) to 
 
 
-latch truck on bridge
+* latch truck on bridge
 ** raise arm to bridge-catching height
 ** Hybred gyro-line follow to bump bridge (right side color sensor) - measure from parking line (left color sensor)
 ** Raise arm to vertical - out of way
@@ -51,6 +51,14 @@ Another "portable loading dock" - attaches to the train, not the tracks - this o
 
 Back pivot on right wheel, then use the arm to repair the tracks. Drive forward
 
+* Sorting center - blue
+
+Pivot to face the sorting center. Use the fork to pick up the blue container
+
+* Blue circle
+
+Retract the fork to drop off the blue container in the blue circle
+
 * Helicopter
 
 Bump the helicopter to release the food packet.
@@ -59,17 +67,13 @@ Bump the helicopter to release the food packet.
 
 Lower an arm to catch the train, then slide the robot backward to move the grain.
 
-* Sorting center
+* Sorting center - green
 
-Pivot to face the sorting center. Use the fork to pick up the green container, then the blue container
-
-* Blue circle
-
-Retract the fork to drop off the blue container in the blue circle
+Pivot to face the sorting center. Use the fork to pick up the green container
 
 * Drawbridge
 
-Drive backward west. Use the arm to lower the drawbridge
+Drive backward west. Use the arm to knock down the east drawbridge
 
 * Green circle
 

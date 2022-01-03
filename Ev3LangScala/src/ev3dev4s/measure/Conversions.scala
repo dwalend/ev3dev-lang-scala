@@ -9,4 +9,5 @@ object Conversions:
     def degreesPerSecond = new DegreesPerSecond(i)
     def unitless = new Unitless(i)
     def microvolts = new Microvolts(i)
+    def dutyCyclePercent = new DutyCycle(i)
   }

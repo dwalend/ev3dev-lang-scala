@@ -9,7 +9,7 @@ import java.nio.file.Path
 import java.io.IOException
 import java.nio.file.AccessDeniedException
 
-import ev3dev4s.measure.Percent
+import ev3dev4s.measure.DutyCycle
 import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.measure.Degrees
@@ -27,7 +27,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeStopAction(command:MotorStopCommand):Unit = checkPort(_.writeStopAction(command))
 
-  def writeDutyCycle(percent:Percent):Unit = checkPort(_.writeDutyCycle(percent))
+  def writeDutyCycle(dutyCycle:DutyCycle):Unit = checkPort(_.writeDutyCycle(dutyCycle))
 
   def maxSpeed:DegreesPerSecond
 
@@ -68,8 +68,8 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeStopAction(MotorStopCommand.HOLD)
     writeCommand(MotorCommand.STOP)
 
-  def runDutyCycle(percent:Percent):Unit =
-    writeDutyCycle(percent)
+  def runDutyCycle(dutyCycle:DutyCycle):Unit =
+    writeDutyCycle(dutyCycle)
     writeCommand(MotorCommand.RUN_DIRECT)
 
   def run(speed:DegreesPerSecond):Unit =

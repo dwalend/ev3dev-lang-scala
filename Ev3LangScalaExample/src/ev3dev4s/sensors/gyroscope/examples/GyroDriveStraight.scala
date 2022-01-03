@@ -3,9 +3,10 @@ package ev3dev4s.sensors.gyroscope.examples
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.measure.{Degrees,Percent}
+import ev3dev4s.measure.Degrees
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.measure.DegreesPerSecond
+import ev3dev4s.measure.DutyCycle
 
 /**
  *
@@ -45,7 +46,7 @@ object GyroDriveStraight extends Runnable:
    */
   def driveGyroFeedbackDistance(
                                  goalHeading: Degrees,
-                                 dutyCycle: Percent,
+                                 dutyCycle: DutyCycle,
                                  distanceMm: Int
                            ): Unit =
     val startTac: Degrees = Robot.leftMotor.readPosition()
@@ -69,29 +70,29 @@ object GyroDriveStraight extends Runnable:
    */
   def driveGyroFeedback(
                          goalHeading: Degrees,
-                         dutyCycle: Percent,
+                         dutyCycle: DutyCycle,
                          keepGoing: () => Boolean
                         ): Unit =
 
-    Robot.leftMotor.runDutyCycle(0.percent)
-    Robot.rightMotor.runDutyCycle(0.percent)
+    Robot.leftMotor.runDutyCycle(0.dutyCyclePercent)
+    Robot.rightMotor.runDutyCycle(0.dutyCyclePercent)
 
     while (keepGoing())
       val heading: Degrees = Robot.headingMode.readHeading()
-      val steerAdjust: Percent = //todo give this units
-        if(heading == goalHeading) 0.percent
+      val steerAdjust: DutyCycle = 
+        if(heading == goalHeading) 0.dutyCyclePercent
         else 
           //about 1% per degree off seems good - but it should really care about wheel base width
-          val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).percent
-          if (proportionalSteerAdjust.abs > 1.percent) proportionalSteerAdjust
-          else if (proportionalSteerAdjust == 0.percent) 0.percent
-          else if (proportionalSteerAdjust > 0.percent) 1.percent
-          else -1.percent
+          val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).dutyCyclePercent
+          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) proportionalSteerAdjust
+          else if (proportionalSteerAdjust == 0.dutyCyclePercent) 0.dutyCyclePercent
+          else if (proportionalSteerAdjust > 0.dutyCyclePercent) 1.dutyCyclePercent
+          else -1.dutyCyclePercent
         
 
-      def dutyCyclesFromAdjust():(Percent,Percent) =
-        val leftIdeal = ((dutyCycle + steerAdjust)/10.unitless).percent
-        val rightIdeal = ((dutyCycle - steerAdjust)/10.unitless).percent
+      def dutyCyclesFromAdjust():(DutyCycle,DutyCycle) =
+        val leftIdeal = ((dutyCycle + steerAdjust)/10.unitless).dutyCyclePercent
+        val rightIdeal = ((dutyCycle - steerAdjust)/10.unitless).dutyCyclePercent
         (leftIdeal,rightIdeal)
         //todo for fractions 
         //val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)

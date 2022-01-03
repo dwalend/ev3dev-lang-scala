@@ -61,3 +61,7 @@ class Unitless(val value:Int) extends AnyVal with Measured[Unitless]:
 
 class Microvolts(val value:Int) extends AnyVal with Measured[Microvolts]:
   def create(i:Int) = new Microvolts(i)
+
+class DutyCycle(val value:Int) extends AnyVal with Measured[DutyCycle]:
+  def create(i:Int) = new DutyCycle(i)
+
