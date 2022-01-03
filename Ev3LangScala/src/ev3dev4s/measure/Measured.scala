@@ -35,6 +35,8 @@ trait Measured[M <: Measured[M]] extends Any:
 
   def sign:Unitless = new Unitless(this.value.sign)
 
+  //todo figure out how to do a Range
+
 class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
   def create(i:Int) = new Degrees(i)
 
