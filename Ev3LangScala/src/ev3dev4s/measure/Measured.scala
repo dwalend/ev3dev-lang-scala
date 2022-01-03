@@ -65,3 +65,5 @@ class Microvolts(val value:Int) extends AnyVal with Measured[Microvolts]:
 class DutyCycle(val value:Int) extends AnyVal with Measured[DutyCycle]:
   def create(i:Int) = new DutyCycle(i)
 
+class LedInensity(val value:Int) extends AnyVal with Measured[LedInensity]:
+  def create(i:Int) = new LedInensity(i)

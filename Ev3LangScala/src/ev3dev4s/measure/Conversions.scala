@@ -10,4 +10,5 @@ object Conversions:
     def unitless = new Unitless(i)
     def microvolts = new Microvolts(i)
     def dutyCyclePercent = new DutyCycle(i)
+    def ledIntensity = new LedInensity(i)
   }
