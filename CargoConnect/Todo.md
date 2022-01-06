@@ -70,5 +70,7 @@ Equipment
 ** Arc drive
 
 * Core library
-** Fix duty cycle to be -100 to 100
-
+** Use ant tasks
+** scp from ant task in build.sc
+** ssh start jvm from ant task in build.sc
+** Auto scp and reload - based on a checksum

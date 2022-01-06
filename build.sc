@@ -140,4 +140,29 @@ object Ev3LangScalaExperimental extends ScalaModule {
   }
 }
 
+object CargoConnect extends ScalaModule {
+  override def artifactName: T[String] = "CargoConnect"
 
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
+
+  override def scalacOptions = Shared.scalacOptions
+
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
+
+  def scpJar():Command[CommandResult] = T.command {
+
+    val scpProc = os.proc(
+      'scp,
+      "-i", "~/.ssh/dwalend_ev3_id_rsa",
+      jar().path,
+      s"robot@ev3dev.local:${artifactName()}.jar"
+    )
+
+    val result: CommandResult = scpProc.call()
+    println(result.out)
+    println(result.err)
+
+    result
+  }
+}
