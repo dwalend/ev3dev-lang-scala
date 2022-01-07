@@ -6,16 +6,22 @@ Robot
 Robot Parts
 
 * Retracting Tines
-** Concept prototype
-** Puppet prototype
-** First version
-** Medium motor?
+** Rotate racks - stops in back, rack in front
+** Add bushing to axels - especially the yellow axel
 
 * Axial Power Takeoff
 ** High and back on the robot?
 ** Standard frame (5 x 7 or 7 x 11 frame pairs?)
 ** Standard gear options?
 ** Medium motor or large?
+
+* Front passive attachment socket
+** Add standard-sized passive attachment socket to front of robot
+
+* Wire conduits
+** Add wire conduit up from large motors and color sensors, but below power takeoff
+** Run sensor wires parallel to brick in cable stays 
+
 
 Power-take-off Attachments
 

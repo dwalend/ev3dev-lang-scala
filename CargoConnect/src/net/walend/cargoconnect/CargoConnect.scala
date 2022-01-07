@@ -28,9 +28,9 @@ object CargoConnect extends Runnable:
 
   val ttyMenu =
     val actions: Array[TtyMenuAction] = Array(
-      ForkCommands.ForkOutAndUp,
-      ForkCommands.ForkUpABit,
+      ForkCommands.ForkOutUp,
       ForkCommands.ForkIn,
+      ForkCommands.ForkOut,
       DespinGyro,
       Reload
     )
