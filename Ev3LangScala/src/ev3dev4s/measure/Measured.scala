@@ -11,6 +11,8 @@ trait Measured[M <: Measured[M]] extends Any:
 
   def create(i:Int):M
 
+ //todo figure out def toString():String
+
   def +(m:M):M = create(this.value + m.value)
 
   def - (m:M):M = create(this.value - m.value)
@@ -39,6 +41,8 @@ trait Measured[M <: Measured[M]] extends Any:
 
 class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
   def create(i:Int) = new Degrees(i)
+
+  //todo figure out override def toString() = s"${Integer.toString(value)}d"
 
   /**
    * @return a value between -180 and +179 

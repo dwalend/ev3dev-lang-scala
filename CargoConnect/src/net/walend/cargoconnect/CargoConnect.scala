@@ -28,18 +28,9 @@ object CargoConnect extends Runnable:
 
   val ttyMenu =
     val actions: Array[TtyMenuAction] = Array(
-      LedAction("Green", { () =>
-        Ev3System.leftLed.writeGreen()
-        Ev3System.rightLed.writeGreen()
-      }),
-      LedAction("Yellow", { () =>
-        Ev3System.leftLed.writeYellow()
-        Ev3System.rightLed.writeYellow()
-      }),
-      LedAction("Red", { () =>
-        Ev3System.leftLed.writeRed()
-        Ev3System.rightLed.writeRed()
-      }),
+      ForkCommands.ForkOutAndUp,
+      ForkCommands.ForkUpABit,
+      ForkCommands.ForkIn,
       DespinGyro,
       Reload
     )
@@ -55,8 +46,11 @@ object CargoConnect extends Runnable:
   //todo add color sensors
   def setSensorRows():Unit =
     Lcd.set(0,s"${elapsedTime}s",Lcd.RIGHT)
-    val heading = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading()}d")
+    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}d")
     Lcd.set(0,heading,Lcd.LEFT)
+
+    val forkDegrees = UnpluggedException.safeString(() => s"Fork ${Robot.forkMotor.readPosition().value}d")
+    Lcd.set(1,forkDegrees,Lcd.LEFT)
 
   object UpdateScreen extends Runnable:
     @volatile var keepGoing = true
