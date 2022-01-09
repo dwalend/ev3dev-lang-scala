@@ -7,6 +7,8 @@ import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
 
+import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction}
+
 /**
  *
  *
@@ -28,9 +30,9 @@ object CargoConnect extends Runnable:
 
   val ttyMenu =
     val actions: Array[TtyMenuAction] = Array(
-      ForkCommands.ForkOutUp,
-      ForkCommands.ForkIn,
-      ForkCommands.ForkOut,
+      MovesMenuAction("ForkUp",ForkMoves.ForkOutUp),
+      MovesMenuAction("ForkIn",ForkMoves.ForkIn),
+      MovesMenuAction("ForkOut",ForkMoves.ForkOut),
       DespinGyro,
       Reload
     )

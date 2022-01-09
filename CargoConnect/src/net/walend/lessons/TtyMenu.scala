@@ -1,4 +1,4 @@
-package net.walend.cargoconnect
+package net.walend.lessons
 
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
@@ -72,3 +72,7 @@ trait TtyMenuAction:
   def label:String = this.getClass.getSimpleName.dropRight(1).take(9) //Drop the $ and take the first 9 characters
 
   def act(menu: TtyMenu):Unit
+
+case class MovesMenuAction(override val label:String,moves:Move*) extends TtyMenuAction:
+  def act(menu: TtyMenu):Unit =
+    moves.foreach{_.move()}
