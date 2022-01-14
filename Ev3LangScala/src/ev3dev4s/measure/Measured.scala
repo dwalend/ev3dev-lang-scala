@@ -8,10 +8,11 @@ package ev3dev4s.measure
  */
 trait Measured[M <: Measured[M]] extends Any:
   def value:Int //todo fine to change to Float or spire's Ratio if Int doesn't work out
-
   def create(i:Int):M
+  def toString():String
 
  //todo figure out def toString():String
+  def unary_- = create(-this.value) //todo add type annotation when allowed
 
   def +(m:M):M = create(this.value + m.value)
 
@@ -41,6 +42,7 @@ trait Measured[M <: Measured[M]] extends Any:
 
 class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
   def create(i:Int) = new Degrees(i)
+  override def toString():String = Integer.toString(value)+"d"
 
   //todo figure out override def toString() = s"${Integer.toString(value)}d"
 
@@ -55,21 +57,34 @@ class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
 
 class Percent(val value:Int) extends AnyVal with Measured[Percent]:
   def create(i:Int) = new Percent(i)
+  override def toString():String = Integer.toString(value)+"%"
 
 class MilliSeconds(val value:Int) extends AnyVal with Measured[MilliSeconds]:
   def create(i:Int) = new MilliSeconds(i)
+  override def toString():String = Integer.toString(value)+"ms"
 
 class DegreesPerSecond(val value:Int) extends AnyVal with Measured[DegreesPerSecond]:
   def create(i:Int) = new DegreesPerSecond(i)
+  override def toString():String = Integer.toString(value)+"dps"
 
 class Unitless(val value:Int) extends AnyVal with Measured[Unitless]:
   def create(i:Int) = new Unitless(i)
+  override def toString():String = Integer.toString(value)
 
 class Microvolts(val value:Int) extends AnyVal with Measured[Microvolts]:
   def create(i:Int) = new Microvolts(i)
+  override def toString():String = Integer.toString(value)+"uv"
 
 class DutyCycle(val value:Int) extends AnyVal with Measured[DutyCycle]:
   def create(i:Int) = new DutyCycle(i)
+  override def toString():String = Integer.toString(value)+"%"
 
 class LedInensity(val value:Int) extends AnyVal with Measured[LedInensity]:
   def create(i:Int) = new LedInensity(i)
+  override def toString():String = Integer.toString(value)
+
+
+class MilliMeters(val value:Int) extends AnyVal with Measured[MilliMeters]:
+  def create(i:Int) = new MilliMeters(i)
+  override def toString():String = Integer.toString(value)+"mm"
+

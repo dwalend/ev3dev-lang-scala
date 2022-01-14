@@ -7,7 +7,9 @@ import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
 
-import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction}
+import ev3dev4s.measure.Conversions.*
+
+import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistanceForward,GyroSetHeading,GyroDriveDistanceBackward,DespinGyro,Controller}
 
 /**
  *
@@ -15,63 +17,35 @@ import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction}
  * @author David Walend
  * @since v0.0.0
  */
-object CargoConnect extends Runnable:
+object CargoConnect:
   def main(args: Array[String]): Unit =
-    run()
+    lcdView.run()
 
-  override def run(): Unit =
-    val timeThread = new Thread(UpdateScreen)
-    timeThread.setDaemon(true)
-    timeThread.start()
-
-    ttyMenu.loop()
-
-    UpdateScreen.keepGoing = false
-
-  val ttyMenu =
-    val actions: Array[TtyMenuAction] = Array(
-      MovesMenuAction("ForkUp",ForkMoves.ForkOutUp),
-      MovesMenuAction("ForkIn",ForkMoves.ForkIn),
-      MovesMenuAction("ForkOut",ForkMoves.ForkOut),
+  val lcdView:Controller = Controller(actions,setSensorRows)
+  
+  val actions = Array(
+      MovesMenuAction("WSortToBlue",SortingCenter.deliverBlueFromWestSlot),
+      MovesMenuAction("GyroBack",Seq(GyroDriveDistanceBackward(0.degrees,-Robot.fineSpeed,-(16*8).mm),Robot.Coast)),
+      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
+      MovesMenuAction("SetGyro90",Seq(GyroSetHeading(90.degrees))),
+      MovesMenuAction("Gyro90Back",Seq(
+        GyroSetHeading(90.degrees),
+        GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,(16*8).mm),
+        Robot.Brake
+      )),
+      MovesMenuAction("GyroDrive",Seq(GyroDriveDistanceForward(0.degrees,500.degreesPerSecond,1000.mm),Robot.Brake)),
+      MovesMenuAction("SlowGyroDrive",Seq(GyroDriveDistanceForward(0.degrees,50.degreesPerSecond,1000.mm),Robot.Brake)),
+      MovesMenuAction("ForkUp",Seq(ForkMoves.ForkOutUp)),
+      MovesMenuAction("ForkIn",Seq(ForkMoves.ForkIn)),
+      MovesMenuAction("ForkOut",Seq(ForkMoves.ForkOut)),
       DespinGyro,
-      Reload
     )
-    TtyMenu(actions, setLcd)
-
-  def setLcd(ttyMenu: TtyMenu):Unit =
-    ttyMenu.setActionRow(3)
-    setSensorRows()
-
-  var startTime = System.currentTimeMillis()
-  def elapsedTime = (System.currentTimeMillis() - startTime)/1000
 
   //todo add color sensors
   def setSensorRows():Unit =
-    Lcd.set(0,s"${elapsedTime}s",Lcd.RIGHT)
+    Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
     val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}d")
     Lcd.set(0,heading,Lcd.LEFT)
 
     val forkDegrees = UnpluggedException.safeString(() => s"Fork ${Robot.forkMotor.readPosition().value}d")
     Lcd.set(1,forkDegrees,Lcd.LEFT)
-
-  object UpdateScreen extends Runnable:
-    @volatile var keepGoing = true
-
-    override def run(): Unit =
-      while(keepGoing)
-        if(!ttyMenu.doingAction) ttyMenu.drawScreen()
-        Thread.sleep(500)
-
-object DespinGyro extends TtyMenuAction:
-  override def act(menu: TtyMenu): Unit =
-    Robot.gyroscope.despin()
-
-object Reload extends TtyMenuAction:
-    override def act(ttyMenu: TtyMenu): Unit = ttyMenu.stopLoop()
-
-case class LedAction(aLabel:String,action:() => Unit) extends TtyMenuAction {
-  override def label: String = aLabel
-
-  override def act(menu: TtyMenu): Unit =
-    action()
-}
