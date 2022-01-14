@@ -64,6 +64,36 @@ case class GyroDriveDistanceBackward(
 case class GyroSetHeading(heading:Degrees) extends Move:
   def move():Unit = Robot.gyroscope.headingMode().setHeading(heading)  
 
-object DespinGyro extends TtyMenuAction:
-  override def act(menu: TtyMenu): Unit =
+object DespinGyro extends Move:
+  def move(): Unit =
     Robot.gyroscope.despin()
+
+object TestGyroDrive:
+  val actions: Array[TtyMenuAction] = Array(
+      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
+      MovesMenuAction("GyroForward0",Seq(GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,500.mm),Robot.Hold)),
+      MovesMenuAction("GyroBack0",Seq(GyroDriveDistanceBackward(0.degrees,-Robot.fineSpeed,-500.mm),Robot.Hold)),
+      MovesMenuAction("SetGyro90",Seq(GyroSetHeading(90.degrees))),
+      MovesMenuAction("GyroForward90",Seq(GyroDriveDistanceForward(90.degrees,Robot.fineSpeed,500.mm),Robot.Hold)),
+      MovesMenuAction("GyroBack90",Seq(GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,-500.mm),Robot.Hold)),
+      MovesMenuAction("Coast",Seq(Robot.Coast)),
+      MovesMenuAction("Despin",Seq(DespinGyro))
+    )
+
+  def setSensorRows():Unit =
+    import ev3dev4s.lcd.tty.Lcd
+    import ev3dev4s.sysfs.UnpluggedException
+
+    Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
+    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}")
+    Lcd.set(0,heading,Lcd.LEFT)
+
+    val leftMotorText = UnpluggedException.safeString(() => s"${Robot.leftDriveMotor.readPosition().value}")
+    Lcd.set(1,leftMotorText,Lcd.LEFT)
+    val rightMotorText = UnpluggedException.safeString(() => s"${Robot.rightDriveMotor.readPosition().value}")
+    Lcd.set(1,rightMotorText,Lcd.RIGHT)
+
+  val lcdView:Controller = Controller(actions,setSensorRows)
+
+  def main(args: Array[String]): Unit =
+    lcdView.run()

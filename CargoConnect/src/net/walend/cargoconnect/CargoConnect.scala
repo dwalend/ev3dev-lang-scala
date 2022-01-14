@@ -18,12 +18,7 @@ import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistan
  * @since v0.0.0
  */
 object CargoConnect:
-  def main(args: Array[String]): Unit =
-    lcdView.run()
-
-  val lcdView:Controller = Controller(actions,setSensorRows)
-  
-  val actions = Array(
+  val actions: Array[TtyMenuAction] = Array(
       MovesMenuAction("WSortToBlue",SortingCenter.deliverBlueFromWestSlot),
       MovesMenuAction("GyroBack",Seq(GyroDriveDistanceBackward(0.degrees,-Robot.fineSpeed,-(16*8).mm),Robot.Coast)),
       MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
@@ -38,7 +33,7 @@ object CargoConnect:
       MovesMenuAction("ForkUp",Seq(ForkMoves.ForkOutUp)),
       MovesMenuAction("ForkIn",Seq(ForkMoves.ForkIn)),
       MovesMenuAction("ForkOut",Seq(ForkMoves.ForkOut)),
-      DespinGyro,
+      MovesMenuAction("Despin",Seq(DespinGyro))
     )
 
   //todo add color sensors
@@ -49,3 +44,8 @@ object CargoConnect:
 
     val forkDegrees = UnpluggedException.safeString(() => s"Fork ${Robot.forkMotor.readPosition().value}d")
     Lcd.set(1,forkDegrees,Lcd.LEFT)
+
+  val lcdView:Controller = Controller(actions,setSensorRows)
+
+  def main(args: Array[String]): Unit =
+    lcdView.run()

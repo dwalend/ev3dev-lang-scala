@@ -123,3 +123,34 @@ case class RightRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)
     driveWheels = GyroTurn.rightRotate,
     setLeds = GyroTurn.showLedsForRotate
   )
+
+object TestGyroTurn:
+  val actions: Array[TtyMenuAction] = Array(
+      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
+      MovesMenuAction("LeftForward",Seq(LeftForwardPivot(-90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("RightForward",Seq(RightForwardPivot(90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("LeftRotate",Seq(LeftRotate(-90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("RightRotate",Seq(RightRotate(90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("LeftBackward",Seq(LeftBackwardPivot(-90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("RightBackward",Seq(RightBackwardPivot(90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("Coast",Seq(Robot.Coast)),
+      MovesMenuAction("Despin",Seq(DespinGyro))
+    )
+
+  def setSensorRows():Unit =
+    import ev3dev4s.lcd.tty.Lcd
+    import ev3dev4s.sysfs.UnpluggedException
+
+    Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
+    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}")
+    Lcd.set(0,heading,Lcd.LEFT)
+
+    val leftMotorText = UnpluggedException.safeString(() => s"${Robot.leftDriveMotor.readPosition().value}")
+    Lcd.set(1,leftMotorText,Lcd.LEFT)
+    val rightMotorText = UnpluggedException.safeString(() => s"${Robot.rightDriveMotor.readPosition().value}")
+    Lcd.set(1,rightMotorText,Lcd.RIGHT)
+
+  val lcdView:Controller = Controller(actions,setSensorRows)
+
+  def main(args: Array[String]): Unit =
+    lcdView.run()
