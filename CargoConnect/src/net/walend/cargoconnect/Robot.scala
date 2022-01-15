@@ -43,7 +43,7 @@ object Robot:
   val Brake = StopMove(MotorStopCommand.BRAKE)
   val Hold = StopMove(MotorStopCommand.HOLD)   
 
-  val wheelDiameter = 92.millimeters
+  val wheelDiameter = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
   val wheelCircumference = (wheelDiameter.value * Math.PI).toInt.millimeters
 
   val cruiseSpeed = 500.degreesPerSecond
@@ -53,6 +53,7 @@ object Robot:
     def move():Unit = 
       Sound.beep()
 
-  object WaitForButton extends Move:
+  object StopAndWaitForButton extends Move:
     def move():Unit = 
+      Hold.move()
       Ev3KeyPad.blockUntilAnyKey()

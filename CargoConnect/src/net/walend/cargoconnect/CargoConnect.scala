@@ -17,19 +17,9 @@ import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistan
  * @author David Walend
  * @since v0.0.0
  */
-object CargoConnect:
+object CargoConnect extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
       MovesMenuAction("WSortToBlue",SortingCenter.deliverBlueFromWestSlot),
-      MovesMenuAction("GyroBack",Seq(GyroDriveDistanceBackward(0.degrees,-Robot.fineSpeed,-(16*8).mm),Robot.Coast)),
-      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
-      MovesMenuAction("SetGyro90",Seq(GyroSetHeading(90.degrees))),
-      MovesMenuAction("Gyro90Back",Seq(
-        GyroSetHeading(90.degrees),
-        GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,(16*8).mm),
-        Robot.Brake
-      )),
-      MovesMenuAction("GyroDrive",Seq(GyroDriveDistanceForward(0.degrees,500.degreesPerSecond,1000.mm),Robot.Brake)),
-      MovesMenuAction("SlowGyroDrive",Seq(GyroDriveDistanceForward(0.degrees,50.degreesPerSecond,1000.mm),Robot.Brake)),
       MovesMenuAction("ForkUp",Seq(ForkMoves.ForkOutUp)),
       MovesMenuAction("ForkIn",Seq(ForkMoves.ForkIn)),
       MovesMenuAction("ForkOut",Seq(ForkMoves.ForkOut)),
@@ -47,5 +37,6 @@ object CargoConnect:
 
   val lcdView:Controller = Controller(actions,setSensorRows)
 
-  def main(args: Array[String]): Unit =
-    lcdView.run()
+  override def run():Unit = lcdView.run()
+
+  def main(args: Array[String]): Unit = run()

@@ -28,7 +28,6 @@ abstract class GyroDrive extends Move:
         if(heading == goalHeading) 0.degreesPerSecond
         else 
           ((goalHeading - heading).value * 6).degreesPerSecond //todo should also be proportional to goal speed
-      Log.log(s"gyroDriveStraight $goalHeading $heading $steerAdjust drive(${goalSpeed + steerAdjust},${goalSpeed - steerAdjust})")
       Robot.drive(goalSpeed + steerAdjust, goalSpeed - steerAdjust) //todo duty cycle instead?    
       gyroDriveStraight(goalHeading,goalSpeed,keepGoing,setLeds)
 
@@ -56,7 +55,6 @@ case class GyroDriveDistanceBackward(
   def move():Unit = 
     val initialPosition = Robot.leftDriveMotor.readPosition()
     def notBackEnough():Boolean =
-      Log.log(s"notBackEnough ${Robot.leftDriveMotor.readPosition()} $initialPosition + ${((distance.value * 360)/Robot.wheelCircumference.value).degrees}")
       Robot.leftDriveMotor.readPosition() > initialPosition + ((distance.value * 360)/Robot.wheelCircumference.value).degrees
 
     gyroDriveStraight(goalHeading,goalSpeed,notBackEnough)   
@@ -68,7 +66,7 @@ object DespinGyro extends Move:
   def move(): Unit =
     Robot.gyroscope.despin()
 
-object TestGyroDrive:
+object TestGyroDrive extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
       MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
       MovesMenuAction("GyroForward0",Seq(GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,500.mm),Robot.Hold)),
@@ -95,5 +93,6 @@ object TestGyroDrive:
 
   val lcdView:Controller = Controller(actions,setSensorRows)
 
-  def main(args: Array[String]): Unit =
-    lcdView.run()
+  override def run():Unit = lcdView.run()
+
+  def main(args: Array[String]): Unit = run()

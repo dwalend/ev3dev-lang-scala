@@ -15,7 +15,7 @@ object GyroTurn:
  
   val fullSpeedThreshold = 45.degrees
   val minSpeedThreshold = 5.degrees
-  val minSpeed = 10.degreesPerSecond
+  val minSpeed = 50.degreesPerSecond
 
   def showLedsForPivot(changing:Ev3Led,fixed:Ev3Led)(headingDiff:Degrees):Unit = 
     if (headingDiff > fullSpeedThreshold) changing.writeGreen()
@@ -40,8 +40,8 @@ object GyroTurn:
       Ev3Led.Left.writeBrightness(255.ledIntensity,127.ledIntensity)  
       Ev3Led.Right.writeBrightness(255.ledIntensity,127.ledIntensity)  
 
-  def leftRotate(speed:DegreesPerSecond) = Robot.drive((speed/2.unitless).degreesPerSecond,(-(speed/2.unitless)).degreesPerSecond)
-  def rightRotate(speed:DegreesPerSecond) = Robot.drive((-(speed/2.unitless)).degreesPerSecond,(speed/2.unitless).degreesPerSecond)
+  def leftRotate(speed:DegreesPerSecond) = Robot.drive((-speed/2.unitless).degreesPerSecond,(speed/2.unitless).degreesPerSecond)
+  def rightRotate(speed:DegreesPerSecond) = Robot.drive((speed/2.unitless).degreesPerSecond,(-speed/2.unitless).degreesPerSecond)
 
 abstract class GyroTurn(
     goalHeading: Degrees,
@@ -57,15 +57,15 @@ abstract class GyroTurn(
   @tailrec
   final def gyroTurnRecursive():Unit = 
     import GyroTurn.*
-    val heading = Robot.gyroHeading.readHeading() //read sensors into a structure
-    if(!keepGoing(heading)) () //return condition takes the sensor structure
+    val headingDiff = goalHeading - Robot.gyroHeading.readHeading()  //read sensors into a structure
+    if(!keepGoing(headingDiff)) () //return condition takes the sensor structure
     else
-      val headingDiff = (heading - goalHeading).abs //proportional bit
-      setLeds(headingDiff) //indicators - add to drive
+      val absHeadingDiff = headingDiff.abs //proportional bit
+      setLeds(absHeadingDiff) //indicators - add to drive
 
       //proportional value
-      val speed = if (headingDiff > fullSpeedThreshold) goalSpeed
-                  else if (headingDiff > minSpeedThreshold) (goalSpeed * headingDiff / fullSpeedThreshold.value).degreesPerSecond 
+      val speed = if (absHeadingDiff > fullSpeedThreshold) goalSpeed
+                  else if (absHeadingDiff > minSpeedThreshold) (goalSpeed * absHeadingDiff / fullSpeedThreshold.value).degreesPerSecond 
                   else (minSpeed * goalSpeed.sign).degreesPerSecond
       driveWheels(speed)  
       gyroTurnRecursive() //recur
@@ -124,15 +124,15 @@ case class RightRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)
     setLeds = GyroTurn.showLedsForRotate
   )
 
-object TestGyroTurn:
+object TestGyroTurn extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
       MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
       MovesMenuAction("LeftForward",Seq(LeftForwardPivot(-90.degrees,Robot.fineSpeed),Robot.Hold)),
       MovesMenuAction("RightForward",Seq(RightForwardPivot(90.degrees,Robot.fineSpeed),Robot.Hold)),
       MovesMenuAction("LeftRotate",Seq(LeftRotate(-90.degrees,Robot.fineSpeed),Robot.Hold)),
       MovesMenuAction("RightRotate",Seq(RightRotate(90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("LeftBackward",Seq(LeftBackwardPivot(-90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("RightBackward",Seq(RightBackwardPivot(90.degrees,Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("LeftBackward",Seq(LeftBackwardPivot(-90.degrees,-Robot.fineSpeed),Robot.Hold)),
+      MovesMenuAction("RightBackward",Seq(RightBackwardPivot(90.degrees,-Robot.fineSpeed),Robot.Hold)),
       MovesMenuAction("Coast",Seq(Robot.Coast)),
       MovesMenuAction("Despin",Seq(DespinGyro))
     )
@@ -152,5 +152,6 @@ object TestGyroTurn:
 
   val lcdView:Controller = Controller(actions,setSensorRows)
 
-  def main(args: Array[String]): Unit =
-    lcdView.run()
+  override def run():Unit = lcdView.run()
+
+  def main(args: Array[String]): Unit = run()
