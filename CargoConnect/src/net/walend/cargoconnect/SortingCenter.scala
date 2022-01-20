@@ -7,11 +7,18 @@ import net.walend.lessons.{GyroSetHeading,GyroDriveDistanceBackward,LeftBackward
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import net.walend.lessons.RightRotate
+import net.walend.lessons.LeftRotate
+import ev3dev4s.measure.MilliMeters
 
+/**
+ * A collection of moves for the sorting center 
+ */
 object SortingCenter:
 
 /**
- * Start with the robot in contact with a slot
+ * Move to the correct slot, capture the blue container and deliver it to the blue circle
+ *
+ * Start with the robot in contact with the east slot
  * 
  * Fork forward and up
  * Back up 5 studs
@@ -22,26 +29,42 @@ object SortingCenter:
  * Backward 104mm at 270
  * Pull forks in 
  * Beep in triumph
- * 
  */ 
+  lazy val deliverBlueFromWestSlot:Seq[Move] = eastSlotToWestSlot ++ deliverBlueFromSlot(GyroDriveDistanceBackward(180.degrees,-Robot.fineSpeed,-68.mm)) 
+  lazy val deliverBlueFromCenterSlot:Seq[Move] = eastSlotToCenterSlot ++ deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,44.mm)) 
+  lazy val deliverBlueFromEastSlot:Seq[Move] =  deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,(44+68).mm))
 
-  lazy val deliverBlueFromWestSlot:Seq[Move] = deliverBlueFromSlot(GyroDriveDistanceBackward(180.degrees,-Robot.fineSpeed,-68.mm)) 
-  lazy val deliverBlueFromCenterSlot:Seq[Move] = deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,44.mm)) 
-  lazy val deliverBlueFromEastSlot:Seq[Move] = deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,(44+68).mm))
+/**
+ * Move from the east slot to another slot (to capture blue) (todo eventually have defs to capture green as well)
+ * 
+ * Starting point for these is either 5 studs or 2 studs into the east slot of the sorting center (if the green 
+ * container is in the east slot)
+ * End point is 5 studs into the slot with the blue container (or two studs to pick up the green container)
+ */ 
+  private lazy val eastSlotToCenterSlot:Seq[Move] = eastSlotToOtherSlot(slotToSlotDistance)
+  private lazy val eastSlotToWestSlot:Seq[Move] = eastSlotToOtherSlot(slotToSlotDistance + slotToSlotDistance)
+  private lazy val slotToSlotDistance: MilliMeters = 1.studs + 11.studs + 4.mm
 
-  def deliverBlueFromSlot(eastWestCorrection:Move):Seq[Move] = 
-    captureBlueFromASlot ++ Seq(
-      GyroSetHeading(90.degrees),
-      Robot.Hold,
-      ForkMoves.ForkOutUp,
+  private def eastSlotToOtherSlot(distanceToSlot:MilliMeters):Seq[Move] = Seq(
+    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
+    GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,-6.studs),
+    RightRotate(180.degrees,Robot.fineSpeed),
+    GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,distanceToSlot),
+    LeftRotate(90.degrees,Robot.fineSpeed),
+    GyroDriveDistanceForward(90.degrees,Robot.fineSpeed,6.studs)
+  )
+
+  private def deliverBlueFromSlot(eastWestCorrection:Move):Seq[Move] = 
+    captureBlueFromAnySlot ++ Seq(
       GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,-(5*8).mm),
       RightRotate(180.degrees,Robot.fineSpeed),
       eastWestCorrection,
   ) ++ deliverBlueFromSouthOfBlueCircle
 
-  lazy val deliverBlueFromSouthOfBlueCircle = Seq(
+  private lazy val deliverBlueFromSouthOfBlueCircle = Seq(
     RightRotate(270.degrees,Robot.fineSpeed),
-    GyroDriveDistanceForward(270.degrees,Robot.fineSpeed,(800 + 80 -(2*33*8)).mm), //touches back wall - might stall
+    //touches back wall - might stall
+    GyroDriveDistanceForward(270.degrees,Robot.fineSpeed,(800 + 80 -(2*Robot.driveAxelToExtendedFork.value)).mm), 
     GyroDriveDistanceBackward(270.degrees,-Robot.fineSpeed,-104.mm),
     Robot.Hold,
     ForkMoves.ForkIn,
@@ -49,8 +72,8 @@ object SortingCenter:
     Robot.Coast  
   )
 
-  lazy val captureBlueFromASlot = Seq(
-    GyroSetHeading(90.degrees),
+  private lazy val captureBlueFromAnySlot = Seq(
+    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
     Robot.Hold,
     ForkMoves.ForkOutUp,
   )

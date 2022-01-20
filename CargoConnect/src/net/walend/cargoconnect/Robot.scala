@@ -45,6 +45,7 @@ object Robot:
 
   val wheelDiameter = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
   val wheelCircumference = (wheelDiameter.value * Math.PI).toInt.millimeters
+  val driveAxelToExtendedFork = 33.studs
 
   val cruiseSpeed = 500.degreesPerSecond
   val fineSpeed = 200.degreesPerSecond

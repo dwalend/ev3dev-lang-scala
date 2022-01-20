@@ -14,4 +14,5 @@ object Conversions:
     def ledIntensity = new LedInensity(i)
     def millimeters = new MilliMeters(i)
     def mm = new MilliMeters(i)
+    def studs = new MilliMeters(i*8)
   }
