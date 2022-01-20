@@ -64,7 +64,6 @@
 ### Sortie
 ### Route
 ### Route Segment
-### Move
 ### Robot state ??
 
 ## Routes
@@ -79,6 +78,7 @@
 ## Maneuver Library
 ### Start a defined maneuver library, move existing maneuvers there
 ### Gyro drive
+#### Accel/Decel
 ### Hybred sensor line follower
 ### Arc drive
 

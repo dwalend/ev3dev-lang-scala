@@ -48,6 +48,7 @@ object Robot:
 
   val cruiseSpeed = 500.degreesPerSecond
   val fineSpeed = 200.degreesPerSecond
+  val noSlipSpeed = 5.degreesPerSecond 
 
   object Beep extends Move:
     def move():Unit = 
