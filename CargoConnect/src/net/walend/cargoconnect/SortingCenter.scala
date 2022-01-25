@@ -15,6 +15,13 @@ import ev3dev4s.measure.MilliMeters
  */
 object SortingCenter:
 
+  enum Slot:
+    case West
+    case Center
+    case East
+
+  var blueSlot:Slot = Slot.West
+  var greenSlot:Slot = Slot.Center
 /**
  * Move to the correct slot, capture the blue container and deliver it to the blue circle
  *
@@ -30,9 +37,14 @@ object SortingCenter:
  * Pull forks in 
  * Beep in triumph
  */ 
-  lazy val deliverBlueFromWestSlot:Seq[Move] = eastSlotToWestSlot ++ deliverBlueFromSlot(GyroDriveDistanceBackward(180.degrees,-Robot.fineSpeed,-68.mm)) 
-  lazy val deliverBlueFromCenterSlot:Seq[Move] = eastSlotToCenterSlot ++ deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,44.mm)) 
-  lazy val deliverBlueFromEastSlot:Seq[Move] =  deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,(44+68).mm))
+  lazy val deliverBlueFromWestSlot:Seq[Move] =
+    eastSlotToWestSlot ++
+    deliverBlueFromSlot(GyroDriveDistanceBackward(180.degrees,-Robot.fineSpeed,-(slotToSlotDistance+slotToSlotDistance-eastSlotToBlueCircleCenterOffset)))
+  lazy val deliverBlueFromCenterSlot:Seq[Move] =
+    eastSlotToCenterSlot ++
+    deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset-slotToSlotDistance))
+  lazy val deliverBlueFromEastSlot:Seq[Move] =
+    deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset))
 
 /**
  * Move from the east slot to another slot (to capture blue) (todo eventually have defs to capture green as well)
@@ -44,6 +56,7 @@ object SortingCenter:
   private lazy val eastSlotToCenterSlot:Seq[Move] = eastSlotToOtherSlot(slotToSlotDistance)
   private lazy val eastSlotToWestSlot:Seq[Move] = eastSlotToOtherSlot(slotToSlotDistance + slotToSlotDistance)
   private lazy val slotToSlotDistance: MilliMeters = 1.studs + 11.studs + 4.mm
+  private lazy val eastSlotToBlueCircleCenterOffset:MilliMeters = 14.studs
 
   private def eastSlotToOtherSlot(distanceToSlot:MilliMeters):Seq[Move] = Seq(
     GyroSetHeading(90.degrees), //todo remove this gyro set when done testing

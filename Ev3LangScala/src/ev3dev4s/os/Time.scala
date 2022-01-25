@@ -18,3 +18,6 @@ object Time:
     System.gc()
     val sleepTime = deadline - now()
     if(sleepTime > 0) Thread.sleep(sleepTime)
+
+  def pause():Unit = 
+    Thread.`yield`()
