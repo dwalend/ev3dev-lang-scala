@@ -191,3 +191,21 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
 
 object Ev3Gyroscope:
   val driverName = "lego-ev3-gyro"
+
+  /* todo another way for despin to fail - a new kind of unplugged thing
+1643172523163 Read 0 from /sys/class/lego-sensor/sensor4
+java.io.IOException: Invalid argument
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite0(Native Method)
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite(FileDispatcherImpl.java:68)
+	at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:109)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:79)
+	at java.base/sun.nio.ch.FileChannelImpl.writeInternal(FileChannelImpl.java:850)
+	at java.base/sun.nio.ch.FileChannelImpl.write(FileChannelImpl.java:836)
+	at ev3dev4s.sysfs.ChannelRewriter.writeString(ChannelRewriter.scala:25)
+	at ev3dev4s.sysfs.ChannelRewriter$.writeString(ChannelRewriter.scala:40)
+	at ev3dev4s.sensors.Ev3Gyroscope.scanForSensor$2$$anonfun$1(Ev3Gyroscope.scala:149)
+	at scala.Option.map(Option.scala:242)
+	at ev3dev4s.sensors.Ev3Gyroscope.scanForSensor$1(Ev3Gyroscope.scala:152)
+	at ev3dev4s.sensors.Ev3Gyroscope.despin(Ev3Gyroscope.scala:179)
+
+  */
