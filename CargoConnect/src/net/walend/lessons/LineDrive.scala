@@ -40,6 +40,7 @@ abstract class LineDrive extends Move:
     else
       val brightness:Percent = colorSensor.reflectMode().readReflect()
       val calibrationCenter:Percent = 50.percent //todo calibrate the color sensors and get the value from Robot - which means bring it in with the color sensor
+      //todo changanble value for how much to steer - currently 1/3
       val colorSteerAdjust = (blackSide.steerSign * (brightness - calibrationCenter).value / 3).degreesPerSecond //todo should also be proportional to goal speed
       val steerAdjust = colorSteerAdjust
 
@@ -63,6 +64,21 @@ case class LineDriveDistanceForward(
       Robot.leftDriveMotor.readPosition() < initialPosition + ((distance.value * 360)/Robot.wheelCircumference.value).degrees
 
     lineDriveStraight(colorSensor,blackSide,goalSpeed,notFarEnough)    
+
+case class AquireLine(
+  goalHeading:Degrees,
+  colorSensor:Ev3ColorSensor,
+  blackSide:BlackSide,
+  goalSpeed: DegreesPerSecond
+
+) extends Move:
+
+  def move():Unit = 
+    //Find white
+    //Find black while adjusting heading
+    //Settle in with high constant
+    //Use low constant
+    ???
 
 enum BlackSide(val steerSign:Int):
   case Left extends BlackSide(-1)

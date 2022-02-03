@@ -68,7 +68,7 @@
 
 ## Routes
 ### Program ship route
-### Define train and sorting center route
+### Define train and sorting center route *
 #### Blue east to blue circle
 #### Blue center to blue circle
 #### Blue east to blue circle
@@ -76,14 +76,13 @@
 ### Define park route
 
 ## Maneuver Library
-### Start a defined maneuver library, move existing maneuvers there
-### Gyro drive
-#### Accel/Decel
-### Hybred sensor line follower
-### Arc drive
+#### Accel/Decel *
+### Hybred sensor line follower *
+#### Can this go backward ? *
+### Arc drive *
 
 ## Core library
-### Use ant tasks
-### scp from ant task in build.sc
-### ssh start jvm from ant task in build.sc
-### Auto scp and reload - based on a checksum
+### Use ant tasks T
+### scp from ant task in build.sc T
+### ssh start jvm from ant task in build.sc T
+### Auto scp and reload - based on a checksum T
