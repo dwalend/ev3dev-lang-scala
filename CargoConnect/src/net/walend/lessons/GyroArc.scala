@@ -34,10 +34,8 @@ abstract class GyroArc() extends Move:
       //figure out actual remaining distance
       val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
       val remainingDistance = goalOdo - ((outerMotorDegrees * Robot.wheelCircumference)/360).mm 
-      Log.log(s"goal $goalOdo current ${((outerMotorDegrees * Robot.wheelCircumference)/360).mm } remaining $remainingDistance")
 
       val expectedRemainingDegrees = ((remainingDistance.value * 360) / (radius.value * 2 * Math.PI)).toInt.degrees
-      Log.log(s"heading $heading remaining $remainingDegrees expectedRemaining $expectedRemainingDegrees")
 
       //todo steer adjust 
 
@@ -47,7 +45,6 @@ abstract class GyroArc() extends Move:
           ((remainingDegrees - expectedRemainingDegrees).value * 6).degreesPerSecond //todo should also be proportional to goal speed
       val outerMotorSpeed = goalSpeed + steerAdjust
       val innerMotorSpeed = (((goalSpeed - steerAdjust).value * (radius - Robot.wheelToWheel).value)/radius.value).degreesPerSecond
-      Log.log(s"outer $outerMotorSpeed inner $innerMotorSpeed")
 
       //todo maybe pass in the Robot.drive function and steer adjust ???
       //todo duty cycle instead
