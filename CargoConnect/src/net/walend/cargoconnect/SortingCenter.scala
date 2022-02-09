@@ -25,6 +25,19 @@ object SortingCenter:
   var blueSlot:Slot = Slot.West
   var greenSlot:Slot = Slot.Center
 
+  def startToEastSlot:Seq[Move] = Seq(
+    //Forward at -45
+    //Aquaire line black-on-left on right sensor at -45
+    //follow line black-on-left on right sensor at -45 until left sensor sees white-black-white
+    //follow line black-on-left on right sensor at  -45 X mm
+    //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor
+    //follow line black-on-right with right sensor with heading 0 until white-black on left sensor
+    //drive straight at heading 0 2 studs
+    //follow line black-on-right with right sensor with heading 0 X mm
+    //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
+    //line drive to east slot
+  )
+
 /**
 * Line drive/gyro assist parallel to the train tracks to the east slot 
 * 

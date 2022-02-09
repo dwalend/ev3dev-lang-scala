@@ -52,6 +52,24 @@ abstract class GyroArc() extends Move:
                         else Robot.drive(innerMotorSpeed,outerMotorSpeed)
       gyroArc(goalHeading,goalOdo,goalSpeed,radius,outerMotor,keepGoing,setLeds)
 
+  def driveArc(
+            goalHeading: Degrees,
+            goalSpeed: DegreesPerSecond,
+            radius:MilliMeters,
+            outerMotor:Motor,
+            keepGoing: () => Boolean,
+            setLeds: () => Unit = Ev3Led.writeBothGreen
+          ) =
+    val heading:Degrees = Robot.gyroHeading.readHeading()
+    val remainingDegrees = goalHeading - heading
+
+    val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
+    val initialOdo = ((outerMotorDegrees * Robot.wheelCircumference)/360).mm
+    val deltaOdo = (goalSpeed.value.sign * (((radius.value * 2 * Math.PI) * remainingDegrees.value.abs) /360).toInt).mm
+    val goalOdo = initialOdo + deltaOdo
+
+    gyroArc(goalHeading,goalOdo,goalSpeed,radius,outerMotor,keepGoing,setLeds)
+
 case class GyroArcForwardRight(
             goalHeading: Degrees,
             radius: MilliMeters,
@@ -60,28 +78,38 @@ case class GyroArcForwardRight(
           ) extends GyroArc:
 
   val outerMotor = Robot.leftDriveMotor
-  def move():Unit = 
-    val heading:Degrees = Robot.gyroHeading.readHeading()
-    val remainingDegrees = goalHeading - heading
-  
-    val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
-    val initialOdo = ((outerMotorDegrees * Robot.wheelCircumference)/360).mm 
-    val deltaOdo = (((radius.value * 2 * Math.PI) * remainingDegrees.value) /360).toInt.mm
-    val goalOdo = initialOdo + deltaOdo
-
+  def move():Unit =
 //todo what to do for "not far enough" ? distance and/or angle? 
     def notFarEnough():Boolean =
       Robot.gyroHeading.readHeading() < goalHeading
 
-    gyroArc(goalHeading,goalOdo,goalSpeed,radius,outerMotor,notFarEnough,setLeds)
+    driveArc(goalHeading,goalSpeed,radius,outerMotor,notFarEnough,setLeds)
+
+case class GyroArcForwardLeft(
+                                goalHeading: Degrees,
+                                radius: MilliMeters,
+                                goalSpeed: DegreesPerSecond,  //speed of the outer (left) wheel
+                                setLeds: () => Unit = Ev3Led.writeBothGreen
+                              ) extends GyroArc:
+
+  val outerMotor = Robot.rightDriveMotor
+  def move():Unit =
+    //todo what to do for "not far enough" ? distance and/or angle?
+    def notFarEnough():Boolean =
+      Robot.gyroHeading.readHeading() > goalHeading
+
+    driveArc(goalHeading,goalSpeed,radius,outerMotor,notFarEnough,setLeds)
 
 object TestGyroArc extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
-      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
-      MovesMenuAction("ArcForward",Seq(GyroArcForwardRight(90.degrees,500.mm,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("Coast",Seq(Robot.Coast)),
-      MovesMenuAction("Despin",Seq(DespinGyro))
-    )
+    MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
+    MovesMenuAction("ArcFR",Seq(GyroArcForwardRight(90.degrees,500.mm,Robot.fineSpeed),Robot.Hold)),
+    MovesMenuAction("ArcFL",Seq(GyroArcForwardLeft(-90.degrees,500.mm,Robot.fineSpeed),Robot.Hold)),
+    MovesMenuAction("ArcRL",Seq(GyroArcForwardRight(-90.degrees,500.mm,-Robot.fineSpeed),Robot.Hold)),
+    MovesMenuAction("ArcRR",Seq(GyroArcForwardLeft(90.degrees,500.mm,-Robot.fineSpeed),Robot.Hold)),
+    MovesMenuAction("Coast",Seq(Robot.Coast)),
+    MovesMenuAction("Despin",Seq(DespinGyro))
+  )
 
   def setSensorRows():Unit =
     import ev3dev4s.lcd.tty.Lcd
