@@ -40,6 +40,13 @@ trait Measured[M <: Measured[M]] extends Any:
 
   //todo figure out how to do a Range
 
+object Measured:
+  def min[M <: Measured[M]](m1:M,m2:M):M = if(m1.value < m2.value) m1
+                                            else m2
+  def max[M <: Measured[M]](m1:M,m2:M):M = if(m1.value > m2.value) m1
+                                            else m2
+
+
 class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
   def create(i:Int) = new Degrees(i)
   override def toString():String = Integer.toString(value)+"d"
