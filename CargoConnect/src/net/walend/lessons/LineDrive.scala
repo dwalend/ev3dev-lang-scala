@@ -39,7 +39,7 @@ abstract class LineDrive extends Move:
       val colorSteerAdjust = (blackSide.steerSign * (brightness - calibrationCenter).value / 3).degreesPerSecond //todo should also be proportional to goal speed
       val steerAdjust = colorSteerAdjust
 
-      Log.log(s"steerAdjust $steerAdjust")
+//      Log.log(s"steerAdjust $steerAdjust")
 
       Robot.drive(goalSpeed + steerAdjust, goalSpeed - steerAdjust) //todo duty cycle instead? 
       Thread.`yield`()   

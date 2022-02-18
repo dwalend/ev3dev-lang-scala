@@ -44,7 +44,7 @@ object Robot:
   val Hold = StopMove(MotorStopCommand.HOLD)   
 
   val wheelDiameter = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
-  val wheelCircumference = (wheelDiameter.value * Math.PI).toInt.millimeters
+  val wheelCircumference = (wheelDiameter.value * Math.PI.toFloat).mm
   val wheelToWheel = 23.studs //todo is that right?
 
   val driveAxelToExtendedFork = 33.studs

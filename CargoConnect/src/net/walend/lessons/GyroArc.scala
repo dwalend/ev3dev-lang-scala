@@ -35,7 +35,7 @@ abstract class GyroArc() extends Move:
       val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
       val remainingDistance = goalOdo - ((outerMotorDegrees * Robot.wheelCircumference)/360).mm 
 
-      val expectedRemainingDegrees = ((remainingDistance.value * 360) / (radius.value * 2 * Math.PI)).toInt.degrees
+      val expectedRemainingDegrees = ((remainingDistance.value * 360) / (radius.value * 2 * Math.PI.toFloat)).degrees
 
       //todo steer adjust 
 
@@ -66,7 +66,7 @@ case class GyroArcForwardRight(
   
     val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
     val initialOdo = ((outerMotorDegrees * Robot.wheelCircumference)/360).mm 
-    val deltaOdo = (((radius.value * 2 * Math.PI) * remainingDegrees.value) /360).toInt.mm
+    val deltaOdo = (((radius.value * 2 * Math.PI.toFloat) * remainingDegrees.value) /360).mm
     val goalOdo = initialOdo + deltaOdo
 
 //todo what to do for "not far enough" ? distance and/or angle? 
