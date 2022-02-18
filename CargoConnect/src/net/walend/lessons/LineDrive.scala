@@ -136,16 +136,16 @@ object TestLineDrive extends Runnable:
     import ev3dev4s.sysfs.UnpluggedException
 
     Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
-    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading()}")
+    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().round}")
     Lcd.set(0,heading,Lcd.LEFT)
 
-    val leftColor:String = UnpluggedException.safeString(() => s"${Robot.leftColorSensor.reflectMode().readReflect()}")
+    val leftColor:String = UnpluggedException.safeString(() => s"${Robot.leftColorSensor.reflectMode().readReflect().round}")
     Lcd.set(1,leftColor,Lcd.LEFT)
-    val rightColor:String = UnpluggedException.safeString(() => s"${Robot.rightColorSensor.reflectMode().readReflect()}")
+    val rightColor:String = UnpluggedException.safeString(() => s"${Robot.rightColorSensor.reflectMode().readReflect().round}")
     Lcd.set(1,rightColor,Lcd.RIGHT)
 
-    Lcd.set(2,s"${CalibrateReflect.leftCalibrated.darkest}/${CalibrateReflect.leftCalibrated.brightest}",Lcd.LEFT)
-    Lcd.set(2,s"${CalibrateReflect.rightCalibrated.darkest}/${CalibrateReflect.rightCalibrated.brightest}",Lcd.RIGHT)
+    Lcd.set(2,s"${CalibrateReflect.leftCalibrated.darkest.round}/${CalibrateReflect.leftCalibrated.brightest.round}",Lcd.LEFT)
+    Lcd.set(2,s"${CalibrateReflect.rightCalibrated.darkest.round}/${CalibrateReflect.rightCalibrated.brightest.round}",Lcd.RIGHT)
 
   //    val leftMotorText = UnpluggedException.safeString(() => s"${Robot.leftDriveMotor.readPosition()}")
 //    Lcd.set(2,leftMotorText,Lcd.LEFT)
