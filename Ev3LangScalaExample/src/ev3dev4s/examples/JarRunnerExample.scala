@@ -19,7 +19,7 @@ object JarRunnerExample extends Runnable:
     Ev3System.rightLed.writeOff()
 
     for _ <- 1 to 10 do
-      for b <- Ev3Led.darkest.value to Ev3Led.brightest.value do
+      for b <- Ev3Led.darkest.round to Ev3Led.brightest.round do
         val brightness = b.ledIntensity
         Ev3System.leftLed.writeBrightness(brightness,brightness)
         Ev3System.rightLed.writeBrightness(brightness,Ev3Led.brightest - brightness)

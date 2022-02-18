@@ -7,11 +7,11 @@ import mill.api.Result
 import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
-import $ivy.`org.apache.ant:ant:1.10.12`, org.apache.tools.ant.taskdefs.Checksum
+//import $ivy.`org.apache.ant:ant:1.10.12`, org.apache.tools.ant.taskdefs.Checksum
 
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
-  val scalaVersion = "3.0.2"//"2.13.7"//todo "3.1.0"
+  val scalaVersion = "3.1.1"//"2.13.7"//todo "3.1.0"
   val javaVersion = "11.0.10" //todo new release?
 }
 

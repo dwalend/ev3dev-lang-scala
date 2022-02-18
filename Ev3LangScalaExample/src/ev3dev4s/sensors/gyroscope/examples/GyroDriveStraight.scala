@@ -50,7 +50,7 @@ object GyroDriveStraight extends Runnable:
                                  distanceMm: Int
                            ): Unit =
     val startTac: Degrees = Robot.leftMotor.readPosition()
-    val goalTac = (startTac.value + (360 * distanceMm) / Robot.driveWheelCircumference).degrees
+    val goalTac = (startTac.value + (360 * distanceMm) / Robot.driveWheelCircumference.value).degrees
 
     def notThereYet():Boolean =
       val tac = Robot.leftMotor.readPosition()
@@ -261,10 +261,10 @@ object GyroDriveStraight extends Runnable:
 */
 object Robot:
 
-  val driveWheelDiameter = 88 //millimeters
-  val driveWheelCircumference = (driveWheelDiameter * Math.PI).toInt
+  val driveWheelDiameter = 11.studs
+  val driveWheelCircumference = (driveWheelDiameter.value * Math.PI.toFloat).mm
 
-  val robotWheelbase = 18 * 8 //millimeters
+  val robotWheelbase = 18.studs 
 
   val keypad = Ev3System.keyPad
 

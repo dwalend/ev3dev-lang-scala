@@ -39,22 +39,22 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
     stopActionWriter.writeString(command.command)
 
   def writeDutyCycle(dutyCycle:DutyCycle):Unit =
-    dutyCycleSpWriter.writeAsciiInt(dutyCycle.value)
+    dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
 
   def writeSpeed(speed:DegreesPerSecond):Unit =
-    speedSpWriter.writeAsciiInt(speed.value)
+    speedSpWriter.writeAsciiInt(speed.round)
 
   def writePosition(degrees:Degrees):Unit =
-    positionWriter.writeAsciiInt(degrees.value)
+    positionWriter.writeAsciiInt(degrees.round)
 
   def resetPosition():Unit =
     writePosition(0.degrees)
 
   def writeGoalPosition(degrees:Degrees):Unit =
-    goalPositionWriter.writeAsciiInt(degrees.value)
+    goalPositionWriter.writeAsciiInt(degrees.round)
 
   def writeDuration(milliseconds:MilliSeconds):Unit =
-    timeWriter.writeAsciiInt(milliseconds.value)
+    timeWriter.writeAsciiInt(milliseconds.round)
 
   /**
    * @return position in degrees 

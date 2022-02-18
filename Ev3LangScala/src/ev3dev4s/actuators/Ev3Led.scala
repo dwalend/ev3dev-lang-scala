@@ -3,8 +3,7 @@ package ev3dev4s.actuators
 import ev3dev4s.sysfs.ChannelRewriter
 
 import java.nio.file.Path
-import ev3dev4s.measure.LedInensity
-
+import ev3dev4s.measure.LedIntensity
 import ev3dev4s.measure.Conversions.ledIntensity
 
 /**
@@ -27,9 +26,9 @@ enum Ev3Led(side:Int) extends AutoCloseable:
   private val greenWriter = ChannelRewriter(greenPath)
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
-  def writeBrightness(red:LedInensity,green:LedInensity):Unit = this.synchronized {
-    redWriter.writeAsciiInt(red.value)
-    greenWriter.writeAsciiInt(green.value)
+  def writeBrightness(red:LedIntensity, green:LedIntensity):Unit = this.synchronized {
+    redWriter.writeAsciiInt(red.round)
+    greenWriter.writeAsciiInt(green.round)
   }
 
   override def close(): Unit = this.synchronized {

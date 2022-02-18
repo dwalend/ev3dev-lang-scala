@@ -21,6 +21,9 @@ import ev3dev4s.measure.DutyCycle
  * 
  * With my own universal trait for the arithmetic operations
  * 1640018240566 19308 loop closures in 60000 for 3.10752 milliseconds per loop closure
+ *
+ * With Floats instead of Ints underlying the units
+ * 1645127290993 18331 loop closures in 60000 for 3.2731438 milliseconds per loop closure
  */ 
 object GyroFeedbackLoop extends Runnable:
   def main(args: Array[String]): Unit =

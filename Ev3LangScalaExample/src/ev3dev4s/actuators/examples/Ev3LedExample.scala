@@ -28,7 +28,7 @@ object Ev3LedExample:
     Thread.sleep(500)
 
     for _ <- 1 to 3 do
-      for i <- Ev3Led.darkest.value to Ev3Led.brightest.value do
+      for i <- Ev3Led.darkest.round to Ev3Led.brightest.round do
         val intensity = i.ledIntensity
         Ev3System.leftLed.writeBrightness(intensity, Ev3Led.brightest - intensity)
         Ev3System.rightLed.writeBrightness(Ev3Led.brightest - intensity, intensity)

@@ -79,7 +79,7 @@
 #### Accel/Decel *
 ### Hybred sensor line follower *
 #### Can this go backward ? *
-### Arc drive *
+### Arc drive - todo on ArcDrive branch, ready to test
 
 ## Core library
 ### Use ant tasks T

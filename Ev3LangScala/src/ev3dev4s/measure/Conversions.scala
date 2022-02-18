@@ -3,16 +3,31 @@ package ev3dev4s.measure
 object Conversions: 
 
   extension(i:Int) {
-    def degrees = new Degrees(i)
-    def percent = new Percent(i)
-    def milliseconds = new MilliSeconds(i)
-    def ms = new MilliSeconds(i)
-    def degreesPerSecond = new DegreesPerSecond(i)
-    def unitless = new Unitless(i)
-    def microvolts = new Microvolts(i)
-    def dutyCyclePercent = new DutyCycle(i)
-    def ledIntensity = new LedInensity(i)
-    def millimeters = new MilliMeters(i)
-    def mm = new MilliMeters(i)
-    def studs = new MilliMeters(i*8)
+    def degrees = new Degrees(i.toFloat)
+    def percent = new Percent(i.toFloat)
+    def milliseconds = new MilliSeconds(i.toFloat)
+    def ms = new MilliSeconds(i.toFloat)
+    def degreesPerSecond = new DegreesPerSecond(i.toFloat)
+    def unitless = new Unitless(i.toFloat)
+    def microvolts = new Microvolts(i.toFloat)
+    def dutyCyclePercent = new DutyCycle(i.toFloat)
+    def ledIntensity = new LedIntensity(i.toFloat)
+    def millimeters = new MilliMeters(i.toFloat)
+    def mm = new MilliMeters(i.toFloat)
+    def studs = new MilliMeters(i.toFloat*8)
+  }
+
+  extension(f:Float) {
+    def degrees = new Degrees(f)
+    def percent = new Percent(f)
+    def milliseconds = new MilliSeconds(f)
+    def ms = new MilliSeconds(f)
+    def degreesPerSecond = new DegreesPerSecond(f)
+    def unitless = new Unitless(f)
+    def microvolts = new Microvolts(f)
+    def dutyCyclePercent = new DutyCycle(f)
+    def ledIntensity = new LedIntensity(f)
+    def millimeters = new MilliMeters(f)
+    def mm = new MilliMeters(f)
+    def studs = new MilliMeters(f*8)
   }

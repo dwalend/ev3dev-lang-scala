@@ -7,8 +7,8 @@ package ev3dev4s.measure
  * This provides general-purpose operations for those things.
  */
 trait Measured[M <: Measured[M]] extends Any:
-  def value:Int //todo fine to change to Float or spire's Ratio if Int doesn't work out
-  def create(i:Int):M
+  def value:Float //todo fine to change to Ratio if Float doesn't work out
+  def create(i:Float):M
   def toString():String
 
  //todo figure out def toString():String
@@ -28,9 +28,9 @@ trait Measured[M <: Measured[M]] extends Any:
 
   def != (m:M):Boolean = this.value != m.value
 
-  def * (m:Measured[_]):Int = this.value * m.value
+  def * (m:Measured[_]):Float = this.value * m.value
 
-  def / (m:Measured[_]):Int = this.value / m.value
+  def / (m:Measured[_]):Float = this.value / m.value
 
   def % (m:Measured[_]):M = create(this.value % m.value)
 
@@ -38,13 +38,20 @@ trait Measured[M <: Measured[M]] extends Any:
 
   def sign:Unitless = new Unitless(this.value.sign)
 
+  def round:Int = value.round
+
   //todo figure out how to do a Range
 
-class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
-  def create(i:Int) = new Degrees(i)
-  override def toString():String = Integer.toString(value)+"d"
+object Measured:
+  def min[M <: Measured[M]](m1:M,m2:M):M = if(m1.value < m2.value) m1
+                                            else m2
+  def max[M <: Measured[M]](m1:M,m2:M):M = if(m1.value > m2.value) m1
+                                            else m2
 
-  //todo figure out override def toString() = s"${Integer.toString(value)}d"
+
+class Degrees(val value:Float) extends AnyVal with Measured[Degrees]:
+  def create(i:Float) = new Degrees(i)
+  override def toString():String = s"${value}d"
 
   /**
    * @return a value between -180 and +179 
@@ -55,36 +62,36 @@ class Degrees(val value:Int) extends AnyVal with Measured[Degrees]:
     else if(remainder >= 180) create(remainder - 360)
     else create(remainder)
 
-class Percent(val value:Int) extends AnyVal with Measured[Percent]:
-  def create(i:Int) = new Percent(i)
-  override def toString():String = Integer.toString(value)+"%"
+class Percent(val value:Float) extends AnyVal with Measured[Percent]:
+  def create(i:Float) = new Percent(i)
+  override def toString():String = s"$value%"
 
-class MilliSeconds(val value:Int) extends AnyVal with Measured[MilliSeconds]:
-  def create(i:Int) = new MilliSeconds(i)
-  override def toString():String = Integer.toString(value)+"ms"
+class MilliSeconds(val value:Float) extends AnyVal with Measured[MilliSeconds]:
+  def create(i:Float) = new MilliSeconds(i)
+  override def toString():String = s"${value}ms"
 
-class DegreesPerSecond(val value:Int) extends AnyVal with Measured[DegreesPerSecond]:
-  def create(i:Int) = new DegreesPerSecond(i)
-  override def toString():String = Integer.toString(value)+"dps"
+class DegreesPerSecond(val value:Float) extends AnyVal with Measured[DegreesPerSecond]:
+  def create(i:Float) = new DegreesPerSecond(i)
+  override def toString():String = s"${value}dps"
 
-class Unitless(val value:Int) extends AnyVal with Measured[Unitless]:
-  def create(i:Int) = new Unitless(i)
-  override def toString():String = Integer.toString(value)
+class Unitless(val value:Float) extends AnyVal with Measured[Unitless]:
+  def create(i:Float) = new Unitless(i)
+  override def toString():String = s"${value}"
 
-class Microvolts(val value:Int) extends AnyVal with Measured[Microvolts]:
-  def create(i:Int) = new Microvolts(i)
-  override def toString():String = Integer.toString(value)+"uv"
+class Microvolts(val value:Float) extends AnyVal with Measured[Microvolts]:
+  def create(i:Float) = new Microvolts(i)
+  override def toString():String = s"${value}uv"
 
-class DutyCycle(val value:Int) extends AnyVal with Measured[DutyCycle]:
-  def create(i:Int) = new DutyCycle(i)
-  override def toString():String = Integer.toString(value)+"%"
+class DutyCycle(val value:Float) extends AnyVal with Measured[DutyCycle]:
+  def create(i:Float) = new DutyCycle(i)
+  override def toString():String = s"${value}%"
 
-class LedInensity(val value:Int) extends AnyVal with Measured[LedInensity]:
-  def create(i:Int) = new LedInensity(i)
-  override def toString():String = Integer.toString(value)
+class LedIntensity(val value:Float) extends AnyVal with Measured[LedIntensity]:
+  def create(i:Float) = new LedIntensity(i)
+  override def toString():String = s"${value}"
 
 
-class MilliMeters(val value:Int) extends AnyVal with Measured[MilliMeters]:
-  def create(i:Int) = new MilliMeters(i)
-  override def toString():String = Integer.toString(value)+"mm"
+class MilliMeters(val value:Float) extends AnyVal with Measured[MilliMeters]:
+  def create(i:Float) = new MilliMeters(i)
+  override def toString():String = s"${value}mm"
 
