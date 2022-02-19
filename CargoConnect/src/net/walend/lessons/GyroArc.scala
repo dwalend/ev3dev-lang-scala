@@ -71,6 +71,10 @@ abstract class GyroArc() extends Move:
     Log.log(s"remainingDegrees $remainingDegrees goalOdo $goalOdo")
     gyroArc(goalHeading,goalOdo,goalSpeed,radius,outerMotor,keepGoing,setLeds)
 
+  def notRightEnough(goalHeading:Degrees):Boolean = Robot.gyroHeading.readHeading() < goalHeading
+
+  def notLeftEnough(goalHeading:Degrees):Boolean = Robot.gyroHeading.readHeading() > goalHeading
+
 case class GyroArcForwardRight(
             goalHeading: Degrees,
             radius: MilliMeters,
@@ -81,17 +85,8 @@ case class GyroArcForwardRight(
   val outerMotor: Ev3LargeMotor = Robot.leftDriveMotor
 
   def move():Unit =
-    val heading:Degrees = Robot.gyroHeading.readHeading()
-    val remainingDegrees = goalHeading - heading
-  
-    val outerMotorDegrees = outerMotor.readPosition() //todo convert this to mm in Robot
-    val initialOdo = ((outerMotorDegrees * Robot.wheelCircumference)/360).mm 
-    val deltaOdo = (((radius.value * 2 * Math.PI.toFloat) * remainingDegrees.value) /360).mm
-    val goalOdo = initialOdo + deltaOdo
-
 //todo what to do for "not far enough" ? distance and/or angle?
-    def notFarEnough():Boolean =
-      Robot.gyroHeading.readHeading() < goalHeading
+    def notFarEnough():Boolean = notRightEnough(goalHeading)
 
     driveArc(goalHeading,goalSpeed,radius,outerMotor,notFarEnough,setLeds)
 
@@ -105,8 +100,7 @@ case class GyroArcForwardLeft(
   val outerMotor: Ev3LargeMotor = Robot.rightDriveMotor
   def move():Unit =
     //todo what to do for "not far enough" ? distance and/or angle?
-    def notFarEnough():Boolean =
-      Robot.gyroHeading.readHeading() > goalHeading
+    def notFarEnough():Boolean = notLeftEnough(goalHeading)
 
     driveArc(goalHeading,goalSpeed,radius,outerMotor,notFarEnough,setLeds)
 
