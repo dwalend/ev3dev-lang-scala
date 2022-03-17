@@ -80,8 +80,13 @@ case class LineDriveToBlackForward(
       val stopCalibration = CalibrateReflect.colorSensorsToCalibrated(stopColorSensor)
       val sensorReading = stopColorSensor.reflectMode().readReflect()
 
+      val tachometerReading = Robot.leftDriveMotor.readPosition()
+
+      //todo let the robot convert distance into degrees to turn the wheel
+      val limitTachometerReading = initialPosition + ((distanceLimit.value * 360)/Robot.wheelCircumference.value).degrees
+      
       stopCalibration.dark(sensorReading) ||
-        Robot.leftDriveMotor.readPosition() < initialPosition + ((distanceLimit.value * 360)/Robot.wheelCircumference.value).degrees
+        tachometerReading < limitTachometerReading
 
     lineDriveStraight(goalHeading,colorSensor,blackSide,goalSpeed,notFarEnough)
 

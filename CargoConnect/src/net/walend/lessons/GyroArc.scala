@@ -156,6 +156,8 @@ case class GyroArcBackwardLeft(
 
 object TestGyroArc extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
+    MovesMenuAction("SetGyro-45",GyroSetHeading(-45.degrees)),
+    MovesMenuAction("ArcFR45",Seq(GyroArcForwardRight(0.degrees,100.mm+Robot.wheelToWheel,Robot.fineSpeed),Robot.Hold)),
     MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
     MovesMenuAction("ArcFR",Seq(GyroArcForwardRight(90.degrees,500.mm,Robot.fineSpeed),Robot.Hold)),
     MovesMenuAction("ArcFL",Seq(GyroArcForwardLeft(-90.degrees,500.mm,Robot.fineSpeed),Robot.Hold)),

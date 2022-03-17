@@ -6,10 +6,8 @@ import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
-
 import ev3dev4s.measure.Conversions.*
-
-import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistanceForward,GyroSetHeading,GyroDriveDistanceBackward,DespinGyro,Controller}
+import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroDriveDistanceBackward, GyroDriveDistanceForward, GyroSetHeading, MovesMenuAction, TtyMenu, TtyMenuAction}
 
 /**
  *
@@ -24,11 +22,10 @@ object CargoConnect extends Runnable:
       MovesMenuAction("WSort-Blu",SortingCenter.deliverBlueFromWestSlot),
       MovesMenuAction("CSort-Blu",SortingCenter.deliverBlueFromCenterSlot),
       MovesMenuAction("ESort-Blu",SortingCenter.deliverBlueFromEastSlot),
-      MovesMenuAction("ForkUp",Seq(ForkMoves.ForkOutUp)),
-      MovesMenuAction("ForkIn",Seq(ForkMoves.ForkIn)),
-      MovesMenuAction("ForkOut",Seq(ForkMoves.ForkOut)),
-      MovesMenuAction("Despin",Seq(DespinGyro))
-    )
+      MovesMenuAction("Stop",Robot.Coast),
+      MovesMenuAction("Despin",Seq(DespinGyro)),
+      MovesMenuAction("ColorCalibrate",Seq(CalibrateReflect)),
+  )
 
   //todo add color sensors
   def setSensorRows():Unit =

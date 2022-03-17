@@ -75,4 +75,11 @@ trait TtyMenuAction:
 
 case class MovesMenuAction(override val label:String,moves:Seq[Move]) extends TtyMenuAction:
   def act(menu: TtyMenu):Unit =
-    moves.foreach{_.move()}
+    moves.foreach { (move:Move) =>
+      Log.log(s"Start $move")
+      move.move()
+      Log.log(s"Finished $move")
+    }
+
+object MovesMenuAction:
+  def apply(label:String,move:Move):MovesMenuAction = MovesMenuAction(label,Seq(move))

@@ -49,7 +49,7 @@ object Robot:
 
   val driveAxelToExtendedFork = 33.studs
 
-  val cruiseSpeed = 500.degreesPerSecond
+  val cruiseSpeed = 500.degreesPerSecond  //todo figure out a good cruise speed
   val fineSpeed = 200.degreesPerSecond
   val noSlipSpeed = 5.degreesPerSecond 
 
