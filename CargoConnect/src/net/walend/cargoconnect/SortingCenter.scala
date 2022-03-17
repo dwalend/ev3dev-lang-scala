@@ -1,42 +1,43 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.Move
-
-import net.walend.lessons.{GyroSetHeading,GyroDriveDistanceBackward,LeftBackwardPivot,GyroDriveDistanceForward,LeftForwardPivot}
-
+import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDriveDistanceBackward, GyroDriveDistanceForward, GyroSetHeading, LeftBackwardPivot, LeftForwardPivot, LeftRotate, LineDriveDistanceForward, LineDriveToBlackForward, Move, RightForwardPivot, RightRotate, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
-import net.walend.lessons.RightRotate
-import net.walend.lessons.LeftRotate
+import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.measure.MilliMeters
-import net.walend.lessons.{LineDriveDistanceForward,BlackSide}
-import net.walend.lessons.RightForwardPivot
+import scala.collection.mutable.{Map => MutableMap}
 
 /**
  * A collection of moves for the sorting center 
  */
 object SortingCenter:
 
-  enum Slot:
-    case East
-    case Center
-    case West
-
-  var blueSlot:Slot = Slot.West
-  var greenSlot:Slot = Slot.Center
-
   def startToEastSlot:Seq[Move] = Seq(
-    //Forward at -45
-    //Aquaire line black-on-left on right sensor at -45
-    //follow line black-on-left on right sensor at -45 until left sensor sees white-black-white
+    GyroSetHeading(-45.degrees),
+    //From home - Forward at -45
+    GyroDriveDistanceForward(-45.degrees,Robot.cruiseSpeed,100.mm),
+    //acquire line black-on-left on right sensor at -45
+    //follow line black-on-left on right sensor at -45 until left sensor sees black //todo white-black-white
+    LineDriveToBlackForward(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.cruiseSpeed,150.mm,Robot.leftColorSensor),
+
     //follow line black-on-left on right sensor at  -45 X mm
-    //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor
-    //follow line black-on-right with right sensor with heading 0 until white-black on left sensor
+    LineDriveDistanceForward(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.cruiseSpeed,70.mm),
+    //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor todo radius??
+    GyroArcForwardRight(0.degrees,100.mm,Robot.cruiseSpeed),
+
+    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
+    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.cruiseSpeed,700.mm,Robot.leftColorSensor),
+
+
     //drive straight at heading 0 2 studs
+    GyroDriveDistanceForward(0.degrees,Robot.cruiseSpeed,2.studs),
+
     //follow line black-on-right with right sensor with heading 0 X mm
+    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.cruiseSpeed,100.mm),
+
     //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
-    //line drive to east slot
-  )
+    GyroArcForwardRight(90.degrees,500.mm,Robot.cruiseSpeed)
+  ) ++ southToEastSlot //line drive to east slot
 
 /**
 * Line drive/gyro assist parallel to the train tracks to the east slot 
@@ -45,8 +46,8 @@ object SortingCenter:
  */ 
 //todo back up 3 studs unless green is in east slot
   def southToEastSlot:Seq[Move] = Seq(
-    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
-    LineDriveDistanceForward(Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,440.mm), //todo stop after stall or distance
+//    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
+    LineDriveDistanceForward(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
     //todo consider switching to both color sensors at ~330mm 
     RightForwardPivot(90.degrees,Robot.fineSpeed),
     LeftForwardPivot(90.degrees,Robot.fineSpeed),
@@ -111,4 +112,67 @@ object SortingCenter:
     ForkMoves.ForkOutUp,
   )
 
-//  object SortingCenterMenu
+object SortingCenterMenu extends TtyMenuAction:
+  //todo up/down arrows would be more intuitive
+  //todo remove the reload option as part of refactoring
+
+  //todo move the slot and container enums to SortingCenter
+  enum Slot:
+    case East
+    case Center
+    case West
+
+  enum Container:
+    case Blue
+    case Green
+    case Yellow
+
+  import Slot.*
+  import Container.*
+
+  private val slotArray: Array[Container] = Array(Blue,Green,Yellow)
+
+  def slotForContainer(container: Container): Slot = Slot.fromOrdinal(slotArray.indexOf(container))
+
+  val actions: Array[TtyMenuAction] = Array(
+      Done,
+      Swap(Blue,West),
+      Swap(Blue,East),
+      Swap(Green,West),
+      Swap(Green,East)
+    )
+
+  object Done extends TtyMenuAction:
+    override def act(ttyMenu: TtyMenu): Unit = ttyMenu.stopLoop()
+
+  case class Swap(container: Container,slot: Slot) extends TtyMenuAction:
+    override def label:String = s"$container $slot"
+
+    def act(menu: TtyMenu):Unit =
+      //What index has the right container?
+      val currentIndex = slotArray.indexOf(container)
+      //What direction to swap?
+      val targetIndex =
+        val rawIndex = slot match
+          case West => currentIndex +1
+          case Center => currentIndex //do nothing
+          case East => currentIndex -1
+        if(rawIndex < 0) 2
+        else if(rawIndex > 2) 0
+        else rawIndex
+
+      //What container to replace it with
+      val targetContainer = slotArray(targetIndex)
+      slotArray(targetIndex) = container
+      slotArray(currentIndex) = targetContainer
+
+  def setSensorRows():Unit =
+    Slot.values.foreach{ (slot:Slot) =>
+      Lcd.set(slot.ordinal,s"${slotArray(slot.ordinal)}",Lcd.LEFT)
+    }
+
+  val lcdView:Controller = Controller(actions,setSensorRows) //todo separate timing display from the rest of the Controller
+
+  override def label:String = "Set Boxes"
+
+  def act(menu: TtyMenu):Unit = lcdView.run()

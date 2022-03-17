@@ -19,7 +19,8 @@ import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistan
  */
 object CargoConnect extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
-      MovesMenuAction("SPastTrain",SortingCenter.southToEastSlot),
+      SortingCenterMenu,
+      MovesMenuAction("ToEastSlot",SortingCenter.startToEastSlot),
       MovesMenuAction("WSort-Blu",SortingCenter.deliverBlueFromWestSlot),
       MovesMenuAction("CSort-Blu",SortingCenter.deliverBlueFromCenterSlot),
       MovesMenuAction("ESort-Blu",SortingCenter.deliverBlueFromEastSlot),

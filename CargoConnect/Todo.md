@@ -2,9 +2,6 @@
 
 # Robot Parts
 
-## Retracting Tines
-### Add bushing to axels - especially the yellow axel - next time the robot is split open
-
 ## Axial Power Takeoff
 ### High and back on the robot?
 ### Standard frame (5 x 7 or 7 x 11 frame pairs?)
@@ -37,8 +34,7 @@
 
 # Other attachments
 
-## Sorting center protien spike
-## Package delivery protien spike 
+## Package delivery protein spike 
 
 # Equipment
 
@@ -53,9 +49,9 @@
 ### Robot coupling
 
 ## Train loader
-### Build a separate protien spike for the robot to find the center
-### Add more of a protien spike one-stud deep to the long arms to better center them
-### Replace the long arms and their attchment with something sturdier
+### Build a separate protein spike for the robot to find the center
+### Add more of a protein spike one-stud deep to the long arms to better center them
+### Replace the long arms and their attachment with something sturdier
 ### Maybe use blue (instead of beige) pins in the folding arms
 ### Add top rails, maybe even a front edge, to the folding arms to better hold the containers
 ### Robot coupling
@@ -79,7 +75,9 @@
 #### Accel/Decel *
 ### Hybred sensor line follower *
 #### Can this go backward ? *
-### Arc drive - todo on ArcDrive branch, ready to test
+### Arc drive - code cleanup
+### Sideslip as a combo of arc drives
+### Standard sensor feedback loop structure
 
 ## Core library
 ### Use ant tasks T

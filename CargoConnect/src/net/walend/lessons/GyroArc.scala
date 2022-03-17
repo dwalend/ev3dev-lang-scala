@@ -49,6 +49,7 @@ abstract class GyroArc() extends Move:
       //todo duty cycle instead
       if(Robot.leftDriveMotor == arcSpecifier.outerMotor) Robot.drive(outerMotorSpeed,innerMotorSpeed)
       else Robot.drive(innerMotorSpeed,outerMotorSpeed)
+      Thread.`yield`()
       gyroArc(goalHeading,goalOdo,goalSpeed,radius,arcSpecifier,keepGoing,setLeds)
 
   def driveArc(
