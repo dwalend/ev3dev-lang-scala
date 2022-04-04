@@ -84,9 +84,11 @@ case class LineDriveToBlackForward(
 
       //todo let the robot convert distance into degrees to turn the wheel
       val limitTachometerReading = initialPosition + ((distanceLimit.value * 360)/Robot.wheelCircumference.value).degrees
-      
-      stopCalibration.dark(sensorReading) ||
-        tachometerReading < limitTachometerReading
+
+      Log.log(s"$sensorReading ${stopCalibration.dark(sensorReading)} ${limitTachometerReading - tachometerReading} ${tachometerReading >= limitTachometerReading}")
+
+      val farEnough = stopCalibration.dark(sensorReading) || tachometerReading >= limitTachometerReading
+      !farEnough
 
     lineDriveStraight(goalHeading,colorSensor,blackSide,goalSpeed,notFarEnough)
 
@@ -129,7 +131,7 @@ object CalibrateReflect extends Move:
         GyroSetHeading(0.degrees).move()
         GyroDriveDistanceForward(0.degrees,100.degreesPerSecond,300.mm).move()
         Robot.Coast.move()
-    thread.run()
+    thread.start()
 
     @tailrec
     def findMinAndMax(thread:Thread,bestVals:(Percent,Percent,Percent,Percent)):(Percent,Percent,Percent,Percent) =
@@ -138,8 +140,11 @@ object CalibrateReflect extends Move:
         Thread.`yield`()
         val left = Robot.leftColorSensor.reflectMode().readReflect()
         val right = Robot.rightColorSensor.reflectMode().readReflect()
+        Log.log(s"left $left right $right")
+
         import ev3dev4s.measure.Measured.{min,max}
         val newBestVals = (min(bestVals._1,left),max(bestVals._2,left),min(bestVals._3,right),max(bestVals._4,right))
+        Log.log(s"newBestVals $newBestVals")
 
         findMinAndMax(thread,newBestVals)
 
@@ -148,6 +153,7 @@ object CalibrateReflect extends Move:
 
     colorSensorsToCalibrated.put(Robot.leftColorSensor,CalibratedReflect(finalVals._1,finalVals._2))
     colorSensorsToCalibrated.put(Robot.rightColorSensor,CalibratedReflect(finalVals._3,finalVals._4))
+    Log.log(s"Calibration results: $colorSensorsToCalibrated")
 
 
 object TestLineDrive extends Runnable:

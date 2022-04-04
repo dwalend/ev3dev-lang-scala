@@ -1,18 +1,18 @@
 package net.walend.cargoconnect
 
-import ev3dev4s.Ev3System
+import ev3dev4s.{Ev3System,Log}
 import ev3dev4s.sensors.Ev3Gyroscope
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
-import ev3dev4s.actuators.{Ev3MediumMotor,MotorPort,MotorCommand}
+import ev3dev4s.actuators.{Ev3MediumMotor, MotorCommand, MotorPort}
 import ev3dev4s.actuators.Ev3LargeMotor
 import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-
 import net.walend.lessons.Move
 import ev3dev4s.actuators.Sound
 import ev3dev4s.sensors.Ev3KeyPad
+import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
 
 object Robot: 
   val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
@@ -60,4 +60,9 @@ object Robot:
   object StopAndWaitForButton extends Move:
     def move():Unit = 
       Hold.move()
-      Ev3KeyPad.blockUntilAnyKey()
+      while
+        val key = Ev3KeyPad.blockUntilAnyKey()
+        key match
+        case (_,State.Released) => false
+        case _ => true
+      do ()
