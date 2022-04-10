@@ -1,6 +1,7 @@
 package net.walend.cargoconnect
 
-import ev3dev4s.{Ev3System,Log}
+import ev3dev4s.{Ev3System, Log}
+import ev3dev4s.os.Time
 import ev3dev4s.sensors.Ev3Gyroscope
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
@@ -9,14 +10,15 @@ import ev3dev4s.actuators.Ev3LargeMotor
 import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.Move
+import net.walend.lessons.{GyroArcForwardRight, GyroDriveDistanceForward, GyroSetHeading, LineDriveDistanceForward, Move, BlackSide}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
+import net.walend.cargoconnect.Robot.gyroscope
 
 object Robot: 
   val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
-  val gyroHeading = gyroscope.headingMode()
+  val gyroHeading: gyroscope.HeadingMode = gyroscope.headingMode()
 
   val leftColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.One).collect{case cs:Ev3ColorSensor => cs}.get
   val rightColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.Four).collect{case cs:Ev3ColorSensor => cs}.get
@@ -26,22 +28,22 @@ object Robot:
   val leftDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.A).collect{case m:Ev3LargeMotor => m}.get
   val rightDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.B).collect{case m:Ev3LargeMotor => m}.get
 
-  def drive(leftSpeed:DegreesPerSecond,rightSpeed:DegreesPerSecond) = 
+  def drive(leftSpeed:DegreesPerSecond,rightSpeed:DegreesPerSecond): Unit =
     leftDriveMotor.writeSpeed(leftSpeed)
     rightDriveMotor.writeSpeed(rightSpeed)
     leftDriveMotor.writeCommand(MotorCommand.RUN)
     rightDriveMotor.writeCommand(MotorCommand.RUN)
 
   sealed case class StopMove(stopCommand:MotorStopCommand) extends Move:
-    def move() = 
+    def move(): Unit =
       leftDriveMotor.writeStopAction(stopCommand)
       rightDriveMotor.writeStopAction(stopCommand)
       leftDriveMotor.writeCommand(MotorCommand.STOP)
       rightDriveMotor.writeCommand(MotorCommand.STOP)
 
-  val Coast = StopMove(MotorStopCommand.COAST)
-  val Brake = StopMove(MotorStopCommand.BRAKE)
-  val Hold = StopMove(MotorStopCommand.HOLD)   
+  val Coast: StopMove = StopMove(MotorStopCommand.COAST)
+  val Brake: StopMove = StopMove(MotorStopCommand.BRAKE)
+  val Hold: StopMove = StopMove(MotorStopCommand.HOLD)
 
   val wheelDiameter = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
   val wheelCircumference = (wheelDiameter.value * Math.PI.toFloat).mm
@@ -51,7 +53,7 @@ object Robot:
 
   val cruiseSpeed = 500.degreesPerSecond  //todo figure out a good cruise speed
   val fineSpeed = 200.degreesPerSecond
-  val noSlipSpeed = 5.degreesPerSecond 
+  val noSlipSpeed = 5.degreesPerSecond
 
   object Beep extends Move:
     def move():Unit = 
@@ -66,3 +68,31 @@ object Robot:
         case (_,State.Released) => false
         case _ => true
       do ()
+
+  object WarmUp extends Move:
+    def move():Unit =
+      GyroSetHeading(0.degrees)
+
+      val start = Time.now()
+      warmUpTask()
+      val afterFirst = Time.now()
+      Log.log(s"after first ${afterFirst - start}")
+
+      for (i <- 1 to 100) {
+        warmUpTask()
+      }
+
+      val afterWarmUp = Time.now()
+      warmUpTask()
+      val afterLast = Time.now()
+      Log.log(s"after warm-up ${afterLast - afterWarmUp}")
+
+      Coast.move()
+      Time.pause(1000.ms)
+
+    def warmUpTask():Unit =
+      LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,0.mm).move()
+      //        GyroArcForwardRight(0.degrees,0.mm,Robot.fineSpeed).move()
+      GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,0.mm).move()
+
+

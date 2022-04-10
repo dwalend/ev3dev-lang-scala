@@ -61,3 +61,7 @@ object Ev3Led:
   def writeBothYellow(): Unit =
     Left.writeYellow()
     Right.writeYellow()
+    
+  def writeBothOff(): Unit =
+    Left.writeOff()
+    Right.writeOff()

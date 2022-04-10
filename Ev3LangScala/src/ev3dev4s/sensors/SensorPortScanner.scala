@@ -21,7 +21,7 @@ object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sen
         case Ev3Gyroscope.driverName => Ev3Gyroscope(port,Option(sensorDir))
         case Ev3ColorSensor.driverName => Ev3ColorSensor(port,Option(sensorDir))
         case Ev3TouchSensor.driverName => Ev3TouchSensor(port,Option(sensorDir))
-        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName")
+        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName in $sensorDir")
       port -> sensor
     }
 

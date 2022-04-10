@@ -18,6 +18,7 @@ import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroDriveDi
 object CargoConnect extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
       SortingCenterMenu,
+      MovesMenuAction("WarmUp",Robot.WarmUp),
       MovesMenuAction("ToEastSlot",SortingCenter.startToEastSlot),
       MovesMenuAction("WSort-Blu",SortingCenter.deliverBlueFromWestSlot),
       MovesMenuAction("CSort-Blu",SortingCenter.deliverBlueFromCenterSlot),

@@ -37,9 +37,10 @@ abstract class LineDrive extends Move:
     if(!keepGoing()) ()
     else
       val brightness:Percent = colorSensor.reflectMode().readReflect()
-      val calibrationCenter:Percent = 50.percent //todo calibrate the color sensors and get the value from Robot - which means bring it in with the color sensor
+      val calibrationCenter:Percent = CalibrateReflect.colorSensorsToCalibrated(colorSensor).middle
       //todo changanble value for how much to steer - currently 1/3
       val colorSteerAdjust = (blackSide.steerSign * (brightness - calibrationCenter).value / 3).degreesPerSecond //todo should also be proportional to goal speed
+      //todo add gyro sensor call??
       val steerAdjust = colorSteerAdjust
 
 //      Log.log(s"steerAdjust $steerAdjust")
