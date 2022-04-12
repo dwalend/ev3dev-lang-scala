@@ -37,34 +37,46 @@ object SortingCenter:
 
     Robot.StopAndWaitForButton,
 
-    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,210.mm,Robot.leftColorSensor),
+    //follow line black-on-right with right sensor heading 0 120 mm
+    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,160.mm),
 
     Robot.StopAndWaitForButton,
 
+    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
+    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftColorSensor),
+
+    Robot.StopAndWaitForButton,
 
     //drive straight at heading 0 2 studs
     GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,2.studs),
 
-    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,190.mm,Robot.leftColorSensor),
+    Robot.StopAndWaitForButton,
 
-    /*
+    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
+
+    Robot.StopAndWaitForButton,
+
     //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.cruiseSpeed,190.mm,Robot.leftColorSensor),
+    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftColorSensor),
 
     //drive straight at heading 0 2 studs
-    GyroDriveDistanceForward(0.degrees,Robot.cruiseSpeed,2.studs),
+    GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,2.studs),
+
+    Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 X mm
-    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.cruiseSpeed,40.mm),
+    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
+
+    Robot.StopAndWaitForButton,
 
     //Gyro drive to the turning point
-    GyroDriveDistanceForward(0.degrees,Robot.cruiseSpeed,360.mm), //consider going forward until you see "not white"
+    GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,360.mm), //consider going forward until you see "not white"
+
+    Robot.StopAndWaitForButton,
 
     //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
-    GyroArcForwardRight(90.degrees,200.mm+Robot.wheelToWheel,Robot.cruiseSpeed)
-*/
+    GyroArcForwardRight(90.degrees,200.mm+Robot.wheelToWheel,Robot.fineSpeed),
+
     Robot.Hold,
     Robot.Beep
   ) //++ southToEastSlot //line drive to east slot

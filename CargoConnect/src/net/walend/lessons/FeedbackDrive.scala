@@ -7,7 +7,7 @@ import ev3dev4s.measure.Conversions.*
 
 import ev3dev4s.Log
 
-import ev3dev4s.actuators.Ev3Led
+import ev3dev4s.actuators.{Ev3Led,Motor}
 import scala.annotation.tailrec
 import ev3dev4s.measure.MilliMeters
 
@@ -28,15 +28,27 @@ trait SensorResults
 
 final case class GyroSensorResults(heading:Degrees,leftMotorTachometer:Degrees) extends SensorResults
 
+object GyroSensorResults:
+  def sense():GyroSensorResults = GyroSensorResults(
+    Robot.gyroscope.headingMode().readHeading(),
+    Robot.leftDriveMotor.readPosition()
+  )
+
+  def completeForward(goalTachometer: Degrees)(sensorResults: GyroSensorResults): Boolean =
+    sensorResults.leftMotorTachometer > goalTachometer
+
+
+
 
 case class GyroDriveStraightForwardFeedback(
                                               goalHeading:Degrees,
                                               goalDistance:Degrees,
-                                              goalSpeed:DegreesPerSecond
+                                              goalSpeed:DegreesPerSecond,
+                                              tachometer:Motor = Robot.leftDriveMotor
                                             ) extends Move:
 
   private def sense():GyroSensorResults =
-    GyroSensorResults(Robot.gyroscope.headingMode().readHeading(),Robot.leftDriveMotor.readPosition())
+    GyroSensorResults(Robot.gyroscope.headingMode().readHeading(),tachometer.readPosition())
 
   private def complete(goalTachometer:Degrees)(sensorResults: GyroSensorResults) =
     sensorResults.leftMotorTachometer > goalDistance
