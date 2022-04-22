@@ -130,7 +130,7 @@ object CalibrateReflect extends Move:
     val thread = new Thread:
       override def run(): Unit =
         GyroSetHeading(0.degrees).move()
-        GyroDriveDistanceForward(0.degrees,100.degreesPerSecond,300.mm).move()
+        GyroDriveFeedback.driveForwardDistance(0.degrees,100.degreesPerSecond,300.mm).move()
         Robot.Coast.move()
     thread.start()
 

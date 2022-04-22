@@ -9,7 +9,7 @@ import ev3dev4s.actuators.{Ev3LargeMotor,Ev3MediumMotor, MotorCommand, MotorPort
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDriveDistanceForward, GyroDriveFeedback, GyroSetHeading, LineDriveDistanceForward, Move}
+import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDriveFeedback, GyroSetHeading, LineDriveDistanceForward, Move}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.sensors.Ev3KeyPad.{Key, State}

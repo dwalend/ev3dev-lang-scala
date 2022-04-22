@@ -22,12 +22,33 @@ object FeedbackLoop:
       Time.pause()
       feedback(sense)(complete)(response)
 
+final case class FeedbackMove(
+                         name:String,
+                         sense: () => GyroSensorResults,
+                         complete: GyroSensorResults => GyroSensorResults => Boolean,
+                         drive: GyroSensorResults => Unit,
+                         start: () => Unit,
+                         end: () => Unit
+                       ) extends Move:
+  def move():Unit =
+    val initialSense = sense()
+    start()
 
+    import FeedbackLoop.feedback
+    //noinspection EmptyParenMethodAccessedAsParameterless
+    feedback(sense)(complete(initialSense))(drive)
+    end()
 
 trait SensorResults
 
+trait GyroHeadingResult extends SensorResults:
+  def heading:Degrees
 
-final case class GyroSensorResults(heading:Degrees, tachometer:Degrees) extends SensorResults
+trait TachometerResult extends SensorResults:
+  def tachometerResult:Degrees
+
+final case class GyroSensorResults(heading:Degrees, tachometerResult:Degrees)
+  extends GyroHeadingResult with TachometerResult
 
 object GyroSensorResults:
   def sense():GyroSensorResults = GyroSensorResults(
@@ -35,61 +56,49 @@ object GyroSensorResults:
     Robot.leftDriveMotor.readPosition()
   )
 
-
-
-
-case class GyroDriveFeedback(
-                              sense: () => GyroSensorResults,
-                              complete: GyroSensorResults => GyroSensorResults => Boolean,
-                              drive: GyroSensorResults => Unit,
-                              setLeds: () => Unit
-                    ) extends Move:
-
-  def move():Unit =
-    //todo just have an init instead of setLeds
-    setLeds()
-    //Robot.dutyCycleDrive(0.dps,0.dps)
-    Robot.writeDirectDriveMode()
-    val initialSense = sense()
-
-    import FeedbackLoop.feedback
-    //noinspection EmptyParenMethodAccessedAsParameterless
-    feedback(sense)(complete(initialSense))(drive)
-
-
 object GyroDriveFeedback:
   private def senseGyroAndDistance(tachometer:Motor)():GyroSensorResults =
     GyroSensorResults(Robot.gyroscope.headingMode().readHeading(),tachometer.readPosition())
 
-  private def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:GyroSensorResults)(sensorResults: GyroSensorResults) =
-    val goalTachometer = initialSensorResults.tachometer + Robot.distanceToWheelRotation(distance)
-    sensorResults.tachometer > goalTachometer
+  private def start(goalSpeed:DegreesPerSecond)():Unit =
+    Ev3Led.writeBothGreen()
+    Robot.directDrive(goalSpeed,goalSpeed)
+    Robot.writeDirectDriveMode()
 
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(sensorResults: GyroSensorResults): Unit =
+  private def end():Unit =
+    Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
+    Ev3Led.writeBothOff()
 
+  private def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerResult)(sensorResults: TachometerResult) =
+    val goalTachometer = initialSensorResults.tachometerResult + Robot.distanceToWheelRotation(distance)
+    sensorResults.tachometerResult > goalTachometer
+
+  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(sensorResults: GyroHeadingResult): Unit =
     val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 
   def driveForwardDistance(goalHeading:Degrees,goalSpeed:DegreesPerSecond,distance:MilliMeters,tachometer:Motor = Robot.leftDriveMotor):Move =
-    GyroDriveFeedback(
+    FeedbackMove(
+      name = s"GyroF $distance",
       sense = senseGyroAndDistance(tachometer),
       complete = forwardUntilDistance(distance),
       drive = driveAdjust(goalHeading,goalSpeed),
-      //noinspection EmptyParenMethodAccessedAsParameterless
-      setLeds = Ev3Led.writeBothGreen
+      start = start(goalSpeed),
+      end = end
     )
 
-  private def backwardUntilDistance(distance:MilliMeters)(initialSensorResults:GyroSensorResults)(sensorResults: GyroSensorResults) =
-    val goalTachometer = initialSensorResults.tachometer + Robot.distanceToWheelRotation(distance)
-    sensorResults.tachometer < goalTachometer
+  private def backwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerResult)(sensorResults: TachometerResult) =
+    val goalTachometer = initialSensorResults.tachometerResult + Robot.distanceToWheelRotation(distance)
+    sensorResults.tachometerResult < goalTachometer
 
   def driveBackwardDistance(goalHeading:Degrees,goalSpeed:DegreesPerSecond,distance:MilliMeters,tachometer:Motor = Robot.leftDriveMotor):Move =
-    GyroDriveFeedback(
+    FeedbackMove(
+      name = s"GyroB $distance",
       sense = senseGyroAndDistance(tachometer),
       complete = backwardUntilDistance(distance),
       drive = driveAdjust(goalHeading,goalSpeed),
-      //noinspection EmptyParenMethodAccessedAsParameterless
-      setLeds = Ev3Led.writeBothGreen
+      start = start(goalSpeed),
+      end = end
     )
 
 object FeedbackDriveTest extends Runnable:

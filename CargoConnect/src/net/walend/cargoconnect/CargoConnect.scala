@@ -7,7 +7,7 @@ import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroDriveDistanceBackward, GyroDriveDistanceForward, GyroSetHeading, MovesMenuAction, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroSetHeading, MovesMenuAction, TtyMenu, TtyMenuAction}
 
 /**
  *

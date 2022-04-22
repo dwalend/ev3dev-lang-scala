@@ -9,7 +9,7 @@ import ev3dev4s.sensors.SensorPort
 
 import ev3dev4s.measure.Conversions.*
 
-import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction,GyroDriveDistanceForward,GyroSetHeading,GyroDriveDistanceBackward}
+import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction}
 
 /**
  *

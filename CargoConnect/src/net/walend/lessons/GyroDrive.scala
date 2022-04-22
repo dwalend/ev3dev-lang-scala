@@ -10,7 +10,7 @@ import ev3dev4s.Log
 import ev3dev4s.actuators.Ev3Led
 import scala.annotation.tailrec
 import ev3dev4s.measure.MilliMeters
-
+       /*
 abstract class GyroDrive extends Move:
   
   @tailrec
@@ -58,14 +58,14 @@ case class GyroDriveDistanceBackward(
       Robot.leftDriveMotor.readPosition() > initialPosition + ((distance.value * 360)/Robot.wheelCircumference.value).degrees
 
     gyroDriveStraight(goalHeading,goalSpeed,notBackEnough)   
-
+ */
 case class GyroSetHeading(heading:Degrees) extends Move:
   def move():Unit = Robot.gyroscope.headingMode().setHeading(heading)  
 
 object DespinGyro extends Move:
   def move(): Unit =
     Robot.gyroscope.despin()
-
+         /*
 object TestGyroDrive extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
       MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
@@ -96,3 +96,4 @@ object TestGyroDrive extends Runnable:
   override def run():Unit = lcdView.run()
 
   def main(args: Array[String]): Unit = run()
+         */
