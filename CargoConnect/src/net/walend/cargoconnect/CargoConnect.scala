@@ -39,6 +39,6 @@ object CargoConnect extends Runnable:
 
   val lcdView:Controller = Controller(actions,setSensorRows)
 
-  override def run():Unit = lcdView.run()
+  override def run():Unit = lcdView.run() //todo beep on start
 
   def main(args: Array[String]): Unit = run()

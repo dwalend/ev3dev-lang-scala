@@ -1,11 +1,10 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDriveDistanceBackward, GyroDriveDistanceForward, GyroSetHeading, LeftBackwardPivot, LeftForwardPivot, LeftRotate, LineDriveDistanceForward, LineDriveToBlackForward, Move, RightForwardPivot, RightRotate, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDriveFeedback, GyroSetHeading, LeftBackwardPivot, LeftForwardPivot, LeftRotate, LineDriveDistanceForward, LineDriveToBlackForward, Move, RightForwardPivot, RightRotate, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.measure.MilliMeters
-import scala.collection.mutable.{Map => MutableMap}
 
 /**
  * A collection of moves for the sorting center 
@@ -15,7 +14,7 @@ object SortingCenter:
   def startToEastSlot:Seq[Move] = Seq(
     GyroSetHeading(-45.degrees),
     //From home - Forward at -45
-    GyroDriveDistanceForward(-45.degrees,Robot.fineSpeed,140.mm), //consider going forward until you see "not white"
+    GyroDriveFeedback.driveForwardDistance(-45.degrees,Robot.fineSpeed,140.mm), //consider going forward until you see "not white"
     Robot.StopAndWaitForButton,
 
     //acquire line black-on-left on right sensor at -45
@@ -29,7 +28,7 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //140mm is the right distance to set up a forward left turn
-    GyroDriveDistanceForward(-45.degrees,Robot.fineSpeed,80.mm), //consider going forward until you see "not white"
+    GyroDriveFeedback.driveForwardDistance(-45.degrees,Robot.fineSpeed,80.mm), //consider going forward until you see "not white"
     Robot.StopAndWaitForButton,
 
     //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor todo radius??
@@ -48,7 +47,7 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //drive straight at heading 0 2 studs
-    GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,2.studs),
+    GyroDriveFeedback.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
 
     Robot.StopAndWaitForButton,
 
@@ -60,7 +59,7 @@ object SortingCenter:
     LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftColorSensor),
 
     //drive straight at heading 0 2 studs
-    GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,2.studs),
+    GyroDriveFeedback.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
 
     Robot.StopAndWaitForButton,
 
@@ -70,7 +69,7 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //Gyro drive to the turning point
-    GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,360.mm), //consider going forward until you see "not white"
+    GyroDriveFeedback.driveForwardDistance(0.degrees,Robot.fineSpeed,360.mm), //consider going forward until you see "not white"
 
     Robot.StopAndWaitForButton,
 
@@ -103,12 +102,12 @@ object SortingCenter:
  */ 
   lazy val deliverBlueFromWestSlot:Seq[Move] =
     eastSlotToWestSlot ++
-    deliverBlueFromSlot(GyroDriveDistanceBackward(180.degrees,-Robot.fineSpeed,-(slotToSlotDistance+slotToSlotDistance-eastSlotToBlueCircleCenterOffset)))
+    deliverBlueFromSlot(GyroDriveFeedback.driveBackwardDistance(180.degrees,-Robot.fineSpeed,-(slotToSlotDistance+slotToSlotDistance-eastSlotToBlueCircleCenterOffset)))
   lazy val deliverBlueFromCenterSlot:Seq[Move] =
     eastSlotToCenterSlot ++
-    deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset-slotToSlotDistance))
+    deliverBlueFromSlot(GyroDriveFeedback.driveForwardDistance(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset-slotToSlotDistance))
   lazy val deliverBlueFromEastSlot:Seq[Move] =
-    deliverBlueFromSlot(GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset))
+    deliverBlueFromSlot(GyroDriveFeedback.driveForwardDistance(180.degrees,Robot.fineSpeed,eastSlotToBlueCircleCenterOffset))
 
 /**
  * Move from the east slot to another slot (to capture blue) (todo eventually have defs to capture green as well)
@@ -123,16 +122,16 @@ object SortingCenter:
   private lazy val eastSlotToBlueCircleCenterOffset:MilliMeters = 14.studs
 
   private def eastSlotToOtherSlot(distanceToSlot:MilliMeters):Seq[Move] = Seq(
-    GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,-6.studs),
+    GyroDriveFeedback.driveBackwardDistance(90.degrees,-Robot.fineSpeed,-6.studs),
     RightRotate(180.degrees,Robot.fineSpeed),
-    GyroDriveDistanceForward(180.degrees,Robot.fineSpeed,distanceToSlot),
+    GyroDriveFeedback.driveForwardDistance(180.degrees,Robot.fineSpeed,distanceToSlot),
     LeftRotate(90.degrees,Robot.fineSpeed),
-    GyroDriveDistanceForward(90.degrees,Robot.fineSpeed,6.studs)
+    GyroDriveFeedback.driveForwardDistance(90.degrees,Robot.fineSpeed,6.studs)
   )
 
   private def deliverBlueFromSlot(eastWestCorrection:Move):Seq[Move] = 
     captureBlueFromAnySlot ++ Seq(
-      GyroDriveDistanceBackward(90.degrees,-Robot.fineSpeed,-(5*8).mm),
+      GyroDriveFeedback.driveBackwardDistance(90.degrees,-Robot.fineSpeed,-(5*8).mm),
       RightRotate(180.degrees,Robot.fineSpeed),
       eastWestCorrection,
   ) ++ deliverBlueFromSouthOfBlueCircle
@@ -140,8 +139,8 @@ object SortingCenter:
   private lazy val deliverBlueFromSouthOfBlueCircle = Seq(
     RightRotate(270.degrees,Robot.fineSpeed),
     //touches back wall - might stall
-    GyroDriveDistanceForward(270.degrees,Robot.fineSpeed,(800 + 80 -(2*Robot.driveAxelToExtendedFork.value)).mm), 
-    GyroDriveDistanceBackward(270.degrees,-Robot.fineSpeed,-104.mm),
+    GyroDriveFeedback.driveForwardDistance(270.degrees,Robot.fineSpeed,(800 + 80 -(2*Robot.driveAxelToExtendedFork.value)).mm), 
+    GyroDriveFeedback.driveBackwardDistance(270.degrees,-Robot.fineSpeed,-104.mm),
     Robot.Hold,
     ForkMoves.ForkIn,
     Robot.Beep,

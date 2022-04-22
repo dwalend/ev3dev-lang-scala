@@ -31,6 +31,8 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def maxSpeed:DegreesPerSecond
 
+  def observedMaxSpeed:DegreesPerSecond
+
   def writeSpeed(speed:DegreesPerSecond):Unit =
     val safeSpeed = if(speed.abs < maxSpeed ) speed
                     else
@@ -97,6 +99,7 @@ sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]
       .map(MotorFS(_))
 
   override val maxSpeed: DegreesPerSecond = 1050.degreesPerSecond
+  override val observedMaxSpeed: DegreesPerSecond = 700.degreesPerSecond
 
 object Ev3LargeMotor:
   val driverName = "lego-ev3-l-motor"
@@ -107,6 +110,7 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
       .map(MotorFS(_))
 
   override val maxSpeed:DegreesPerSecond = 1560.degreesPerSecond
+  override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.value * 0.7f).degreesPerSecond
 
 object Ev3MediumMotor:
   val driverName = "lego-ev3-m-motor"

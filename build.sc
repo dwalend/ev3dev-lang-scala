@@ -11,7 +11,7 @@ import os.{CommandResult, Path}
 
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
-  val scalaVersion = "3.1.1"
+  val scalaVersion = "3.1.2"
   val javaVersion = "11.0.10" //todo new release?
 }
 
