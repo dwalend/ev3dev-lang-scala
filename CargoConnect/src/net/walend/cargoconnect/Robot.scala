@@ -9,23 +9,23 @@ import ev3dev4s.actuators.{Ev3LargeMotor,Ev3MediumMotor, MotorCommand, MotorPort
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDriveFeedback, GyroSetHeading, LineDriveDistanceForward, Move}
+import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDrive, GyroSetHeading, LineDriveDistanceForward, Move}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
 import net.walend.cargoconnect.Robot.gyroscope
 
 object Robot: 
-  val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
-  val gyroHeading: gyroscope.HeadingMode = gyroscope.headingMode()
+  lazy val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
+  lazy val gyroHeading: gyroscope.HeadingMode = gyroscope.headingMode()
 
-  val leftColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.One).collect{case cs:Ev3ColorSensor => cs}.get
-  val rightColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.Four).collect{case cs:Ev3ColorSensor => cs}.get
+  lazy val leftColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.One).collect{case cs:Ev3ColorSensor => cs}.get
+  lazy val rightColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.Four).collect{case cs:Ev3ColorSensor => cs}.get
 
-  val forkMotor:Ev3MediumMotor = Ev3System.portsToMotors.get(MotorPort.C).collect{case m:Ev3MediumMotor => m}.get
+  lazy val forkMotor:Ev3MediumMotor = Ev3System.portsToMotors.get(MotorPort.C).collect{case m:Ev3MediumMotor => m}.get
 
-  val leftDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.A).collect{case m:Ev3LargeMotor => m}.get
-  val rightDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.B).collect{case m:Ev3LargeMotor => m}.get
+  lazy val leftDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.A).collect{case m:Ev3LargeMotor => m}.get
+  lazy val rightDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.B).collect{case m:Ev3LargeMotor => m}.get
 
   def drive(leftSpeed:DegreesPerSecond,rightSpeed:DegreesPerSecond): Unit =
     leftDriveMotor.writeSpeed(leftSpeed)
@@ -107,7 +107,7 @@ object Robot:
       LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,0.mm).move()
       //does not work        GyroArcForwardRight(0.degrees,0.mm,Robot.fineSpeed).move()
 //      GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,0.mm).move()
-      GyroDriveFeedback.driveForwardDistance(0.degrees,Robot.fineSpeed,0.mm)
-      GyroDriveFeedback.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-0.mm)
+      GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,0.mm)
+      GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-0.mm)
 
 

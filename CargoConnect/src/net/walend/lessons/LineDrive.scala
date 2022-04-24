@@ -4,11 +4,9 @@ import net.walend.cargoconnect.Robot
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliMeters, Percent}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.Log
-import ev3dev4s.actuators.Ev3Led
+import ev3dev4s.actuators.{Ev3Led, Motor}
 import ev3dev4s.sensors.Ev3ColorSensor
-import scala.annotation.tailrec
-
-import scala.collection.mutable.{Map => MutableMap}
+import net.walend.lessons.GyroDrive.driveAdjust
 
 /* todo
 * Gyro-assisted line drive straight
@@ -22,6 +20,48 @@ import scala.collection.mutable.{Map => MutableMap}
 /**
  * Use the gyroscope and a light sensor to follow a staight line
  */
+
+object LineDrive:
+
+  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide)(sensorResults: GyroColorTachometer): Unit =
+    val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
+    Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
+
+  def driveForwardUntilDistance(
+                               goalHeading:Degrees,
+                               trackColorSensor:Ev3ColorSensor,
+                               blackOn:BlackSide,
+                               goalSpeed:DegreesPerSecond,
+                               distance:MilliMeters
+                               ):Move =
+    FeedbackMove(
+      name = s"LineF $blackOn $distance",
+      sense = GyroColorTachometer.sense(trackColorSensor,tachometer),
+      complete = GyroDrive.forwardUntilDistance(distance),
+      drive = driveAdjust(goalHeading,goalSpeed),
+      start = start(goalSpeed),
+      end = end
+    )
+
+trait TrackColorReading:
+  def trackIntensity:Percent
+
+trait GyroAndTrackColorReading extends GyroHeading with TrackColorReading with TachometerAngle
+
+final case class GyroColorTachometerReading(heading:Degrees, trackIntensity:Percent, tachometerAngle:Degrees)
+  extends GyroHeading with TachometerAngle
+
+object GyroColorTachometer :
+
+  def sense(colorSensor:Ev3ColorSensor,tachometer:Motor)():GyroColorTachometerReading =
+    GyroColorTachometerReading(
+      Robot.gyroscope.headingMode().readHeading(),
+      colorSensor.reflectMode().readReflect(),
+      tachometer.readPosition()
+    )
+
+  /***/
+
 abstract class LineDrive extends Move:
   
   @tailrec
@@ -130,7 +170,7 @@ object CalibrateReflect extends Move:
     val thread = new Thread:
       override def run(): Unit =
         GyroSetHeading(0.degrees).move()
-        GyroDriveFeedback.driveForwardDistance(0.degrees,100.degreesPerSecond,300.mm).move()
+        GyroDrive.driveForwardDistance(0.degrees,100.degreesPerSecond,300.mm).move()
         Robot.Coast.move()
     thread.start()
 

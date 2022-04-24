@@ -14,7 +14,7 @@ import scala.annotation.tailrec
 
 object FeedbackLoop:
   @tailrec
-  final def feedback[S <: SensorResults](sense:() => S)(complete:S => Boolean)(response:S => Unit):Unit =
+  final def feedback[S <: SensorReading](sense:() => S)(complete:S => Boolean)(response:S => Unit):Unit =
     val sensorResults = sense()
     if(complete(sensorResults)) ()
     else
@@ -22,91 +22,39 @@ object FeedbackLoop:
       Time.pause()
       feedback(sense)(complete)(response)
 
-final case class FeedbackMove(
-                         name:String,
-                         sense: () => GyroSensorResults,
-                         complete: GyroSensorResults => GyroSensorResults => Boolean,
-                         drive: GyroSensorResults => Unit,
-                         start: () => Unit,
-                         end: () => Unit
-                       ) extends Move:
+final case class FeedbackMove[S <: SensorReading] (
+                                                   name:String,
+                                                   sense: () => S,
+                                                   complete: S => S => Boolean,
+                                                   drive: S => Unit,
+                                                   start: S => Unit,
+                                                   end: () => Unit
+                                                  ) extends Move:
   def move():Unit =
     val initialSense = sense()
-    start()
+    start(initialSense)
 
     import FeedbackLoop.feedback
     //noinspection EmptyParenMethodAccessedAsParameterless
     feedback(sense)(complete(initialSense))(drive)
     end()
 
-trait SensorResults
-
-trait GyroHeadingResult extends SensorResults:
-  def heading:Degrees
-
-trait TachometerResult extends SensorResults:
-  def tachometerResult:Degrees
-
-final case class GyroSensorResults(heading:Degrees, tachometerResult:Degrees)
-  extends GyroHeadingResult with TachometerResult
-
-object GyroSensorResults:
-  def sense():GyroSensorResults = GyroSensorResults(
-    Robot.gyroscope.headingMode().readHeading(),
-    Robot.leftDriveMotor.readPosition()
-  )
-
-object GyroDriveFeedback:
-  private def senseGyroAndDistance(tachometer:Motor)():GyroSensorResults =
-    GyroSensorResults(Robot.gyroscope.headingMode().readHeading(),tachometer.readPosition())
-
-  private def start(goalSpeed:DegreesPerSecond)():Unit =
-    Ev3Led.writeBothGreen()
-    Robot.directDrive(goalSpeed,goalSpeed)
-    Robot.writeDirectDriveMode()
-
-  private def end():Unit =
-    Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
-    Ev3Led.writeBothOff()
-
-  private def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerResult)(sensorResults: TachometerResult) =
-    val goalTachometer = initialSensorResults.tachometerResult + Robot.distanceToWheelRotation(distance)
-    sensorResults.tachometerResult > goalTachometer
-
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(sensorResults: GyroHeadingResult): Unit =
-    val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
-    Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
-
-  def driveForwardDistance(goalHeading:Degrees,goalSpeed:DegreesPerSecond,distance:MilliMeters,tachometer:Motor = Robot.leftDriveMotor):Move =
-    FeedbackMove(
-      name = s"GyroF $distance",
-      sense = senseGyroAndDistance(tachometer),
-      complete = forwardUntilDistance(distance),
-      drive = driveAdjust(goalHeading,goalSpeed),
-      start = start(goalSpeed),
-      end = end
-    )
-
-  private def backwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerResult)(sensorResults: TachometerResult) =
-    val goalTachometer = initialSensorResults.tachometerResult + Robot.distanceToWheelRotation(distance)
-    sensorResults.tachometerResult < goalTachometer
-
-  def driveBackwardDistance(goalHeading:Degrees,goalSpeed:DegreesPerSecond,distance:MilliMeters,tachometer:Motor = Robot.leftDriveMotor):Move =
-    FeedbackMove(
-      name = s"GyroB $distance",
-      sense = senseGyroAndDistance(tachometer),
-      complete = backwardUntilDistance(distance),
-      drive = driveAdjust(goalHeading,goalSpeed),
-      start = start(goalSpeed),
-      end = end
-    )
+trait SensorReading
 
 object FeedbackDriveTest extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
-    MovesMenuAction("WarmUp",Robot.WarmUp),
-    MovesMenuAction("0-Gyro",GyroSetHeading(0.degrees)),
-    MovesMenuAction("Forward",Seq(GyroDriveFeedback.driveForwardDistance(0.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Backward",Seq(GyroDriveFeedback.driveBackwardDistance(0.degrees,-200.degreesPerSecond,-500.mm),Robot.Hold)),
+    MovesMenuAction("WarmUp",GyroDrive.WarmUp),
+    MovesMenuAction("0 Gyro",GyroSetHeading(0.degrees)),
+    MovesMenuAction("Gyro F 0",Seq(GyroDrive.driveForwardDistance(0.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Gyro B 0",Seq(GyroDrive.driveBackwardDistance(0.degrees,-200.degreesPerSecond,-500.mm),Robot.Hold)),
+    MovesMenuAction("90 Gyro",GyroSetHeading(90.degrees)),
+    MovesMenuAction("Gyro F 90",Seq(GyroDrive.driveForwardDistance(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Turn RF 90",Seq(GyroTurn.rightForwardPivotFeedback(90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn LF -90",Seq(GyroTurn.leftForwardPivotFeedback(-90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn RB 90",Seq(GyroTurn.rightBackwardPivotFeedback(90.degrees,-200.degreesPerSecond))),
+    MovesMenuAction("Turn LB -90",Seq(GyroTurn.leftBackwardPivotFeedback(-90.degrees,-200.degreesPerSecond))),
+    MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotateFeedback(90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotateFeedback(-90.degrees,200.degreesPerSecond))),
     MovesMenuAction("Stop",Robot.Coast),
     MovesMenuAction("Despin",Seq(DespinGyro))
   )

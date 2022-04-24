@@ -12,146 +12,132 @@ import scala.annotation.tailrec
 import ev3dev4s.measure.MilliMeters
 
 object GyroTurn:
- 
-  val fullSpeedThreshold = 45.degrees
-  val minSpeedThreshold = 5.degrees
-  val minSpeed = 50.degreesPerSecond
 
-  def showLedsForPivot(changing:Ev3Led,fixed:Ev3Led)(headingDiff:Degrees):Unit = 
-    if (headingDiff > fullSpeedThreshold) changing.writeGreen()
-    else if (headingDiff > minSpeedThreshold) changing.writeYellow()
-    else changing.writeBrightness(255.ledIntensity,127.ledIntensity)
-    fixed.writeRed()  
-  
-  def keepTurningRight(headingDiff:Degrees) = headingDiff > 0.degrees
-  def keepTurningLeft(headingDiff:Degrees) = headingDiff < 0.degrees
-  
-  def leftWheelPivot(speed:DegreesPerSecond) = Robot.drive(speed,0.degreesPerSecond)
-  def rightWheelPivot(speed:DegreesPerSecond) = Robot.drive(0.degreesPerSecond,speed)
+  case class GyroReading(heading:Degrees) extends SensorReading
 
-  def showLedsForRotate(headingDiff:Degrees):Unit = 
-    if (headingDiff > fullSpeedThreshold) 
-      Ev3Led.Left.writeGreen()
-      Ev3Led.Right.writeGreen()
-    else if (headingDiff > minSpeedThreshold) 
-      Ev3Led.Left.writeYellow()
-      Ev3Led.Right.writeYellow()
-    else 
-      Ev3Led.Left.writeBrightness(255.ledIntensity,127.ledIntensity)  
-      Ev3Led.Right.writeBrightness(255.ledIntensity,127.ledIntensity)  
+  object GyroReading:
+    def sense():GyroReading =
+      GyroReading(Robot.gyroscope.headingMode().readHeading())
 
-  def leftRotate(speed:DegreesPerSecond) = Robot.drive((-speed/2.unitless).degreesPerSecond,(speed/2.unitless).degreesPerSecond)
-  def rightRotate(speed:DegreesPerSecond) = Robot.drive((speed/2.unitless).degreesPerSecond,(-speed/2.unitless).degreesPerSecond)
-
-abstract class GyroTurn(
-    goalHeading: Degrees,
-    goalSpeed: DegreesPerSecond,
-    keepGoing: (Degrees) => Boolean,
-    driveWheels: (DegreesPerSecond) => Unit,
-    setLeds: (Degrees) => Unit
-  ) extends Move:
-
-  def move():Unit = gyroTurnRecursive()
-
-  //todo extract this into a control structure
-  @tailrec
-  final def gyroTurnRecursive():Unit = 
-    import GyroTurn.*
-    val headingDiff = goalHeading - Robot.gyroHeading.readHeading()  //read sensors into a structure
-    if(!keepGoing(headingDiff)) () //return condition takes the sensor structure
-    else
-      val absHeadingDiff = headingDiff.abs //proportional bit
-      setLeds(absHeadingDiff) //indicators - add to drive
-
-      //proportional value
-      val speed = if (absHeadingDiff > fullSpeedThreshold) goalSpeed
-                  else if (absHeadingDiff > minSpeedThreshold) (goalSpeed * absHeadingDiff / fullSpeedThreshold.value).degreesPerSecond 
-                  else (minSpeed * goalSpeed.sign).degreesPerSecond
-      driveWheels(speed)  
-      gyroTurnRecursive() //recur
-
-case class LeftForwardPivot(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningLeft,
-    driveWheels = GyroTurn.rightWheelPivot,
-    setLeds = GyroTurn.showLedsForPivot(Ev3Led.Right,Ev3Led.Left)
-  )
-  
-case class RightForwardPivot(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningRight,
-    driveWheels = GyroTurn.leftWheelPivot,
-    setLeds = GyroTurn.showLedsForPivot(Ev3Led.Left,Ev3Led.Right)
-  )
-
-case class LeftBackwardPivot(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningLeft,
-    driveWheels = GyroTurn.leftWheelPivot,
-    setLeds = GyroTurn.showLedsForPivot(Ev3Led.Left,Ev3Led.Right)
-  )
-  
-case class RightBackwardPivot(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningRight,
-    driveWheels = GyroTurn.rightWheelPivot,
-    setLeds = GyroTurn.showLedsForPivot(Ev3Led.Right,Ev3Led.Left)
-  )
-
-case class LeftRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningLeft,
-    driveWheels = GyroTurn.leftRotate,
-    setLeds = GyroTurn.showLedsForRotate
-  )
-  
-case class RightRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond) 
-  extends GyroTurn(
-    goalHeading = goalHeading,
-    goalSpeed = goalSpeed,
-    keepGoing = GyroTurn.keepTurningRight,
-    driveWheels = GyroTurn.rightRotate,
-    setLeds = GyroTurn.showLedsForRotate
-  )
-
-object TestGyroTurn extends Runnable:
-  val actions: Array[TtyMenuAction] = Array(
-      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
-      MovesMenuAction("LeftForward",Seq(LeftForwardPivot(-90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("RightForward",Seq(RightForwardPivot(90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("LeftRotate",Seq(LeftRotate(-90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("RightRotate",Seq(RightRotate(90.degrees,Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("LeftBackward",Seq(LeftBackwardPivot(-90.degrees,-Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("RightBackward",Seq(RightBackwardPivot(90.degrees,-Robot.fineSpeed),Robot.Hold)),
-      MovesMenuAction("Coast",Seq(Robot.Coast)),
-      MovesMenuAction("Despin",Seq(DespinGyro))
+  def rightForwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"R F Pivot $goalHeading",
+      sense = GyroReading.sense,
+      complete = rightEnough(goalHeading),
+      drive = leftWheelDrive(goalHeading,goalSpeed),
+      start = startLeftWheel(goalHeading,goalSpeed),
+      end = end
     )
 
-  def setSensorRows():Unit =
-    import ev3dev4s.lcd.tty.Lcd
-    import ev3dev4s.sysfs.UnpluggedException
+  def rightEnough(goalHeading:Degrees)(notUsed: GyroReading)(gyroReading: GyroReading):Boolean =
+    goalHeading < gyroReading.heading
 
-    Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
-    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}")
-    Lcd.set(0,heading,Lcd.LEFT)
+  def speed(goalHeading:Degrees,goalSpeed:DegreesPerSecond,gyroReading: GyroReading):DegreesPerSecond =
+    
+    val fullSpeedThreshold = 45.degrees
+    val minSpeedThreshold = 5.degrees
+    val minSpeed = (goalSpeed.sign * 100.degreesPerSecond).degreesPerSecond //todo this is too slow for rotations - or need to use the motor's internal control to go this slow.
 
-    val leftMotorText = UnpluggedException.safeString(() => s"${Robot.leftDriveMotor.readPosition().value}")
-    Lcd.set(1,leftMotorText,Lcd.LEFT)
-    val rightMotorText = UnpluggedException.safeString(() => s"${Robot.rightDriveMotor.readPosition().value}")
-    Lcd.set(1,rightMotorText,Lcd.RIGHT)
+    val absHeadingDiff = (goalHeading - gyroReading.heading).abs
 
-  val lcdView:Controller = Controller(actions,setSensorRows)
+    if(absHeadingDiff > fullSpeedThreshold) goalSpeed
+    else if(absHeadingDiff > minSpeedThreshold)
+      val threshholdDiff = fullSpeedThreshold - minSpeedThreshold
+      ((goalSpeed.value * (absHeadingDiff - minSpeedThreshold).value/threshholdDiff.value) +
+        (minSpeed.value * (fullSpeedThreshold - absHeadingDiff).value/threshholdDiff.value)).degreesPerSecond
+    else minSpeed
 
-  override def run():Unit = lcdView.run()
 
-  def main(args: Array[String]): Unit = run()
+  def leftWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    val s = speed(goalHeading,goalSpeed,gyroReading)
+    Robot.drive(s,0.degreesPerSecond)
+
+  def startLeftWheel(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    leftWheelDrive(goalHeading,goalSpeed)(gyroReading)
+    Ev3Led.Left.writeGreen()
+    Ev3Led.Right.writeOff()
+
+  def end():Unit =
+    Ev3Led.writeBothOff()
+
+  def leftForwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"L F Pivot $goalHeading",
+      sense = GyroReading.sense,
+      complete = leftEnough(goalHeading),
+      drive = rightWheelDrive(goalHeading,goalSpeed),
+      start = startRightWheel(goalHeading,goalSpeed),
+      end = end
+    )
+
+  def leftEnough(goalHeading:Degrees)(notUsed: GyroReading)(gyroReading: GyroReading):Boolean =
+    goalHeading > gyroReading.heading
+
+  def rightWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    val s = speed(goalHeading,goalSpeed,gyroReading)
+    Robot.drive(0.degreesPerSecond,s)
+
+  def startRightWheel(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    rightWheelDrive(goalHeading,goalSpeed)(gyroReading)
+    Ev3Led.Right.writeGreen()
+    Ev3Led.Left.writeOff()
+
+
+  def rightBackwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"R B Pivot $goalHeading",
+      sense = GyroReading.sense,
+      complete = rightEnough(goalHeading),
+      drive = rightWheelDrive(goalHeading,goalSpeed),
+      start = startRightWheel(goalHeading,goalSpeed),
+      end = end
+    )
+
+  def leftBackwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"L B Pivot $goalHeading",
+      sense = GyroReading.sense,
+      complete = leftEnough(goalHeading),
+      drive = leftWheelDrive(goalHeading,goalSpeed),
+      start = startLeftWheel(goalHeading,goalSpeed),
+      end = end
+    )
+
+  def rightRotateFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"R Rotate $goalHeading",
+      sense = GyroReading.sense,
+      complete = rightEnough(goalHeading),
+      drive = rightRotateDrive(goalHeading,goalSpeed),
+      start = startRightRotate(goalHeading,goalSpeed),
+      end = end
+    )
+
+  def rightRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    val s = (speed(goalHeading,goalSpeed,gyroReading).value/2).degreesPerSecond
+    Robot.drive(s,-s)
+
+  def startRightRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    rightRotateDrive(goalHeading,goalSpeed)(gyroReading)
+    Ev3Led.writeBothGreen()
+
+  def leftRotateFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+    FeedbackMove(
+      name = s"R Rotate $goalHeading",
+      sense = GyroReading.sense,
+      complete = leftEnough(goalHeading),
+      drive = leftRotateDrive(goalHeading,goalSpeed),
+      start = startLeftRotate(goalHeading,goalSpeed),
+      end = end
+    )
+
+  def leftRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    val s = (speed(goalHeading,goalSpeed,gyroReading).value/2).degreesPerSecond
+    Robot.drive(-s,s)
+
+  def startLeftRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+    leftRotateDrive(goalHeading,goalSpeed)(gyroReading)
+    Ev3Led.writeBothGreen()
+
+  /****/
+
