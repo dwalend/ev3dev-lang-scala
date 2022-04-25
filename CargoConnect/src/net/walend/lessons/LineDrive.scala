@@ -7,6 +7,8 @@ import ev3dev4s.Log
 import ev3dev4s.actuators.{Ev3Led, Motor}
 import ev3dev4s.sensors.Ev3ColorSensor
 import net.walend.lessons.GyroDrive.driveAdjust
+import scala.annotation.tailrec
+import scala.collection.mutable.{Map => MutableMap}
 
 /* todo
 * Gyro-assisted line drive straight
@@ -21,10 +23,12 @@ import net.walend.lessons.GyroDrive.driveAdjust
  * Use the gyroscope and a light sensor to follow a staight line
  */
 
-object LineDrive:
+object LineDriveFeedback:
 
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide)(sensorResults: GyroColorTachometer): Unit =
-    val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
+  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide)(sensorResults: GyroAndTrackColorReading): Unit =
+    val gyroSteerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
+//    val colorSteerAdjust = (blackOn.steerSign * (brightness - calibrationCenter).value * goalSpeed.abs.value / 30).degreesPerSecond
+    val steerAdjust = gyroSteerAdjust //+ colorSteerAdjust
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 
   def driveForwardUntilDistance(
@@ -32,15 +36,34 @@ object LineDrive:
                                trackColorSensor:Ev3ColorSensor,
                                blackOn:BlackSide,
                                goalSpeed:DegreesPerSecond,
-                               distance:MilliMeters
+                               distance:MilliMeters,
+                               tachometer:Motor = Robot.leftDriveMotor
                                ):Move =
     FeedbackMove(
       name = s"LineF $blackOn $distance",
       sense = GyroColorTachometer.sense(trackColorSensor,tachometer),
       complete = GyroDrive.forwardUntilDistance(distance),
-      drive = driveAdjust(goalHeading,goalSpeed),
-      start = start(goalSpeed),
-      end = end
+      drive = driveAdjust(goalHeading,goalSpeed,blackOn),
+      start = GyroDrive.start(goalSpeed),
+      end = GyroDrive.end
+    )
+
+  def driveForwardUntilBlack(
+                              goalHeading:Degrees,
+                              trackColorSensor:Ev3ColorSensor,
+                              blackOn:BlackSide,
+                              goalSpeed:DegreesPerSecond,
+                              distance:MilliMeters,
+                              tachometer:Motor = Robot.leftDriveMotor,
+                              tripColorSensor:Ev3ColorSensor = Robot.leftColorSensor
+                            ):Move =
+    FeedbackMove(
+      name = s"LineF to $blackOn $distance or black",
+      sense = GyroColorTrackingTripTachometerReading.sense(trackColorSensor,tripColorSensor,tachometer),
+      complete = GyroColorTrackingTripTachometerReading.complete(distance,CalibrateReflect.colorSensorsToCalibrated(tripColorSensor).dark),
+      drive = driveAdjust(goalHeading,goalSpeed,blackOn),
+      start = GyroDrive.start(goalSpeed),
+      end = GyroDrive.end
     )
 
 trait TrackColorReading:
@@ -49,7 +72,7 @@ trait TrackColorReading:
 trait GyroAndTrackColorReading extends GyroHeading with TrackColorReading with TachometerAngle
 
 final case class GyroColorTachometerReading(heading:Degrees, trackIntensity:Percent, tachometerAngle:Degrees)
-  extends GyroHeading with TachometerAngle
+  extends GyroAndTrackColorReading
 
 object GyroColorTachometer :
 
@@ -60,7 +83,33 @@ object GyroColorTachometer :
       tachometer.readPosition()
     )
 
-  /***/
+enum BlackSide(val steerSign:Int):
+  case Left extends BlackSide(-1)
+  case Right extends BlackSide(1)
+
+trait TripColorReading:
+  def tripIntensity:Percent
+
+final case class GyroColorTrackingTripTachometerReading(heading:Degrees,trackIntensity:Percent,tripIntensity:Percent,tachometerAngle: Degrees)
+  extends GyroAndTrackColorReading with TripColorReading
+
+object GyroColorTrackingTripTachometerReading:
+  def sense(trackSensor:Ev3ColorSensor,tripSensor:Ev3ColorSensor,tachometer:Motor)():GyroColorTrackingTripTachometerReading =
+    GyroColorTrackingTripTachometerReading(
+      Robot.gyroscope.headingMode().readHeading(),
+      trackSensor.reflectMode().readReflect(),
+      tripSensor.reflectMode().readReflect(),
+      tachometer.readPosition()
+    )
+
+  def complete(distance:MilliMeters,trip:Percent => Boolean)
+              (initialSense:GyroColorTrackingTripTachometerReading)
+              (sensorResults:GyroColorTrackingTripTachometerReading):Boolean = {
+    GyroDrive.forwardUntilDistance(distance)(initialSense)(sensorResults) || trip(sensorResults.tripIntensity)
+  }
+
+
+/***/
 
 abstract class LineDrive extends Move:
   
@@ -147,10 +196,6 @@ case class AcquireLine(
     //Settle in with high constant
     //Use low constant
     ???
-
-enum BlackSide(val steerSign:Int):
-  case Left extends BlackSide(-1)
-  case Right extends BlackSide(1) 
 
 object CalibrateReflect extends Move:
   case class CalibratedReflect(darkest:Percent,brightest:Percent):

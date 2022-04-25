@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDrive, GyroSetHeading, LeftBackwardPivot, LeftForwardPivot, LeftRotate, LineDriveDistanceForward, LineDriveToBlackForward, Move, RightForwardPivot, RightRotate, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDrive, GyroSetHeading, GyroTurn, LineDriveDistanceForward, LineDriveToBlackForward, Move, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -90,8 +90,8 @@ object SortingCenter:
 //    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
     LineDriveDistanceForward(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
     //todo consider switching to both color sensors at ~330mm 
-    RightForwardPivot(90.degrees,Robot.fineSpeed),
-    LeftForwardPivot(90.degrees,Robot.fineSpeed),
+    GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
+    GyroTurn.leftForwardPivot(90.degrees,Robot.fineSpeed),
     Robot.Hold
   )
 
@@ -123,21 +123,21 @@ object SortingCenter:
 
   private def eastSlotToOtherSlot(distanceToSlot:MilliMeters):Seq[Move] = Seq(
     GyroDrive.driveBackwardDistance(90.degrees,-Robot.fineSpeed,-6.studs),
-    RightRotate(180.degrees,Robot.fineSpeed),
+    GyroTurn.rightRotate(180.degrees,Robot.fineSpeed),
     GyroDrive.driveForwardDistance(180.degrees,Robot.fineSpeed,distanceToSlot),
-    LeftRotate(90.degrees,Robot.fineSpeed),
+    GyroTurn.leftRotate(90.degrees,Robot.fineSpeed),
     GyroDrive.driveForwardDistance(90.degrees,Robot.fineSpeed,6.studs)
   )
 
   private def deliverBlueFromSlot(eastWestCorrection:Move):Seq[Move] = 
     captureBlueFromAnySlot ++ Seq(
       GyroDrive.driveBackwardDistance(90.degrees,-Robot.fineSpeed,-(5*8).mm),
-      RightRotate(180.degrees,Robot.fineSpeed),
+      GyroTurn.rightRotate(180.degrees,Robot.fineSpeed),
       eastWestCorrection,
   ) ++ deliverBlueFromSouthOfBlueCircle
 
   private lazy val deliverBlueFromSouthOfBlueCircle = Seq(
-    RightRotate(270.degrees,Robot.fineSpeed),
+    GyroTurn.rightRotate(270.degrees,Robot.fineSpeed),
     //touches back wall - might stall
     GyroDrive.driveForwardDistance(270.degrees,Robot.fineSpeed,(800 + 80 -(2*Robot.driveAxelToExtendedFork.value)).mm), 
     GyroDrive.driveBackwardDistance(270.degrees,-Robot.fineSpeed,-104.mm),

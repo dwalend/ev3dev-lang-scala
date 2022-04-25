@@ -19,7 +19,7 @@ object GyroTurn:
     def sense():GyroReading =
       GyroReading(Robot.gyroscope.headingMode().readHeading())
 
-  def rightForwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def rightForwardPivot(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"R F Pivot $goalHeading",
       sense = GyroReading.sense,
@@ -60,7 +60,7 @@ object GyroTurn:
   def end():Unit =
     Ev3Led.writeBothOff()
 
-  def leftForwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def leftForwardPivot(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"L F Pivot $goalHeading",
       sense = GyroReading.sense,
@@ -83,7 +83,7 @@ object GyroTurn:
     Ev3Led.Left.writeOff()
 
 
-  def rightBackwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def rightBackwardPivot(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"R B Pivot $goalHeading",
       sense = GyroReading.sense,
@@ -93,7 +93,7 @@ object GyroTurn:
       end = end
     )
 
-  def leftBackwardPivotFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def leftBackwardPivot(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"L B Pivot $goalHeading",
       sense = GyroReading.sense,
@@ -103,7 +103,7 @@ object GyroTurn:
       end = end
     )
 
-  def rightRotateFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def rightRotate(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"R Rotate $goalHeading",
       sense = GyroReading.sense,
@@ -121,7 +121,7 @@ object GyroTurn:
     rightRotateDrive(goalHeading,goalSpeed)(gyroReading)
     Ev3Led.writeBothGreen()
 
-  def leftRotateFeedback(goalHeading:Degrees,goalSpeed:DegreesPerSecond):Move =
+  def leftRotate(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
     FeedbackMove(
       name = s"R Rotate $goalHeading",
       sense = GyroReading.sense,

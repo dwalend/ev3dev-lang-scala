@@ -49,12 +49,12 @@ object FeedbackDriveTest extends Runnable:
     MovesMenuAction("Gyro B 0",Seq(GyroDrive.driveBackwardDistance(0.degrees,-200.degreesPerSecond,-500.mm),Robot.Hold)),
     MovesMenuAction("90 Gyro",GyroSetHeading(90.degrees)),
     MovesMenuAction("Gyro F 90",Seq(GyroDrive.driveForwardDistance(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Turn RF 90",Seq(GyroTurn.rightForwardPivotFeedback(90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Turn LF -90",Seq(GyroTurn.leftForwardPivotFeedback(-90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Turn RB 90",Seq(GyroTurn.rightBackwardPivotFeedback(90.degrees,-200.degreesPerSecond))),
-    MovesMenuAction("Turn LB -90",Seq(GyroTurn.leftBackwardPivotFeedback(-90.degrees,-200.degreesPerSecond))),
-    MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotateFeedback(90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotateFeedback(-90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn RF 90",Seq(GyroTurn.rightForwardPivot(90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn LF -90",Seq(GyroTurn.leftForwardPivot(-90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn RB 90",Seq(GyroTurn.rightBackwardPivot(90.degrees,-200.degreesPerSecond))),
+    MovesMenuAction("Turn LB -90",Seq(GyroTurn.leftBackwardPivot(-90.degrees,-200.degreesPerSecond))),
+    MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotate(90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotate(-90.degrees,200.degreesPerSecond))),
     MovesMenuAction("Stop",Robot.Coast),
     MovesMenuAction("Despin",Seq(DespinGyro))
   )

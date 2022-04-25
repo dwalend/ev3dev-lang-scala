@@ -9,7 +9,7 @@ import ev3dev4s.actuators.{Ev3LargeMotor,Ev3MediumMotor, MotorCommand, MotorPort
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDrive, GyroSetHeading, LineDriveDistanceForward, Move}
+import net.walend.lessons.{BlackSide, GyroArcForwardRight, GyroDrive, GyroSetHeading, Move}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
@@ -104,7 +104,7 @@ object Robot:
       Sound.beep()
 
     def warmUpTask():Unit =
-      LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,0.mm).move()
+//      LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,0.mm).move()
       //does not work        GyroArcForwardRight(0.degrees,0.mm,Robot.fineSpeed).move()
 //      GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,0.mm).move()
       GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,0.mm)

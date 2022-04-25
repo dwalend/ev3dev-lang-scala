@@ -10,16 +10,16 @@ import ev3dev4s.measure.MilliMeters
 
 object GyroDrive:
 
-  private def start(goalSpeed:DegreesPerSecond)(notUsed:GyroAndTachometer):Unit =
+  private[lessons] def start(goalSpeed:DegreesPerSecond)(notUsed:SensorReading):Unit =
     Ev3Led.writeBothGreen()
     Robot.directDrive(goalSpeed,goalSpeed)
     Robot.writeDirectDriveMode()
 
-  private def end():Unit =
+  private[lessons] def end():Unit =
     Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
     Ev3Led.writeBothOff()
 
-  private def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerAngle)(sensorResults: TachometerAngle) =
+  private[lessons] def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerAngle)(sensorResults: TachometerAngle) =
     val goalTachometer = initialSensorResults.tachometerAngle + Robot.distanceToWheelRotation(distance)
     sensorResults.tachometerAngle > goalTachometer
 
