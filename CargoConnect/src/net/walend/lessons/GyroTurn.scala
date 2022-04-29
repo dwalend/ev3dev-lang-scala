@@ -13,7 +13,7 @@ import ev3dev4s.measure.MilliMeters
 
 object GyroTurn:
 
-  case class GyroReading(heading:Degrees) extends SensorReading
+  case class GyroReading(heading:Degrees) extends GyroHeading
 
   object GyroReading:
     def sense():GyroReading =
@@ -29,8 +29,8 @@ object GyroTurn:
       end = end
     )
 
-  def rightEnough(goalHeading:Degrees)(notUsed: GyroReading)(gyroReading: GyroReading):Boolean =
-    goalHeading < gyroReading.heading
+  def rightEnough(goalHeading:Degrees)(notUsed: GyroHeading)(gyroReading: GyroHeading):Boolean =
+    goalHeading <= gyroReading.heading
 
   def speed(goalHeading:Degrees,goalSpeed:DegreesPerSecond,gyroReading: GyroReading):DegreesPerSecond =
     
@@ -48,12 +48,12 @@ object GyroTurn:
     else minSpeed
 
 
-  def leftWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+  def leftWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial:GyroReading)(gyroReading: GyroReading):Unit =
     val s = speed(goalHeading,goalSpeed,gyroReading)
     Robot.drive(s,0.degreesPerSecond)
 
   def startLeftWheel(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
-    leftWheelDrive(goalHeading,goalSpeed)(gyroReading)
+    leftWheelDrive(goalHeading,goalSpeed)(gyroReading)(gyroReading)
     Ev3Led.Left.writeGreen()
     Ev3Led.Right.writeOff()
 
@@ -70,15 +70,15 @@ object GyroTurn:
       end = end
     )
 
-  def leftEnough(goalHeading:Degrees)(notUsed: GyroReading)(gyroReading: GyroReading):Boolean =
-    goalHeading > gyroReading.heading
+  def leftEnough(goalHeading:Degrees)(notUsed: GyroHeading)(gyroReading: GyroHeading):Boolean =
+    goalHeading >= gyroReading.heading
 
-  def rightWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+  def rightWheelDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial:GyroReading)(gyroReading: GyroReading):Unit =
     val s = speed(goalHeading,goalSpeed,gyroReading)
     Robot.drive(0.degreesPerSecond,s)
 
   def startRightWheel(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
-    rightWheelDrive(goalHeading,goalSpeed)(gyroReading)
+    rightWheelDrive(goalHeading,goalSpeed)(gyroReading)(gyroReading)
     Ev3Led.Right.writeGreen()
     Ev3Led.Left.writeOff()
 
@@ -113,12 +113,12 @@ object GyroTurn:
       end = end
     )
 
-  def rightRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+  def rightRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial:GyroReading)(gyroReading: GyroReading):Unit =
     val s = (speed(goalHeading,goalSpeed,gyroReading).value/2).degreesPerSecond
     Robot.drive(s,-s)
 
   def startRightRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
-    rightRotateDrive(goalHeading,goalSpeed)(gyroReading)
+    rightRotateDrive(goalHeading,goalSpeed)(gyroReading)(gyroReading)
     Ev3Led.writeBothGreen()
 
   def leftRotate(goalHeading:Degrees, goalSpeed:DegreesPerSecond):Move =
@@ -131,13 +131,10 @@ object GyroTurn:
       end = end
     )
 
-  def leftRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
+  def leftRotateDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial:GyroReading)(gyroReading: GyroReading):Unit =
     val s = (speed(goalHeading,goalSpeed,gyroReading).value/2).degreesPerSecond
     Robot.drive(-s,s)
 
   def startLeftRotate(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(gyroReading: GyroReading):Unit =
-    leftRotateDrive(goalHeading,goalSpeed)(gyroReading)
+    leftRotateDrive(goalHeading,goalSpeed)(gyroReading)(gyroReading)
     Ev3Led.writeBothGreen()
-
-  /****/
-

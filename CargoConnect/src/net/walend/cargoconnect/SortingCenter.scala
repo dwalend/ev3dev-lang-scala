@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArcForwardRight, GyroDrive, GyroSetHeading, GyroTurn, LineDriveDistanceForward, LineDriveToBlackForward, Move, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroDrive, GyroSetHeading, GyroTurn, LineDriveFeedback,GyroArcFeedback, Move, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -20,11 +20,11 @@ object SortingCenter:
     //acquire line black-on-left on right sensor at -45
     //follow line black-on-left on right sensor at -45 until left sensor sees black //todo white-black-white?
 
-    LineDriveToBlackForward(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftColorSensor),
+    LineDriveFeedback.driveForwardUntilBlack(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
     Robot.StopAndWaitForButton,
 
     //follow line black-on-left on right sensor at  -45 X mm
-    LineDriveDistanceForward(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,76.mm),
+    LineDriveFeedback.driveForwardUntilDistance(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,76.mm),
     Robot.StopAndWaitForButton,
 
     //140mm is the right distance to set up a forward left turn
@@ -32,17 +32,18 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor todo radius??
-    GyroArcForwardRight(0.degrees,128.mm+Robot.wheelToWheel,Robot.fineSpeed),
+    GyroArcFeedback.driveArcForwardRight(0.degrees,Robot.fineSpeed,128.mm+Robot.wheelToWheel),
 
     Robot.StopAndWaitForButton,
 
+    //todo replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
     //follow line black-on-right with right sensor heading 0 120 mm
-    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,160.mm),
+    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,160.mm),
 
     Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftColorSensor),
+    LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
     Robot.StopAndWaitForButton,
 
@@ -51,12 +52,12 @@ object SortingCenter:
 
     Robot.StopAndWaitForButton,
 
-    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
+    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
 
     Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveToBlackForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftColorSensor),
+    LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
     //drive straight at heading 0 2 studs
     GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
@@ -64,7 +65,7 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 X mm
-    LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
+    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
 
     Robot.StopAndWaitForButton,
 
@@ -74,7 +75,9 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
-    GyroArcForwardRight(90.degrees,200.mm+Robot.wheelToWheel,Robot.fineSpeed),
+    //todo this turn is too wide - puts the robot's rear at the front of the sorting center
+    //todo replace from the 360mm forward onward with 360mm + 230mm to bump the train, then sideslip to the east slot
+    GyroArcFeedback.driveArcForwardRight(90.degrees,Robot.fineSpeed,200.mm+Robot.wheelToWheel),
 
     Robot.Hold,
     Robot.Beep
@@ -88,7 +91,7 @@ object SortingCenter:
 //todo back up 3 studs unless green is in east slot
   def southToEastSlot:Seq[Move] = Seq(
 //    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
-    LineDriveDistanceForward(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
+    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
     //todo consider switching to both color sensors at ~330mm 
     GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
     GyroTurn.leftForwardPivot(90.degrees,Robot.fineSpeed),

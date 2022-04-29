@@ -1,15 +1,14 @@
 package net.walend.lessons
 
+import ev3dev4s.actuators.Sound
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
-
 import ev3dev4s.measure.Conversions.*
-
-import net.walend.lessons.{TtyMenuAction,TtyMenu,MovesMenuAction}
+import net.walend.lessons.{MovesMenuAction, TtyMenu, TtyMenuAction}
 
 /**
  *
@@ -24,6 +23,7 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
     timeThread.setDaemon(true)
     timeThread.start()
 
+    Sound.beep()
     ttyMenu.loop()
 
     UpdateScreen.keepGoing = false

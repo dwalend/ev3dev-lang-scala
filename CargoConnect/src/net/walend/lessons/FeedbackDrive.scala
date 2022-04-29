@@ -26,7 +26,7 @@ final case class FeedbackMove[S <: SensorReading] (
                                                    name:String,
                                                    sense: () => S,
                                                    complete: S => S => Boolean,
-                                                   drive: S => Unit,
+                                                   drive: S => S => Unit,
                                                    start: S => Unit,
                                                    end: () => Unit
                                                   ) extends Move:
@@ -36,7 +36,7 @@ final case class FeedbackMove[S <: SensorReading] (
 
     import FeedbackLoop.feedback
     //noinspection EmptyParenMethodAccessedAsParameterless
-    feedback(sense)(complete(initialSense))(drive)
+    feedback(sense)(complete(initialSense))(drive(initialSense))
     end()
 
 trait SensorReading
@@ -49,12 +49,21 @@ object FeedbackDriveTest extends Runnable:
     MovesMenuAction("Gyro B 0",Seq(GyroDrive.driveBackwardDistance(0.degrees,-200.degreesPerSecond,-500.mm),Robot.Hold)),
     MovesMenuAction("90 Gyro",GyroSetHeading(90.degrees)),
     MovesMenuAction("Gyro F 90",Seq(GyroDrive.driveForwardDistance(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Turn RF 90",Seq(GyroTurn.rightForwardPivot(90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Turn LF -90",Seq(GyroTurn.leftForwardPivot(-90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Turn RB 90",Seq(GyroTurn.rightBackwardPivot(90.degrees,-200.degreesPerSecond))),
-    MovesMenuAction("Turn LB -90",Seq(GyroTurn.leftBackwardPivot(-90.degrees,-200.degreesPerSecond))),
-    MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotate(90.degrees,200.degreesPerSecond))),
-    MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotate(-90.degrees,200.degreesPerSecond))),
+    MovesMenuAction("Turn RF 90",Seq(GyroTurn.rightForwardPivot(90.degrees,200.degreesPerSecond),Robot.Hold)),
+    MovesMenuAction("Turn LF -90",Seq(GyroTurn.leftForwardPivot(-90.degrees,200.degreesPerSecond),Robot.Hold)),
+    MovesMenuAction("Turn RB 90",Seq(GyroTurn.rightBackwardPivot(90.degrees,-200.degreesPerSecond),Robot.Hold)),
+    MovesMenuAction("Turn LB -90",Seq(GyroTurn.leftBackwardPivot(-90.degrees,-200.degreesPerSecond),Robot.Hold)),
+    MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotate(90.degrees,200.degreesPerSecond),Robot.Hold)),
+    MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotate(-90.degrees,200.degreesPerSecond),Robot.Hold)),
+
+    MovesMenuAction("Line F L .5m",Seq(LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Line F L black",Seq(LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
+
+    MovesMenuAction("Arc FR",Seq(GyroArcFeedback.driveArcForwardRight(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc FL",Seq(GyroArcFeedback.driveArcForwardLeft(-90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc BR",Seq(GyroArcFeedback.driveArcBackwardRight(90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc BL",Seq(GyroArcFeedback.driveArcBackwardLeft(-90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
+
     MovesMenuAction("Stop",Robot.Coast),
     MovesMenuAction("Despin",Seq(DespinGyro))
   )

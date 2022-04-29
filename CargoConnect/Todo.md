@@ -84,3 +84,41 @@
 ### scp from ant task in build.sc T
 ### ssh start jvm from ant task in build.sc T
 ### Auto scp and reload - based on a checksum T
+
+
+Make this not fatal:
+
+Exception in thread "Thread-0" java.util.NoSuchElementException: None.get
+at scala.None$.get(Option.scala:627)
+at scala.None$.get(Option.scala:626)
+at net.walend.cargoconnect.Robot$.gyroscope(Robot.scala:19)
+at net.walend.lessons.FeedbackDriveTest$.$anonfun$1(FeedbackDrive.scala:74)
+at ev3dev4s.sysfs.UnpluggedException$.safeString(Gadget.scala:68)
+at net.walend.lessons.FeedbackDriveTest$.setSensorRows(FeedbackDrive.scala:74)
+at net.walend.lessons.FeedbackDriveTest$.$init$$$anonfun$1(FeedbackDrive.scala:80)
+at net.walend.lessons.Controller.setLcd(Controller.scala:35)
+at net.walend.lessons.Controller.$init$$$anonfun$1(Controller.scala:31)
+at scala.runtime.function.JProcedure1.apply(JProcedure1.java:15)
+at scala.runtime.function.JProcedure1.apply(JProcedure1.java:10)
+at net.walend.lessons.TtyMenu.drawScreen(TtyMenu.scala:61)
+at net.walend.lessons.Controller$UpdateScreen$.run(Controller.scala:45)
+at java.base/java.lang.Thread.run(Thread.java:834)
+java.util.NoSuchElementException: None.get
+at scala.None$.get(Option.scala:627)
+at scala.None$.get(Option.scala:626)
+at net.walend.cargoconnect.Robot$.gyroscope(Robot.scala:19)
+at net.walend.lessons.FeedbackDriveTest$.$anonfun$1(FeedbackDrive.scala:74)
+at ev3dev4s.sysfs.UnpluggedException$.safeString(Gadget.scala:68)
+at net.walend.lessons.FeedbackDriveTest$.setSensorRows(FeedbackDrive.scala:74)
+at net.walend.lessons.FeedbackDriveTest$.$init$$$anonfun$1(FeedbackDrive.scala:80)
+at net.walend.lessons.Controller.setLcd(Controller.scala:35)
+at net.walend.lessons.Controller.$init$$$anonfun$1(Controller.scala:31)
+at scala.runtime.function.JProcedure1.apply(JProcedure1.java:15)
+at scala.runtime.function.JProcedure1.apply(JProcedure1.java:10)
+at net.walend.lessons.TtyMenu.drawScreen(TtyMenu.scala:61)
+at net.walend.lessons.TtyMenu.loop(TtyMenu.scala:22)
+at net.walend.lessons.Controller.run(Controller.scala:27)
+at net.walend.lessons.FeedbackDriveTest$.run(FeedbackDrive.scala:82)
+at ev3dev4s.JarRunner$.main(JarRunner.scala:27)
+at ev3dev4s.JarRunner.main(JarRunner.scala)
+End JarRunner 

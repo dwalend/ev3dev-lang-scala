@@ -11,10 +11,6 @@ import scala.annotation.tailrec
 import scala.collection.mutable.{Map => MutableMap}
 
 /* todo
-* Gyro-assisted line drive straight
-* Refactor - read sensors, maybe stop, drive motors, repeat - maybe as a trait. 
-* Refactor to have a common HoF
-* Refactor the gyro feedback
 * Gyro-assisted line drive straight backwards
 
 */
@@ -25,10 +21,14 @@ import scala.collection.mutable.{Map => MutableMap}
 
 object LineDriveFeedback:
 
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide)(sensorResults: GyroAndTrackColorReading): Unit =
+  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide,colorSensor: Ev3ColorSensor)(initial: GyroAndTrackColorReading)(sensorResults: GyroAndTrackColorReading): Unit =
+
+    val calibrationCenter = CalibrateReflect.colorSensorsToCalibrated(colorSensor).middle
+
     val gyroSteerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
-//    val colorSteerAdjust = (blackOn.steerSign * (brightness - calibrationCenter).value * goalSpeed.abs.value / 30).degreesPerSecond
-    val steerAdjust = gyroSteerAdjust //+ colorSteerAdjust
+    val colorSteerAdjust = (blackOn.steerSign * (sensorResults.trackIntensity - calibrationCenter).value * goalSpeed.abs.value / 600).degreesPerSecond //todo 600 seems really high
+
+    val steerAdjust = gyroSteerAdjust + colorSteerAdjust
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 
   def driveForwardUntilDistance(
@@ -43,7 +43,7 @@ object LineDriveFeedback:
       name = s"LineF $blackOn $distance",
       sense = GyroColorTachometer.sense(trackColorSensor,tachometer),
       complete = GyroDrive.forwardUntilDistance(distance),
-      drive = driveAdjust(goalHeading,goalSpeed,blackOn),
+      drive = driveAdjust(goalHeading,goalSpeed,blackOn,trackColorSensor),
       start = GyroDrive.start(goalSpeed),
       end = GyroDrive.end
     )
@@ -61,7 +61,7 @@ object LineDriveFeedback:
       name = s"LineF to $blackOn $distance or black",
       sense = GyroColorTrackingTripTachometerReading.sense(trackColorSensor,tripColorSensor,tachometer),
       complete = GyroColorTrackingTripTachometerReading.complete(distance,CalibrateReflect.colorSensorsToCalibrated(tripColorSensor).dark),
-      drive = driveAdjust(goalHeading,goalSpeed,blackOn),
+      drive = driveAdjust(goalHeading,goalSpeed,blackOn,trackColorSensor),
       start = GyroDrive.start(goalSpeed),
       end = GyroDrive.end
     )

@@ -59,7 +59,8 @@ object Robot:
   val wheelCircumference = (wheelDiameter.value * Math.PI.toFloat).mm
   
   def distanceToWheelRotation(distance:MilliMeters):Degrees = (distance.value * 360 / wheelCircumference.value).degrees
-  
+  def wheelRotationToDistance(degrees:Degrees):MilliMeters = (wheelCircumference * degrees / 360).mm
+
   val wheelToWheel = 23.studs //todo is that right?
 
   val driveAxelToExtendedFork = 33.studs
@@ -109,5 +110,7 @@ object Robot:
 //      GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,0.mm).move()
       GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,0.mm)
       GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-0.mm)
+      //todo add arc warm up
+      //todo really drive 
 
 

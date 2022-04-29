@@ -159,7 +159,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
             Log.log(s"Failed with $x")
             System.currentTimeMillis() < deadline // try again if there's time
       do
-        Time.pause()
+        Time.pause(500.milliseconds)
       found
     end scanForSensor
 

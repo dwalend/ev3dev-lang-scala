@@ -15,15 +15,13 @@ object GyroDrive:
     Robot.directDrive(goalSpeed,goalSpeed)
     Robot.writeDirectDriveMode()
 
-  private[lessons] def end():Unit =
-    Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
-    Ev3Led.writeBothOff()
+  private[lessons] def end():Unit = Ev3Led.writeBothOff()
 
   private[lessons] def forwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerAngle)(sensorResults: TachometerAngle) =
     val goalTachometer = initialSensorResults.tachometerAngle + Robot.distanceToWheelRotation(distance)
     sensorResults.tachometerAngle > goalTachometer
 
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(sensorResults: GyroHeading): Unit =
+  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial: GyroHeading)(sensorResults: GyroHeading): Unit =
     val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 

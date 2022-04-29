@@ -9,6 +9,99 @@ import ev3dev4s.actuators.{Ev3LargeMotor, Ev3Led, Motor}
 import ev3dev4s.measure.MilliMeters
 import scala.annotation.tailrec
 
+object GyroArcFeedback:
+
+
+
+  def arcDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters)(initial:GyroAndTachometer)(reading:GyroAndTachometer):Unit =
+
+    val totalDegrees = goalHeading - initial.heading
+    val turnSign = totalDegrees.sign * goalSpeed.sign
+    val outerMotor = if(turnSign > 0) Robot.leftDriveMotor
+                     else Robot.rightDriveMotor
+
+    val totalDistance = ((2 * Math.PI.toFloat * radius.value * totalDegrees.value * turnSign)/360).mm //outer wheel
+
+    val remainingDegrees = goalHeading - reading.heading
+    val remainingDistance = totalDistance - Robot.wheelRotationToDistance(reading.tachometerAngle - initial.tachometerAngle)
+
+    val expectedRemainingDegrees = ((remainingDistance.value/totalDistance.value)*totalDegrees.value).degrees
+
+    //todo maybe goalSpeed.abs.value, maybe no turnSign
+    val steerAdjust = (turnSign * (remainingDegrees - expectedRemainingDegrees).value * goalSpeed.abs.value / 30).degreesPerSecond
+
+    val outerSpeed = goalSpeed + steerAdjust
+    val innerSpeed = (((goalSpeed - steerAdjust).value * (radius - Robot.wheelToWheel).value)/radius.value).degreesPerSecond
+
+    if (outerMotor == Robot.leftDriveMotor) Robot.directDrive(outerSpeed,innerSpeed)
+    else Robot.directDrive(innerSpeed,outerSpeed)
+
+  private[lessons] def startLeftOuter(goalSpeed:DegreesPerSecond)(notUsed:SensorReading):Unit =
+    Ev3Led.Left.writeGreen()
+    Ev3Led.Right.writeYellow()
+    Robot.directDrive(goalSpeed,goalSpeed)
+    Robot.writeDirectDriveMode()
+
+  private[lessons] def startRightOuter(goalSpeed:DegreesPerSecond)(notUsed:SensorReading):Unit =
+    Ev3Led.Left.writeYellow()
+    Ev3Led.Right.writeGreen()
+    Robot.directDrive(goalSpeed,goalSpeed)
+    Robot.writeDirectDriveMode()
+
+
+  private[lessons] def end():Unit =
+    Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
+    Ev3Led.writeBothOff()
+
+
+  def driveArcForwardRight(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters):Move =
+    //todo use some initial bits to avoid specifying right or left - special sense and complete
+
+    FeedbackMove(
+      name = "Arc FR",
+      sense = GyroAndTachometer.sense(Robot.leftDriveMotor),
+      complete = GyroTurn.rightEnough(goalHeading),
+      drive = arcDrive(goalHeading,goalSpeed,radius),
+      start = startLeftOuter(goalSpeed),
+      end = end
+    )
+
+  def driveArcForwardLeft(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters):Move =
+  //todo use some initial bits to avoid specifying right or left - special sense and complete
+
+    FeedbackMove(
+      name = "Arc FL",
+      sense = GyroAndTachometer.sense(Robot.rightDriveMotor),
+      complete = GyroTurn.leftEnough(goalHeading),
+      drive = arcDrive(goalHeading,goalSpeed,radius),
+      start = startRightOuter(goalSpeed),
+      end = end
+    )
+
+  def driveArcBackwardRight(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters):Move =
+  //todo use some initial bits to avoid specifying right or left - special sense and complete
+
+    FeedbackMove(
+      name = "Arc BR",
+      sense = GyroAndTachometer.sense(Robot.rightDriveMotor),
+      complete = GyroTurn.rightEnough(goalHeading),
+      drive = arcDrive(goalHeading,goalSpeed,radius),
+      start = startRightOuter(goalSpeed),
+      end = end
+    )
+
+  def driveArcBackwardLeft(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters):Move =
+  //todo use some initial bits to avoid specifying right or left - special sense and complete
+
+    FeedbackMove(
+      name = "Arc BL",
+      sense = GyroAndTachometer.sense(Robot.leftDriveMotor),
+      complete = GyroTurn.leftEnough(goalHeading),
+      drive = arcDrive(goalHeading,goalSpeed,radius),
+      start = startLeftOuter(goalSpeed),
+      end = end
+    )
+
 abstract class GyroArc() extends Move:
   
   @tailrec
@@ -36,14 +129,10 @@ abstract class GyroArc() extends Move:
       val expectedRemainingDegrees = ((arcSpecifier.turnSign * remainingDistance.value * 360) /
                                       (radius.value * 2 * Math.PI.toFloat))
                                       .degrees
-      Log.log(s"remainingDegrees $remainingDegrees remainingDistance $remainingDistance expectedRemainingDegrees $expectedRemainingDegrees")
-
-      //todo steer adjust 
 
       val steerAdjust = ((remainingDegrees - expectedRemainingDegrees).value * 6 * arcSpecifier.turnSign).degreesPerSecond //todo should also be proportional to goal speed
       val outerMotorSpeed: DegreesPerSecond = goalSpeed + steerAdjust
       val innerMotorSpeed = (((goalSpeed - steerAdjust).value * (radius - Robot.wheelToWheel).value)/radius.value).degreesPerSecond
-      Log.log(s"gaf steerAdjust is $steerAdjust")
 
       //todo maybe pass in the Robot.drive function and steer adjust ???
       //todo duty cycle instead
@@ -68,7 +157,6 @@ abstract class GyroArc() extends Move:
     val deltaOdo = (goalSpeed.value.sign * (((radius.value * 2 * Math.PI.toFloat) * remainingDegrees.value.abs) /360)).mm
     val goalOdo = initialOdo + deltaOdo
 
-    Log.log(s"daf remainingDegrees $remainingDegrees goalOdo $goalOdo")
     gyroArc(goalHeading,goalOdo,goalSpeed,radius,arcSpecifier,keepGoing,setLeds)
 
   def notRightEnough(goalHeading:Degrees):Boolean = Robot.gyroHeading.readHeading() < goalHeading
