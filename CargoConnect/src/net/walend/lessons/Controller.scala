@@ -28,14 +28,14 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
 
     UpdateScreen.keepGoing = false
 
-  val ttyMenu = TtyMenu(actions:+Reload, setLcd)
+  val ttyMenu: TtyMenu = TtyMenu(actions:+Reload, setLcd)
 
   def setLcd(ttyMenu: TtyMenu):Unit =
     ttyMenu.setActionRow(3)
     setSensorRows()
 
-  var startTime = System.currentTimeMillis()
-  def elapsedTime = (System.currentTimeMillis() - startTime)/1000
+  var startTime: Long = System.currentTimeMillis()
+  def elapsedTime: Long = (System.currentTimeMillis() - startTime)/1000
 
   object UpdateScreen extends Runnable:
     @volatile var keepGoing = true

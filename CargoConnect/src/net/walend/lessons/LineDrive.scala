@@ -10,15 +10,9 @@ import net.walend.lessons.GyroDrive.driveAdjust
 import scala.annotation.tailrec
 import scala.collection.mutable.{Map => MutableMap}
 
-/* todo
-* Gyro-assisted line drive straight backwards
-
-*/
-
 /**
- * Use the gyroscope and a light sensor to follow a staight line
+ * Use the gyroscope and a light sensor to follow a straight line
  */
-
 object LineDriveFeedback:
 
   private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide,colorSensor: Ev3ColorSensor)(initial: GyroAndTrackColorReading)(sensorResults: GyroAndTrackColorReading): Unit =
@@ -26,7 +20,7 @@ object LineDriveFeedback:
     val calibrationCenter = CalibrateReflect.colorSensorsToCalibrated(colorSensor).middle
 
     val gyroSteerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
-    val colorSteerAdjust = (blackOn.steerSign * (sensorResults.trackIntensity - calibrationCenter).value * goalSpeed.abs.value / 600).degreesPerSecond //todo 600 seems really high
+    val colorSteerAdjust = (blackOn.steerSign * (sensorResults.trackIntensity - calibrationCenter).value * goalSpeed.abs.value / 300).degreesPerSecond //todo 600 seems really high
 
     val steerAdjust = gyroSteerAdjust + colorSteerAdjust
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
@@ -108,80 +102,6 @@ object GyroColorTrackingTripTachometerReading:
     GyroDrive.forwardUntilDistance(distance)(initialSense)(sensorResults) || trip(sensorResults.tripIntensity)
   }
 
-
-/***/
-
-abstract class LineDrive extends Move:
-  
-  @tailrec
-  final def lineDriveStraight(
-             goalHeading: Degrees, //todo use the heading
-             colorSensor:Ev3ColorSensor,
-             blackSide:BlackSide, //todo use this
-             goalSpeed: DegreesPerSecond,
-             keepGoing: () => Boolean,
-             setLeds: () => Unit = Ev3Led.writeBothGreen
-  ):Unit = 
-    setLeds()
-    if(!keepGoing()) ()
-    else
-      val brightness:Percent = colorSensor.reflectMode().readReflect()
-      val calibrationCenter:Percent = CalibrateReflect.colorSensorsToCalibrated(colorSensor).middle
-      //todo changanble value for how much to steer - currently 1/3
-      val colorSteerAdjust = (blackSide.steerSign * (brightness - calibrationCenter).value / 3).degreesPerSecond //todo should also be proportional to goal speed
-      //todo add gyro sensor call??
-      val steerAdjust = colorSteerAdjust
-
-//      Log.log(s"steerAdjust $steerAdjust")
-
-      Robot.drive(goalSpeed + steerAdjust, goalSpeed - steerAdjust) //todo duty cycle instead? 
-      Thread.`yield`()   
-      lineDriveStraight(goalHeading,colorSensor,blackSide,goalSpeed,keepGoing,setLeds)
-
-case class LineDriveDistanceForward(
-            goalHeading: Degrees,
-            colorSensor:Ev3ColorSensor,
-            blackSide:BlackSide,
-            goalSpeed: DegreesPerSecond,
-            distance: MilliMeters,
-            setLeds: () => Unit = Ev3Led.writeBothGreen
-          ) extends LineDrive:
-
-  def move():Unit = 
-    val initialPosition = Robot.leftDriveMotor.readPosition()
-    def notFarEnough():Boolean =
-      Robot.leftDriveMotor.readPosition() < initialPosition + ((distance.value * 360)/Robot.wheelCircumference.value).degrees
-
-    lineDriveStraight(goalHeading,colorSensor,blackSide,goalSpeed,notFarEnough)
-
-//todo start here
-case class LineDriveToBlackForward(
-                                    goalHeading: Degrees, 
-                                    colorSensor:Ev3ColorSensor,
-                                    blackSide:BlackSide,
-                                    goalSpeed: DegreesPerSecond,
-                                    distanceLimit: MilliMeters,
-                                    stopColorSensor:Ev3ColorSensor,
-                                    setLeds: () => Unit = Ev3Led.writeBothYellow
-                                  ) extends LineDrive:
-  def move():Unit =
-    val initialPosition = Robot.leftDriveMotor.readPosition()
-    def notFarEnough():Boolean =
-      val stopCalibration = CalibrateReflect.colorSensorsToCalibrated(stopColorSensor)
-      val sensorReading = stopColorSensor.reflectMode().readReflect()
-
-      val tachometerReading = Robot.leftDriveMotor.readPosition()
-
-      //todo let the robot convert distance into degrees to turn the wheel
-      val limitTachometerReading = initialPosition + ((distanceLimit.value * 360)/Robot.wheelCircumference.value).degrees
-
-      Log.log(s"$sensorReading ${stopCalibration.dark(sensorReading)} ${limitTachometerReading - tachometerReading} ${tachometerReading >= limitTachometerReading}")
-
-      val farEnough = stopCalibration.dark(sensorReading) || tachometerReading >= limitTachometerReading
-      !farEnough
-
-    lineDriveStraight(goalHeading,colorSensor,blackSide,goalSpeed,notFarEnough)
-
 case class AcquireLine(
   goalHeading:Degrees,
   colorSensor:Ev3ColorSensor,
@@ -240,37 +160,3 @@ object CalibrateReflect extends Move:
     colorSensorsToCalibrated.put(Robot.leftColorSensor,CalibratedReflect(finalVals._1,finalVals._2))
     colorSensorsToCalibrated.put(Robot.rightColorSensor,CalibratedReflect(finalVals._3,finalVals._4))
     Log.log(s"Calibration results: $colorSensorsToCalibrated")
-
-
-object TestLineDrive extends Runnable:
-  val actions: Array[TtyMenuAction] = Array(
-      MovesMenuAction("SetGyro0",Seq(GyroSetHeading(0.degrees))),
-      MovesMenuAction("ColorCalibrate",Seq(CalibrateReflect)),
-      MovesMenuAction("LineForward0",Seq(LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,500.mm),Robot.Hold)),
-      MovesMenuAction("Coast",Seq(Robot.Coast)),
-      MovesMenuAction("Despin",Seq(DespinGyro))
-    )
-
-  def setSensorRows():Unit =
-    import ev3dev4s.lcd.tty.Lcd
-    import ev3dev4s.sysfs.UnpluggedException
-
-    Lcd.set(0,s"${lcdView.elapsedTime}s",Lcd.RIGHT)
-    val heading:String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().round}")
-    Lcd.set(0,heading,Lcd.LEFT)
-
-    val leftColor:String = UnpluggedException.safeString(() => s"${Robot.leftColorSensor.reflectMode().readReflect().round}")
-    Lcd.set(1,leftColor,Lcd.LEFT)
-    val rightColor:String = UnpluggedException.safeString(() => s"${Robot.rightColorSensor.reflectMode().readReflect().round}")
-    Lcd.set(1,rightColor,Lcd.RIGHT)
-  
-  //    val leftMotorText = UnpluggedException.safeString(() => s"${Robot.leftDriveMotor.readPosition()}")
-//    Lcd.set(2,leftMotorText,Lcd.LEFT)
-//    val rightMotorText = UnpluggedException.safeString(() => s"${Robot.rightDriveMotor.readPosition()}")
-//    Lcd.set(2,rightMotorText,Lcd.RIGHT)
-
-  val lcdView:Controller = Controller(actions,setSensorRows)
-
-  override def run():Unit = lcdView.run()
-
-  def main(args: Array[String]): Unit = run()

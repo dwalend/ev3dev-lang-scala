@@ -36,7 +36,7 @@ object SortingCenter:
 
     Robot.StopAndWaitForButton,
 
-    //todo replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
+    //todo maybe replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
     //follow line black-on-right with right sensor heading 0 120 mm
     LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,160.mm),
 

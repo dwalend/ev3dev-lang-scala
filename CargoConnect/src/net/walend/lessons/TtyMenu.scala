@@ -10,7 +10,6 @@ import ev3dev4s.sensors.Ev3KeyPad
  * @author David Walend
  * @since v0.0.0
  */
-//todo make this part of the lessons jar
 case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:(TtyMenu => Unit)):
 
   @volatile var index = 0

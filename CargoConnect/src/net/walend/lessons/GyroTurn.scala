@@ -11,6 +11,7 @@ import ev3dev4s.actuators.Ev3Led
 import scala.annotation.tailrec
 import ev3dev4s.measure.MilliMeters
 
+//noinspection EmptyParenMethodAccessedAsParameterless
 object GyroTurn:
 
   case class GyroReading(heading:Degrees) extends GyroHeading
@@ -36,7 +37,7 @@ object GyroTurn:
     
     val fullSpeedThreshold = 45.degrees
     val minSpeedThreshold = 5.degrees
-    val minSpeed = (goalSpeed.sign * 100.degreesPerSecond).degreesPerSecond //todo this is too slow for rotations - or need to use the motor's internal control to go this slow.
+    val minSpeed = (goalSpeed.sign * 100.degreesPerSecond).degreesPerSecond 
 
     val absHeadingDiff = (goalHeading - gyroReading.heading).abs
 
