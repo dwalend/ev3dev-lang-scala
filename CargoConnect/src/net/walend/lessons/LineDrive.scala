@@ -10,6 +10,7 @@ import net.walend.lessons.GyroDrive.driveAdjust
 import scala.annotation.tailrec
 import scala.collection.mutable.{Map => MutableMap}
 
+
 /**
  * Use the gyroscope and a light sensor to follow a straight line
  */
@@ -101,6 +102,40 @@ object GyroColorTrackingTripTachometerReading:
               (sensorResults:GyroColorTrackingTripTachometerReading):Boolean = {
     GyroDrive.forwardUntilDistance(distance)(initialSense)(sensorResults) || trip(sensorResults.tripIntensity)
   }
+
+object WhiteBlackWhite:
+
+  def createComplete(tripColorSensor:Ev3ColorSensor)(initialSense:GyroColorTrackingTripTachometerReading):GyroColorTrackingTripTachometerReading => Boolean =
+    import net.walend.lessons.CalibrateReflect.CalibratedReflect
+    enum State:
+      case ExpectFirstWhite
+      case ExpectBlack
+      case ExpectSecondWhite
+
+    var state:State = State.ExpectFirstWhite
+    def setState(s:State):Unit =
+      state = s
+      state match
+        case State.ExpectFirstWhite => Ev3Led.Left.writeGreen()
+        case State.ExpectBlack => Ev3Led.Left.writeYellow()
+        case State.ExpectSecondWhite => Ev3Led.Left.writeRed()
+
+    setState(State.ExpectFirstWhite)
+
+    val calibrateReflect:CalibratedReflect = CalibrateReflect.colorSensorsToCalibrated(tripColorSensor)
+    def tripBlackWhiteBlack(sensorResults:GyroColorTrackingTripTachometerReading):Boolean =
+      state match {
+        case State.ExpectFirstWhite =>
+          if(calibrateReflect.bright(sensorResults.tripIntensity)) setState(State.ExpectBlack)
+          false
+        case State.ExpectBlack =>
+          if(calibrateReflect.dark(sensorResults.tripIntensity)) setState(State.ExpectSecondWhite)
+          false
+        case State.ExpectSecondWhite =>
+          if(calibrateReflect.bright(sensorResults.tripIntensity)) true
+          else false
+      }
+    tripBlackWhiteBlack
 
 case class AcquireLine(
   goalHeading:Degrees,
