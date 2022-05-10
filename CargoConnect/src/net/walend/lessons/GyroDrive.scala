@@ -25,6 +25,7 @@ object GyroDrive:
     val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 
+  //todo check inputs
   def driveForwardDistance(goalHeading:Degrees,goalSpeed:DegreesPerSecond,distance:MilliMeters,tachometer:Motor = Robot.leftDriveMotor):Move =
     FeedbackMove(
       name = s"GyroF $distance",
@@ -35,6 +36,7 @@ object GyroDrive:
       end = end
     )
 
+  //todo check inputs
   private def backwardUntilDistance(distance:MilliMeters)(initialSensorResults:TachometerAngle)(sensorResults: TachometerAngle) =
     val goalTachometer = initialSensorResults.tachometerAngle + Robot.distanceToWheelRotation(distance)
     sensorResults.tachometerAngle < goalTachometer
@@ -79,7 +81,10 @@ object GyroAndTachometer :
     )
 
 case class GyroSetHeading(heading:Degrees) extends Move:
-  def move():Unit = Robot.gyroscope.headingMode().setHeading(heading)  
+  def move():Unit = Robot.gyroscope.headingMode().setHeading(heading)
+
+object GyroUnwind extends Move:
+  def move():Unit = Robot.gyroscope.headingMode().unwind()
 
 object DespinGyro extends Move:
   def move(): Unit =

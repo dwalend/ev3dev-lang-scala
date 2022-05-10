@@ -75,9 +75,7 @@
 #### Accel/Decel *
 ### Hybred sensor line follower *
 #### Can this go backward ? *
-### Arc drive - code cleanup
 ### Sideslip as a combo of arc drives
-### Standard sensor feedback loop structure
 
 ## Core library
 ### Use ant tasks T

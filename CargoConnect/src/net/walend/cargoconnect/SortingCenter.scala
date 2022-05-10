@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroDrive, GyroSetHeading, GyroTurn, LineDriveFeedback,GyroArcFeedback, Move, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArcFeedback, GyroDrive, GyroSetHeading, GyroTurn, GyroUnwind, LineDriveFeedback, Move, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -11,15 +11,16 @@ import ev3dev4s.measure.MilliMeters
  */
 object SortingCenter:
 
-  def startToEastSlot:Seq[Move] = Seq(
+  val startToParkRoad:Seq[Move] = Seq(
     GyroSetHeading(-45.degrees),
     //From home - Forward at -45
     GyroDrive.driveForwardDistance(-45.degrees,Robot.fineSpeed,140.mm), //consider going forward until you see "not white"
     Robot.StopAndWaitForButton,
 
     //acquire line black-on-left on right sensor at -45
-    //follow line black-on-left on right sensor at -45 until left sensor sees black //todo white-black-white?
+    //follow line black-on-left on right sensor at -45 until left sensor sees black
 
+    //todo white-black on left sensor
     LineDriveFeedback.driveForwardUntilBlack(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
     Robot.StopAndWaitForButton,
 
@@ -38,7 +39,7 @@ object SortingCenter:
 
     //todo maybe replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
     //follow line black-on-right with right sensor heading 0 120 mm
-    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,160.mm),
+    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,168.mm),
 
     Robot.StopAndWaitForButton,
 
@@ -50,8 +51,10 @@ object SortingCenter:
     //drive straight at heading 0 2 studs
     GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
 
-    Robot.StopAndWaitForButton,
+    Robot.StopAndWaitForButton
+  )
 
+  val parkRoadToShipRoad:Seq[Move] = Seq(
     LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
 
     Robot.StopAndWaitForButton,
@@ -62,22 +65,33 @@ object SortingCenter:
     //drive straight at heading 0 2 studs
     GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
 
-    Robot.StopAndWaitForButton,
+    Robot.StopAndWaitForButton
+  )
 
+  val shipRoadToEastSlot:Seq[Move] = Seq(
     //follow line black-on-right with right sensor with heading 0 X mm
     LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
 
     Robot.StopAndWaitForButton,
 
     //Gyro drive to the turning point
-    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,360.mm), //consider going forward until you see "not white"
+    //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
 
+    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,590.mm),
     Robot.StopAndWaitForButton,
 
-    //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
-    //todo this turn is too wide - puts the robot's rear at the front of the sorting center
-    //todo replace from the 360mm forward onward with 360mm + 230mm to bump the train, then sideslip to the east slot
-    GyroArcFeedback.driveArcForwardRight(90.degrees,Robot.fineSpeed,200.mm+Robot.wheelToWheel),
+    GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-30.mm),
+    Robot.StopAndWaitForButton,
+
+    GyroTurn.rightBackwardPivot(45.degrees,-Robot.fineSpeed),
+    Robot.StopAndWaitForButton,
+
+    GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
+    Robot.StopAndWaitForButton,
+
+    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,300.mm),
+
+//    GyroArcFeedback.driveArcForwardRight(90.degrees,Robot.fineSpeed,200.mm+Robot.wheelToWheel),
 
     Robot.Hold,
     Robot.Beep
@@ -147,13 +161,22 @@ object SortingCenter:
     Robot.Hold,
     ForkMoves.ForkIn,
     Robot.Beep,
-    Robot.Coast  
   )
 
   private lazy val captureBlueFromAnySlot = Seq(
-//    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
     Robot.Hold,
     ForkMoves.ForkOutUp,
+  )
+
+  val blueCircleToEastSlot:Seq[Move] = Seq(
+    GyroUnwind,
+    GyroDrive.driveBackwardDistance(-90.degrees,-Robot.fineSpeed,40.mm),
+    GyroTurn.rightRotate(0.degrees,-Robot.fineSpeed),
+    GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
+    //todo lower arm to push train
+    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,500.mm),
+    //todo raise arm
+    Robot.Hold
   )
 
 object SortingCenterMenu extends TtyMenuAction:

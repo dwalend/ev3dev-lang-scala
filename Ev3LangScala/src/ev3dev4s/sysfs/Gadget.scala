@@ -58,7 +58,7 @@ trait Port {
   def name:Char
 }
 
-case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"Gadget in $port unplugged",cause)
+case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"$port gadget unplugged",cause)
 
 object UnpluggedException:
   def apply(port:Port):UnpluggedException = UnpluggedException(port,null)

@@ -5,18 +5,22 @@ import ev3dev4s.os.Time
 import ev3dev4s.sensors.Ev3Gyroscope
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
-import ev3dev4s.actuators.{Ev3LargeMotor,Ev3MediumMotor, MotorCommand, MotorPort, Motor}
+import ev3dev4s.actuators.{Ev3LargeMotor, Ev3MediumMotor, Motor, MotorCommand, MotorPort}
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
 import net.walend.lessons.{BlackSide, GyroDrive, GyroSetHeading, Move}
 import ev3dev4s.actuators.Sound
+import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
 import net.walend.cargoconnect.Robot.gyroscope
 
+import scala.annotation.tailrec
+
 object Robot: 
-  lazy val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
+  lazy val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.get(SensorPort.Two).collectFirst{case g:Ev3Gyroscope => g}
+    .get
   lazy val gyroHeading: gyroscope.HeadingMode = gyroscope.headingMode()
 
   lazy val leftColorSensor:Ev3ColorSensor = Ev3System.portsToSensors.get(SensorPort.One).collect{case cs:Ev3ColorSensor => cs}.get
@@ -26,6 +30,24 @@ object Robot:
 
   lazy val leftDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.A).collect{case m:Ev3LargeMotor => m}.get
   lazy val rightDriveMotor:Ev3LargeMotor = Ev3System.portsToMotors.get(MotorPort.B).collect{case m:Ev3LargeMotor => m}.get
+
+  @tailrec
+  def check():Unit =
+    try
+      gyroHeading.readHeading()
+      leftColorSensor.reflectMode().readReflect()
+      rightColorSensor.reflectMode().readReflect()
+      forkMotor.readPosition()
+      leftDriveMotor.readPosition()
+      rightDriveMotor.readPosition()
+    catch
+      case x =>
+        Lcd.set(0,"Gadget Check")
+        Lcd.set(1,x.getMessage())
+        Sound.playTone(440,200.milliseconds)
+        Sound.playTone(220,200.milliseconds)
+        Ev3KeyPad.blockUntilAnyKey()
+        check()
 
   def drive(leftSpeed:DegreesPerSecond,rightSpeed:DegreesPerSecond): Unit =
     leftDriveMotor.writeSpeed(leftSpeed)

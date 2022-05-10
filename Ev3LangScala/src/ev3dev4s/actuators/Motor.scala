@@ -58,6 +58,9 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   def readIsStalled():Boolean =
     readState().contains(MotorState.STALLED)
 
+  def readIsRunning():Boolean =
+    readState().contains(MotorState.RUNNING)
+
   def coast(): Unit =
     writeStopAction(MotorStopCommand.COAST)
     writeCommand(MotorCommand.STOP)

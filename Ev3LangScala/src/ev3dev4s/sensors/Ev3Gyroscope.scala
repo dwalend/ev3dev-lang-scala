@@ -68,6 +68,10 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
       offset = heading - readRawHeading()
     }
 
+    def unwind():Unit = this.synchronized {
+      offset = offset.unwind
+    }
+
   /**
    * Angle change rate in degrees per second
    */

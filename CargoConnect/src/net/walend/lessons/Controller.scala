@@ -8,7 +8,7 @@ import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{MovesMenuAction, TtyMenu, TtyMenuAction}
+import net.walend.cargoconnect.Robot
 
 /**
  *
@@ -19,6 +19,7 @@ import net.walend.lessons.{MovesMenuAction, TtyMenu, TtyMenuAction}
 case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) extends Runnable:
 
   override def run(): Unit =
+    Robot.check()
     val timeThread = new Thread(UpdateScreen)
     timeThread.setDaemon(true)
     timeThread.start()
