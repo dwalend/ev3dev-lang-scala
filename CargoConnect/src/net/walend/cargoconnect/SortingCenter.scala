@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArcFeedback, GyroDrive, GyroSetHeading, GyroTurn, GyroUnwind, LineDriveFeedback, Move, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArc, GyroDrive, GyroSetHeading, GyroTurn, GyroUnwind, LineDrive, Move, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -21,11 +21,11 @@ object SortingCenter:
     //follow line black-on-left on right sensor at -45 until left sensor sees black
 
     //todo white-black on left sensor
-    LineDriveFeedback.driveForwardUntilBlack(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
+    LineDrive.driveForwardUntilBlack(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
     Robot.StopAndWaitForButton,
 
     //follow line black-on-left on right sensor at  -45 X mm
-    LineDriveFeedback.driveForwardUntilDistance(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,76.mm),
+    LineDrive.driveForwardUntilDistance(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,76.mm),
     Robot.StopAndWaitForButton,
 
     //140mm is the right distance to set up a forward left turn
@@ -33,18 +33,18 @@ object SortingCenter:
     Robot.StopAndWaitForButton,
 
     //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor todo radius??
-    GyroArcFeedback.driveArcForwardRight(0.degrees,Robot.fineSpeed,128.mm+Robot.wheelToWheel),
+    GyroArc.driveArcForwardRight(0.degrees,Robot.fineSpeed,128.mm+Robot.wheelToWheel),
 
     Robot.StopAndWaitForButton,
 
     //todo maybe replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
     //follow line black-on-right with right sensor heading 0 120 mm
-    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,168.mm),
+    LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,168.mm),
 
     Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
+    LineDrive.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
     Robot.StopAndWaitForButton,
 
@@ -55,12 +55,12 @@ object SortingCenter:
   )
 
   val parkRoadToShipRoad:Seq[Move] = Seq(
-    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
+    LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
 
     Robot.StopAndWaitForButton,
 
     //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
+    LineDrive.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
     //drive straight at heading 0 2 studs
     GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
@@ -70,7 +70,8 @@ object SortingCenter:
 
   val shipRoadToEastSlot:Seq[Move] = Seq(
     //follow line black-on-right with right sensor with heading 0 X mm
-    LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
+    //todo a little shorter distance
+    LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
 
     Robot.StopAndWaitForButton,
 
@@ -83,15 +84,60 @@ object SortingCenter:
     GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-30.mm),
     Robot.StopAndWaitForButton,
 
+    //todo maybe a more accute angle - was about three studs to the right (west) at the sorting center
     GyroTurn.rightBackwardPivot(45.degrees,-Robot.fineSpeed),
     Robot.StopAndWaitForButton,
 
-    GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
+    GyroDrive.driveForwardDistance(45.degrees,Robot.fineSpeed,120.mm),
     Robot.StopAndWaitForButton,
 
-    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,300.mm),
+    //todo this didn't get the motors going, and crashed with a stack trace with duty cycles > 100% - maybe change driveArc to use setSpeed instead of direct
 
-//    GyroArcFeedback.driveArcForwardRight(90.degrees,Robot.fineSpeed,200.mm+Robot.wheelToWheel),
+    /*
+    1654018045765 Finished net.walend.cargoconnect.Robot$StopAndWaitForButton$@18ee631
+1654018045773 Start FeedbackMove(Arc FR,net.walend.lessons.GyroArc$$$Lambda$47/0xb114fa28@c77c7,net.walend.lessons.GyroArc$$$Lambda$48/0xb114e028@dda9cc,net.walend.lessons.GyroArc$$$Lambda$49/0xb114d028@ee5251,net.walend.lessons.GyroArc$$$Lambda$50/0xb1159028@13d61fb,net.walend.lessons.GyroArc$$$Lambda$51/0xb1158a28@909414)
+1654018087993 abs duty cycle 100.12462% is greater than 100.0%
+1654018088015 abs duty cycle 107.236305% is greater than 100.0%
+1654018088396 caught java.io.IOException: Invalid argument with 'Invalid argument'
+java.io.IOException: Invalid argument
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite0(Native Method)
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite(FileDispatcherImpl.java:68)
+	at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:109)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:79)
+	at java.base/sun.nio.ch.FileChannelImpl.writeInternal(FileChannelImpl.java:850)
+	at java.base/sun.nio.ch.FileChannelImpl.write(FileChannelImpl.java:836)
+	at ev3dev4s.sysfs.ChannelRewriter.writeString(ChannelRewriter.scala:25)
+	at ev3dev4s.sysfs.ChannelRewriter.writeAsciiInt(ChannelRewriter.scala:29)
+	at ev3dev4s.actuators.MotorFS.writeDutyCycle(MotorFS.scala:45)
+	at ev3dev4s.actuators.Motor.writeDutyCycle$$anonfun$1(Motor.scala:30)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:15)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:10)
+	at scala.Option.fold(Option.scala:263)
+	at ev3dev4s.sysfs.Gadget.liftedTree1$1(Gadget.scala:41)
+	at ev3dev4s.sysfs.Gadget.checkPort(Gadget.scala:47)
+	at ev3dev4s.actuators.Motor.writeDutyCycle(Motor.scala:30)
+	at net.walend.cargoconnect.Robot$.directDrive(Robot.scala:66)
+	at net.walend.lessons.GyroArc$.arcDrive(GyroArc.scala:33)
+	at net.walend.lessons.GyroArc$.driveArcForwardRight$$anonfun$3$$anonfun$1(GyroArc.scala:59)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:15)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:10)
+	at net.walend.lessons.FeedbackLoop$.feedback(FeedbackDrive.scala:21)
+	at net.walend.lessons.FeedbackMove.move(FeedbackDrive.scala:39)
+	at net.walend.lessons.MovesMenuAction.act$$anonfun$1(TtyMenu.scala:79)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:15)
+	at scala.runtime.function.JProcedure1.apply(JProcedure1.java:10)
+	at scala.collection.immutable.List.foreach(List.scala:333)
+	at net.walend.lessons.MovesMenuAction.act(TtyMenu.scala:80)
+	at net.walend.lessons.TtyMenu.doAction(TtyMenu.scala:40)
+	at net.walend.lessons.TtyMenu.loop(TtyMenu.scala:31)
+	at net.walend.lessons.Controller.run(Controller.scala:28)
+	at net.walend.cargoconnect.CargoConnect$.run(CargoConnect.scala:59)
+    */
+
+    GyroArc.driveArcForwardRight(90.degrees,Robot.fineSpeed,Robot.wheelToWheel + 30.mm),
+    Robot.StopAndWaitForButton,
+
+    LineDrive.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,30.mm),
 
     Robot.Hold,
     Robot.Beep
@@ -105,7 +151,7 @@ object SortingCenter:
 //todo back up 3 studs unless green is in east slot
   def southToEastSlot:Seq[Move] = Seq(
 //    GyroSetHeading(90.degrees), //todo remove this gyro set when done testing
-    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
+    LineDrive.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),//,440.mm), //todo stop after stall or distance
     //todo consider switching to both color sensors at ~330mm 
     GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
     GyroTurn.leftForwardPivot(90.degrees,Robot.fineSpeed),
@@ -168,13 +214,33 @@ object SortingCenter:
     ForkMoves.ForkOutUp,
   )
 
+  /*
+    Crashed with
+
+  1654018825852 Start FeedbackMove(GyroB -40.0mm,net.walend.lessons.GyroDrive$$$Lambda$52/0xb115f828@dec4a,net.walend.lessons.GyroDrive$$$Lambda$53/0xb115e828@16def03,net.walend.lessons.GyroDrive$$$Lambda$54/0xb115d828@cddd20,net.walend.lessons.GyroDrive$$$Lambda$55/0xb115c828@d1993a,net.walend.lessons.GyroDrive$$$Lambda$56/0xb115c028@13f4916)
+1654018825896 abs duty cycle -371.42856% is greater than 100.0%
+1654018826046 caught java.io.IOException: Invalid argument with 'Invalid argument'
+java.io.IOException: Invalid argument
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite0(Native Method)
+	at java.base/sun.nio.ch.FileDispatcherImpl.pwrite(FileDispatcherImpl.java:68)
+	at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:109)
+	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:79)
+	at java.base/sun.nio.ch.FileChannelImpl.writeInternal(FileChannelImpl.java:850)
+	at java.base/sun.nio.ch.FileChannelImpl.write(FileChannelImpl.java:836)
+	at ev3dev4s.sysfs.ChannelRewriter.writeString(ChannelRewriter.scala:25)
+	at ev3dev4s.sysfs.ChannelRewriter.writeAsciiInt(ChannelRewriter.scala:29)
+	at ev3dev4s.actuators.MotorFS.writeDutyCycle(MotorFS.scala:45)
+	at ev3dev4s.actuators.Motor.writeDutyCycle$$anonfun$1(Motor.scala:30)
+
+  */
+
   val blueCircleToEastSlot:Seq[Move] = Seq(
     GyroUnwind,
-    GyroDrive.driveBackwardDistance(-90.degrees,-Robot.fineSpeed,40.mm),
-    GyroTurn.rightRotate(0.degrees,-Robot.fineSpeed),
+    GyroDrive.driveBackwardDistance(-90.degrees,-Robot.fineSpeed,-40.mm),
+    GyroTurn.rightRotate(0.degrees,Robot.fineSpeed),
     GyroTurn.rightForwardPivot(90.degrees,Robot.fineSpeed),
     //todo lower arm to push train
-    LineDriveFeedback.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,500.mm),
+    LineDrive.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,500.mm),
     //todo raise arm
     Robot.Hold
   )

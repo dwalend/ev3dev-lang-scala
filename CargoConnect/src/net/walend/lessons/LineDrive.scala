@@ -14,7 +14,7 @@ import scala.collection.mutable.{Map => MutableMap}
 /**
  * Use the gyroscope and a light sensor to follow a straight line
  */
-object LineDriveFeedback:
+object LineDrive:
 
   private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond,blackOn:BlackSide,colorSensor: Ev3ColorSensor)(initial: GyroAndTrackColorReading)(sensorResults: GyroAndTrackColorReading): Unit =
 
@@ -105,7 +105,7 @@ object GyroColorTrackingTripTachometerReading:
 
 object WhiteBlackWhite:
 
-  def createComplete(tripColorSensor:Ev3ColorSensor)(initialSense:GyroColorTrackingTripTachometerReading):GyroColorTrackingTripTachometerReading => Boolean =
+  def createComplete(tripColorSensor:Ev3ColorSensor,limitDistance:MilliMeters)(initialSense:GyroColorTachometerReading):GyroColorTachometerReading => Boolean =
     import net.walend.lessons.CalibrateReflect.CalibratedReflect
     enum State:
       case ExpectFirstWhite
@@ -122,20 +122,39 @@ object WhiteBlackWhite:
 
     setState(State.ExpectFirstWhite)
 
+    def distanceCheck = GyroDrive.forwardUntilDistance(limitDistance)(initialSense)
+
     val calibrateReflect:CalibratedReflect = CalibrateReflect.colorSensorsToCalibrated(tripColorSensor)
-    def tripBlackWhiteBlack(sensorResults:GyroColorTrackingTripTachometerReading):Boolean =
-      state match {
+    def tripWhiteBlackWhite(sensorResults:GyroColorTachometerReading):Boolean =
+      val seenWBW: Boolean = state match {
         case State.ExpectFirstWhite =>
-          if(calibrateReflect.bright(sensorResults.tripIntensity)) setState(State.ExpectBlack)
+          if (calibrateReflect.bright(sensorResults.trackIntensity)) setState(State.ExpectBlack)
           false
         case State.ExpectBlack =>
-          if(calibrateReflect.dark(sensorResults.tripIntensity)) setState(State.ExpectSecondWhite)
+          if (calibrateReflect.dark(sensorResults.trackIntensity)) setState(State.ExpectSecondWhite)
           false
         case State.ExpectSecondWhite =>
-          if(calibrateReflect.bright(sensorResults.tripIntensity)) true
+          if (calibrateReflect.bright(sensorResults.trackIntensity)) true
           else false
       }
-    tripBlackWhiteBlack
+      seenWBW || distanceCheck(sensorResults)
+    tripWhiteBlackWhite
+
+  def driveForwardToWhiteBlackWhite(
+                              goalHeading:Degrees,
+                              goalSpeed:DegreesPerSecond,
+                              limitDistance:MilliMeters,
+                              tachometer:Motor = Robot.leftDriveMotor,
+                              tripColorSensor:Ev3ColorSensor = Robot.leftColorSensor
+                            ):Move =
+    FeedbackMove(
+      name = s"Forward to White-Black-White",
+      sense = GyroColorTachometer.sense(tripColorSensor,tachometer),
+      complete = createComplete(tripColorSensor,limitDistance),
+      drive = GyroDrive.driveAdjust(goalHeading,goalSpeed),
+      start = GyroDrive.start(goalSpeed),
+      end = GyroDrive.end
+    )
 
 case class AcquireLine(
   goalHeading:Degrees,

@@ -10,6 +10,8 @@ import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.measure.MilliSeconds
 import ev3dev4s.measure.DutyCycle
 
+import ev3dev4s.Log
+
 /**
  *
  *
@@ -39,6 +41,7 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
     stopActionWriter.writeString(command.command)
 
   def writeDutyCycle(dutyCycle:DutyCycle):Unit =
+    if(dutyCycle.abs > 100.dutyCyclePercent) Log.log(s"abs duty cycle $dutyCycle is greater than ${100.dutyCyclePercent}")
     dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
 
   def writeSpeed(speed:DegreesPerSecond):Unit =

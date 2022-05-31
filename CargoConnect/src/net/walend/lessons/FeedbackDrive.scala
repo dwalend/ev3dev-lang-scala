@@ -60,13 +60,13 @@ object FeedbackDriveTest extends Runnable:
     MovesMenuAction("Rotate R 90",Seq(GyroTurn.rightRotate(90.degrees,200.degreesPerSecond),Robot.Hold)),
     MovesMenuAction("Rotate L -90",Seq(GyroTurn.leftRotate(-90.degrees,200.degreesPerSecond),Robot.Hold)),
 
-    MovesMenuAction("Line F L .5m",Seq(LineDriveFeedback.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Line F L black",Seq(LineDriveFeedback.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Line F L .5m",Seq(LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Line F L black",Seq(LineDrive.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,200.degreesPerSecond,500.mm),Robot.Hold)),
 
-    MovesMenuAction("Arc FR",Seq(GyroArcFeedback.driveArcForwardRight(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Arc FL",Seq(GyroArcFeedback.driveArcForwardLeft(-90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Arc BR",Seq(GyroArcFeedback.driveArcBackwardRight(90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
-    MovesMenuAction("Arc BL",Seq(GyroArcFeedback.driveArcBackwardLeft(-90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc FR",Seq(GyroArc.driveArcForwardRight(90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc FL",Seq(GyroArc.driveArcForwardLeft(-90.degrees,200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc BR",Seq(GyroArc.driveArcBackwardRight(90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
+    MovesMenuAction("Arc BL",Seq(GyroArc.driveArcBackwardLeft(-90.degrees,-200.degreesPerSecond,500.mm),Robot.Hold)),
 
     MovesMenuAction("Stop",Robot.Coast),
     MovesMenuAction("Despin",Seq(DespinGyro))

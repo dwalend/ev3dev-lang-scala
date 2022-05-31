@@ -23,14 +23,7 @@ object ForkMoves:  //todo three states: In, Out, OutAndUp
       } do {
         Time.pause(1.milliseconds)
       }
-
-/*      
-  object ForkIn extends TtyMenuAction:
-    def act(menu: TtyMenu):Unit =
-      Robot.forkMotor.coast()
-      Robot.forkMotor.writeStopAction(MotorStopCommand.HOLD)
-      Robot.forkMotor.runToRelativePosition(-500.degreesPerSecond,-460.degrees)
-*/
+  
   /**
    * Runs the fork out, then up, until it stalls.
    */ 

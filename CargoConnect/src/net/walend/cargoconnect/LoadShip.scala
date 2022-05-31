@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArcFeedback, GyroDrive, GyroSetHeading, GyroTurn, LineDriveFeedback, Move, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArc, GyroDrive, GyroSetHeading, GyroTurn, LineDrive, Move, TtyMenu, TtyMenuAction}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -33,13 +33,10 @@ object LoadShip:
   )
 
   val raiseCrane:Seq[Move] = Seq(
-    //todo instead left forward pivot to -135, forward 80mm, left backward pivot to -180, then back up
-    //todo then maybe find the black line, then back up 200mm
-
-
+    GyroTurn.leftForwardPivot(-135.degrees,Robot.fineSpeed),
+    GyroDrive.driveForwardDistance(-135.degrees,Robot.fineSpeed,80.mm),
     GyroTurn.leftBackwardPivot(-180.degrees,-Robot.fineSpeed),
-    //todo lower arm to right side to push crane
-    GyroDrive.driveBackwardDistance(-180.degrees,-Robot.fineSpeed,160.mm),
+    GyroDrive.driveBackwardDistance(-180.degrees,-Robot.fineSpeed,-200.mm),
     Robot.Coast
   )
 

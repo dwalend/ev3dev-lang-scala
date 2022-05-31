@@ -7,7 +7,7 @@ import ev3dev4s.sysfs.UnpluggedException
 import ev3dev4s.sensors.Ev3ColorSensor
 import ev3dev4s.sensors.SensorPort
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroDrive, GyroSetHeading, MovesMenuAction, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroArc, GyroDrive, GyroSetHeading, WhiteBlackWhite, MovesMenuAction, TtyMenu, TtyMenuAction}
 
 /**
  *
@@ -17,12 +17,13 @@ import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroDrive, 
  */
 object CargoConnect extends Runnable:
   val actions: Array[TtyMenuAction] = Array(
-    MovesMenuAction("WarmUp",GyroDrive.WarmUp), //todo add arc turns to warm up
+    MovesMenuAction("WarmUp",Seq(GyroArc.WarmUp,GyroDrive.WarmUp)), 
     SortingCenterMenu,
 
-    MovesMenuAction("ForkOut",ForkMoves.ForkOut),
-    MovesMenuAction("ForkIn",ForkMoves.ForkIn),
-    MovesMenuAction("ForkUp",ForkMoves.ForkOutUp),
+    MovesMenuAction("WBW Test",Seq(
+      WhiteBlackWhite.driveForwardToWhiteBlackWhite(0.degrees,Robot.fineSpeed,500.millimeters),
+      Robot.Hold
+    )),
 
     MovesMenuAction("ToParkRoad",SortingCenter.startToParkRoad),
     MovesMenuAction("ParkToShip",SortingCenter.parkRoadToShipRoad),
@@ -33,7 +34,7 @@ object CargoConnect extends Runnable:
     MovesMenuAction("ESort-Blu",SortingCenter.deliverBlueFromEastSlot),
     MovesMenuAction("Blu-to-Train",SortingCenter.blueCircleToEastSlot),
     
-    MovesMenuAction("ST-Ship",LoadShip.shipRoadToShip),
+    MovesMenuAction("SR-Ship",LoadShip.shipRoadToShip),
     MovesMenuAction("LoadShip",LoadShip.putContainersOnShip),
     MovesMenuAction("EscapeShip",LoadShip.escapeShip),
     MovesMenuAction("RaiseCrane",LoadShip.raiseCrane),

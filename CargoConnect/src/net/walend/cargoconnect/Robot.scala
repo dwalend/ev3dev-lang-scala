@@ -9,7 +9,7 @@ import ev3dev4s.actuators.{Ev3LargeMotor, Ev3MediumMotor, Motor, MotorCommand, M
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions.*
-import net.walend.lessons.{BlackSide, GyroDrive, GyroSetHeading, Move}
+import net.walend.lessons.{BlackSide, GyroAndTachometer, GyroDrive, GyroSetHeading, Move, GyroArc}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
@@ -105,34 +105,31 @@ object Robot:
         case _ => true
       do ()
 
-  object WarmUp extends Move:
+  object TimingCheck extends Move:
     def move():Unit =
       GyroSetHeading(0.degrees)
 
       val start = Time.now()
-      warmUpTask()
+      timingCheckTask()
       val afterFirst = Time.now()
       Log.log(s"after first ${afterFirst - start}")
 
       for (i <- 1 to 100) {
-        warmUpTask()
+        timingCheckTask()
       }
 
       val afterWarmUp = Time.now()
-      warmUpTask()
+      timingCheckTask()
       val afterLast = Time.now()
       Log.log(s"after warm-up ${afterLast - afterWarmUp}")
 
       Coast.move()
       Sound.beep()
 
-    def warmUpTask():Unit =
-//      LineDriveDistanceForward(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,0.mm).move()
-      //does not work        GyroArcForwardRight(0.degrees,0.mm,Robot.fineSpeed).move()
-//      GyroDriveDistanceForward(0.degrees,Robot.fineSpeed,0.mm).move()
-      GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,0.mm)
-      GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-0.mm)
-      //todo add arc warm up
-      //todo really drive 
+    def timingCheckTask():Unit = ???
 
 
+  object WarmUp extends Move:
+    def move():Unit =
+      GyroDrive.WarmUp.move()
+      GyroArc.WarmUp.move()

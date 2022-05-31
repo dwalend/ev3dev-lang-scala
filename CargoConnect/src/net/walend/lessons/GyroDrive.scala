@@ -21,7 +21,7 @@ object GyroDrive:
     val goalTachometer = initialSensorResults.tachometerAngle + Robot.distanceToWheelRotation(distance)
     sensorResults.tachometerAngle > goalTachometer
 
-  private def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial: GyroHeading)(sensorResults: GyroHeading): Unit =
+  private[lessons] def driveAdjust(goalHeading:Degrees,goalSpeed:DegreesPerSecond)(initial: GyroHeading)(sensorResults: GyroHeading): Unit =
     val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
 

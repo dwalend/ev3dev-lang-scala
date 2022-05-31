@@ -9,9 +9,7 @@ import ev3dev4s.actuators.{Ev3LargeMotor, Ev3Led, Motor}
 import ev3dev4s.measure.MilliMeters
 import scala.annotation.tailrec
 
-object GyroArcFeedback:
-
-
+object GyroArc:
 
   def arcDrive(goalHeading:Degrees,goalSpeed:DegreesPerSecond,radius:MilliMeters)(initial:GyroAndTachometer)(reading:GyroAndTachometer):Unit =
 
@@ -92,3 +90,18 @@ object GyroArcFeedback:
       start = startLeftOuter(goalSpeed),
       end = end
     )
+
+  object WarmUp extends Move:
+    /**
+     * Call driveForward and driveBackward 's feedback loop 1100 times each
+     */
+    override def move(): Unit =
+      GyroSetHeading(0.degrees).move()
+      for(_ <- 0 until 2) {
+        driveArcForwardRight(90.degrees,Robot.fineSpeed,Robot.wheelToWheel+200.mm).move()
+        driveArcForwardLeft(0.degrees,Robot.fineSpeed,Robot.wheelToWheel+200.mm).move()
+        driveArcBackwardRight(90.degrees,-Robot.fineSpeed,Robot.wheelToWheel+200.mm).move()
+        driveArcBackwardLeft(0.degrees,-Robot.fineSpeed,Robot.wheelToWheel+200.mm).move()
+      }
+      
+      Robot.Coast.move()

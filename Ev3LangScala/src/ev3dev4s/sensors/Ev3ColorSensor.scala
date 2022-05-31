@@ -60,15 +60,9 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
      * Ambient light
      * @return color detected
      */
-    def readColor():Color = this.synchronized {
-      Color.values(checkPort(_.readValue0Int()))
+    def readColor():Ev3ColorSensor.Color = this.synchronized {
+      Ev3ColorSensor.Color.values(checkPort(_.readValue0Int()))
     }
-
-    /**
-     * @see https://docs.ev3dev.org/projects/lego-linux-drivers/en/ev3dev-stretch/sensor_data.html#lego-ev3-color-mode2-value0
-     */
-    enum Color:
-      case None, Black, Blue, Green, Yellow, Red, White, Brown
 
   /* todo
 COL-REFLECT	Reflected light - sets LED color to red	pct (percent)	0	1	value0: Reflected light intensity (0 to 100)
@@ -98,5 +92,11 @@ value3: ???
 
 object Ev3ColorSensor:
   val driverName = "lego-ev3-color"
+  
+  /**
+   * @see https://docs.ev3dev.org/projects/lego-linux-drivers/en/ev3dev-stretch/sensor_data.html#lego-ev3-color-mode2-value0
+   */
+  enum Color:
+    case None, Black, Blue, Green, Yellow, Red, White, Brown
 
 
