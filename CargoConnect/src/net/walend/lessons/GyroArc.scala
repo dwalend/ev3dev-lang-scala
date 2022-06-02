@@ -30,24 +30,22 @@ object GyroArc:
     val outerSpeed = goalSpeed + steerAdjust
     val innerSpeed = (((goalSpeed - steerAdjust).value * (radius - Robot.wheelToWheel).value)/radius.value).degreesPerSecond
 
-    if (outerMotor == Robot.leftDriveMotor) Robot.directDrive(outerSpeed,innerSpeed)
-    else Robot.directDrive(innerSpeed,outerSpeed)
+    if (outerMotor == Robot.leftDriveMotor) Robot.drive(outerSpeed,innerSpeed)
+    else Robot.drive(innerSpeed,outerSpeed)
 
   private[lessons] def startLeftOuter(goalSpeed:DegreesPerSecond)(notUsed:SensorReading):Unit =
     Ev3Led.Left.writeGreen()
     Ev3Led.Right.writeYellow()
-    Robot.directDrive(goalSpeed,goalSpeed)
-    Robot.writeDirectDriveMode()
+    Robot.drive(goalSpeed,goalSpeed)
 
   private[lessons] def startRightOuter(goalSpeed:DegreesPerSecond)(notUsed:SensorReading):Unit =
     Ev3Led.Left.writeYellow()
     Ev3Led.Right.writeGreen()
-    Robot.directDrive(goalSpeed,goalSpeed)
-    Robot.writeDirectDriveMode()
+    Robot.drive(goalSpeed,goalSpeed)
 
 
   private[lessons] def end():Unit =
-    Robot.directDrive(0.degreesPerSecond,0.degreesPerSecond)
+    Robot.drive(0.degreesPerSecond,0.degreesPerSecond)
     Ev3Led.writeBothOff()
 
 

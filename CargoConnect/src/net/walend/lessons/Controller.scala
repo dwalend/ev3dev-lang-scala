@@ -19,15 +19,17 @@ import net.walend.cargoconnect.Robot
 case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) extends Runnable:
 
   override def run(): Unit =
-    Robot.check()
-    val timeThread = new Thread(UpdateScreen)
-    timeThread.setDaemon(true)
-    timeThread.start()
-
-    Sound.beep()
-    ttyMenu.loop()
-
-    UpdateScreen.keepGoing = false
+    try 
+      Robot.check()
+      val timeThread = new Thread(UpdateScreen)
+      timeThread.setDaemon(true)
+      timeThread.start()
+  
+      Sound.playTone(220,200.milliseconds)
+      Sound.playTone(440,200.milliseconds)
+      ttyMenu.loop()
+    finally
+      UpdateScreen.keepGoing = false
 
   val ttyMenu: TtyMenu = TtyMenu(actions:+Reload, setLcd)
 
@@ -43,7 +45,9 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
 
     override def run(): Unit =
       while(keepGoing)
-        if(!ttyMenu.doingAction) ttyMenu.drawScreen()
+        if(!ttyMenu.doingAction) 
+          ttyMenu.drawScreen()
+          
         Thread.sleep(500)
 
   object Reload extends TtyMenuAction:

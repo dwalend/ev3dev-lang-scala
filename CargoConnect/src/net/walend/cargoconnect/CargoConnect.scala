@@ -25,14 +25,14 @@ object CargoConnect extends Runnable:
       Robot.Hold
     )),
 
-    MovesMenuAction("ToParkRoad",SortingCenter.startToParkRoad),
-    MovesMenuAction("ParkToShip",SortingCenter.parkRoadToShipRoad),
+    MovesMenuAction("Start-Park",SortingCenter.startToParkRoad),
+    MovesMenuAction("Park-ShipRd",SortingCenter.parkRoadToShipRoad),
 
-    MovesMenuAction("SR-EastSlot",SortingCenter.shipRoadToEastSlot),
+    MovesMenuAction("ShipR-ESlot",SortingCenter.shipRoadToEastSlot),
     MovesMenuAction("WSort-Blu",SortingCenter.deliverBlueFromWestSlot),
     MovesMenuAction("CSort-Blu",SortingCenter.deliverBlueFromCenterSlot),
     MovesMenuAction("ESort-Blu",SortingCenter.deliverBlueFromEastSlot),
-    MovesMenuAction("Blu-to-Train",SortingCenter.blueCircleToEastSlot),
+    MovesMenuAction("Blu-to-Tr",SortingCenter.blueCircleToEastSlot),
     
     MovesMenuAction("SR-Ship",LoadShip.shipRoadToShip),
     MovesMenuAction("LoadShip",LoadShip.putContainersOnShip),
@@ -40,9 +40,11 @@ object CargoConnect extends Runnable:
     MovesMenuAction("RaiseCrane",LoadShip.raiseCrane),
     MovesMenuAction("EscapeCrane",LoadShip.escapeCrane),
 
-    MovesMenuAction("Stop",Robot.Coast),
     MovesMenuAction("Despin",Seq(DespinGyro)),
     MovesMenuAction("ColorCalibrate",Seq(CalibrateReflect)),
+    MovesMenuAction("Zero",GyroSetHeading(0.degrees)),
+
+    MovesMenuAction("Stop",Robot.Coast),
   )
 
   //todo add color sensors
@@ -56,6 +58,6 @@ object CargoConnect extends Runnable:
 
   val lcdView:Controller = Controller(actions,setSensorRows)
 
-  override def run():Unit = lcdView.run() //todo beep on start
+  override def run():Unit = lcdView.run()
 
   def main(args: Array[String]): Unit = run()

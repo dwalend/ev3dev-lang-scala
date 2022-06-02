@@ -15,10 +15,9 @@ import net.walend.cargoconnect.ForkMoves
  */
 object LoadShip:
   val shipRoadToShip:Seq[Move] = Seq(
-    //todo forward 4 studs
-
+    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,56.mm),
     GyroTurn.leftForwardPivot(-90.degrees,Robot.fineSpeed),
-    GyroDrive.driveForwardDistance(-90.degrees,Robot.fineSpeed,80.mm),
+    GyroDrive.driveForwardDistance(-90.degrees,Robot.fineSpeed,112.mm),
     Robot.Hold
   )
   
@@ -28,20 +27,21 @@ object LoadShip:
   )
   
   val escapeShip:Seq[Move] = Seq(
-    GyroDrive.driveBackwardDistance(-90.degrees,-Robot.fineSpeed,-30.mm),
+    GyroDrive.driveBackwardDistance(-90.degrees,-Robot.fineSpeed,-48.mm),
     Robot.Coast
   )
 
   val raiseCrane:Seq[Move] = Seq(
     GyroTurn.leftForwardPivot(-135.degrees,Robot.fineSpeed),
-    GyroDrive.driveForwardDistance(-135.degrees,Robot.fineSpeed,80.mm),
+//    GyroDrive.driveForwardDistance(-135.degrees,Robot.fineSpeed,40.mm),
+    //todo lower arm
     GyroTurn.leftBackwardPivot(-180.degrees,-Robot.fineSpeed),
     GyroDrive.driveBackwardDistance(-180.degrees,-Robot.fineSpeed,-200.mm),
     Robot.Coast
   )
 
   val escapeCrane:Seq[Move] = Seq(
-    GyroDrive.driveForwardDistance(-180.degrees,Robot.fineSpeed,104.mm),
+    GyroDrive.driveForwardDistance(-180.degrees,Robot.fineSpeed,200.mm),
     //todo raise arm out of way
     Robot.Coast
   )

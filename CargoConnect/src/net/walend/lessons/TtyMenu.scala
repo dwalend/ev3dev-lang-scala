@@ -1,8 +1,12 @@
 package net.walend.lessons
 
+import ev3dev4s.actuators.{MotorPortScanner,MotorCommand,Ev3Led,Sound}
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
+import ev3dev4s.measure.Conversions._
+
+import scala.util.control.NonFatal
 
 /**
  *
@@ -33,14 +37,23 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:(TtyMenu => Unit)):
         case (Ev3KeyPad.Key.Left,Ev3KeyPad.State.Pressed) => decrementMenu()
         case (Ev3KeyPad.Key.Right,Ev3KeyPad.State.Pressed) => incrementMenu()
         case _ => ;
-    Log.log("end memu loop")
+    Log.log("end menu loop")
 
   def doAction(): Unit =
-    doingAction = true
-    actions(index).act(this)
-    System.gc()
-    doingAction = false
-    drawScreen()
+    try
+      doingAction = true
+      actions(index).act(this)
+    catch
+      case NonFatal(x) =>
+        x.printStackTrace()
+        MotorPortScanner.scanMotors.values.foreach{motor => motor.writeCommand(MotorCommand.STOP)}
+        Ev3Led.writeBothRed()
+        Sound.playTone(440,200.milliseconds)
+        Sound.playTone(220,200.milliseconds)
+    finally
+      System.gc()
+      doingAction = false
+      drawScreen()
 
   def stopLoop():Unit =
     keepGoing = false

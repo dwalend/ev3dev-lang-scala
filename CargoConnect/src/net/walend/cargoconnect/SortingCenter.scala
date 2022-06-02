@@ -1,6 +1,6 @@
 package net.walend.cargoconnect
 
-import net.walend.lessons.{BlackSide, Controller, GyroArc, GyroDrive, GyroSetHeading, GyroTurn, GyroUnwind, LineDrive, Move, TtyMenu, TtyMenuAction}
+import net.walend.lessons.{BlackSide, Controller, GyroArc, GyroDrive, GyroSetHeading, GyroTurn, GyroUnwind, LineDrive, Move, TtyMenu, TtyMenuAction,WhiteBlackWhite}
 import ev3dev4s.measure.Conversions.*
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.lcd.tty.Lcd
@@ -15,80 +15,54 @@ object SortingCenter:
     GyroSetHeading(-45.degrees),
     //From home - Forward at -45
     GyroDrive.driveForwardDistance(-45.degrees,Robot.fineSpeed,140.mm), //consider going forward until you see "not white"
-    Robot.StopAndWaitForButton,
 
     //acquire line black-on-left on right sensor at -45
     //follow line black-on-left on right sensor at -45 until left sensor sees black
 
-    //todo white-black on left sensor
-    LineDrive.driveForwardUntilBlack(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
-    Robot.StopAndWaitForButton,
+    WhiteBlackWhite.driveForwardToWhiteBlackWhite(-45.degrees,Robot.fineSpeed,240.mm,Robot.leftDriveMotor,Robot.leftColorSensor),
 
     //follow line black-on-left on right sensor at  -45 X mm
     LineDrive.driveForwardUntilDistance(-45.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,76.mm),
-    Robot.StopAndWaitForButton,
 
-    //140mm is the right distance to set up a forward left turn
+    //set up a forward left turn
     GyroDrive.driveForwardDistance(-45.degrees,Robot.fineSpeed,80.mm), //consider going forward until you see "not white"
-    Robot.StopAndWaitForButton,
 
-    //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor todo radius??
+    //arc-drive right ? radius until at 0 and aquire black-on-right with right sensor
     GyroArc.driveArcForwardRight(0.degrees,Robot.fineSpeed,128.mm+Robot.wheelToWheel),
-
-    Robot.StopAndWaitForButton,
 
     //todo maybe replace all of this business with "find the line and line follow it for (find distance - 640mm) -then gyro drive out to bump the train
     //follow line black-on-right with right sensor heading 0 120 mm
     LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,168.mm),
 
-    Robot.StopAndWaitForButton,
+    WhiteBlackWhite.driveForwardToWhiteBlackWhite(0.degrees,Robot.fineSpeed,5.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
-    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDrive.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
-
-    Robot.StopAndWaitForButton,
-
-    //drive straight at heading 0 2 studs
-    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
-
-    Robot.StopAndWaitForButton
+    Robot.Hold,
   )
 
   val parkRoadToShipRoad:Seq[Move] = Seq(
     LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,140.mm),
 
-    Robot.StopAndWaitForButton,
+    WhiteBlackWhite.driveForwardToWhiteBlackWhite(0.degrees,Robot.fineSpeed,5.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
 
-    //follow line black-on-right with right sensor with heading 0 until black //todo white-black on left sensor
-    LineDrive.driveForwardUntilBlack(0.degrees,Robot.rightColorSensor,BlackSide.Right,Robot.fineSpeed,3.studs,Robot.leftDriveMotor,Robot.leftColorSensor),
-
-    //drive straight at heading 0 2 studs
-    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,2.studs),
-
-    Robot.StopAndWaitForButton
+    Robot.Hold
   )
 
   val shipRoadToEastSlot:Seq[Move] = Seq(
-    //follow line black-on-right with right sensor with heading 0 X mm
-    //todo a little shorter distance
-    LineDrive.driveForwardUntilDistance(0.degrees,Robot.rightColorSensor,BlackSide.Left,Robot.fineSpeed,40.mm),
-
+    //Gyro drive to the train and bump it
+    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,630.mm),
     Robot.StopAndWaitForButton,
 
-    //Gyro drive to the turning point
-    //arc drive right ? radius until at 90 and aquire black-on-left with left sensor
-
-    GyroDrive.driveForwardDistance(0.degrees,Robot.fineSpeed,590.mm),
-    Robot.StopAndWaitForButton,
-
+    //back up a bit
     GyroDrive.driveBackwardDistance(0.degrees,-Robot.fineSpeed,-30.mm),
     Robot.StopAndWaitForButton,
 
-    //todo maybe a more accute angle - was about three studs to the right (west) at the sorting center
+    //todo maybe a more acute angle - was about three studs to the right (west) at the sorting center
     GyroTurn.rightBackwardPivot(45.degrees,-Robot.fineSpeed),
     Robot.StopAndWaitForButton,
 
-    GyroDrive.driveForwardDistance(45.degrees,Robot.fineSpeed,120.mm),
+    //todo try a bit further forward
+//    GyroDrive.driveForwardDistance(45.degrees,Robot.fineSpeed,120.mm),
+    GyroDrive.driveForwardDistance(45.degrees,Robot.fineSpeed,140.mm),
     Robot.StopAndWaitForButton,
 
     //todo this didn't get the motors going, and crashed with a stack trace with duty cycles > 100% - maybe change driveArc to use setSpeed instead of direct
@@ -134,9 +108,11 @@ java.io.IOException: Invalid argument
 	at net.walend.cargoconnect.CargoConnect$.run(CargoConnect.scala:59)
     */
 
+    //todo this is badly behaved for some reason
     GyroArc.driveArcForwardRight(90.degrees,Robot.fineSpeed,Robot.wheelToWheel + 30.mm),
     Robot.StopAndWaitForButton,
 
+    //todo not needed if the green block is the furthest forward
     LineDrive.driveForwardUntilDistance(90.degrees,Robot.leftColorSensor,BlackSide.Left,Robot.fineSpeed,30.mm),
 
     Robot.Hold,
