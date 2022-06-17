@@ -49,6 +49,14 @@ object ChannelRereader:
     finally
       reader.close()
 
+  def readAsciiInt(path: Path, bufferLength:Int = 32): Int =
+    val reader = ChannelRereader(path, bufferLength)
+    try
+      reader.readAsciiInt()
+    finally
+      reader.close()
+
+
 /*
 ev3.replay.CalibrateGyro$@1353651 finished in 266 milliseconds
 java.nio.channels.ClosedChannelException
