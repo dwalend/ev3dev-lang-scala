@@ -7,7 +7,11 @@ import mill.api.Result
 import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
-//import $ivy.`org.apache.ant:ant:1.10.12`, org.apache.tools.ant.taskdefs.Checksum
+import $ivy.`com.github.mwiede:jsch:0.1.61`
+//import $ivy.`com.jcraft:jsch:0.1.55`
+import $ivy.`org.apache.ant:ant-jsch:1.10.12`
+import org.apache.tools.ant.taskdefs.optional.ssh.Scp
+import org.apache.tools.ant.BuildException
 
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
@@ -151,7 +155,27 @@ object CargoConnect extends ScalaModule {
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 
-  def scpJar():Command[CommandResult] = T.command {
+  def scpJar():Command[CommandResult] = T.command{
+
+    val scpAnt = new Scp()
+    scpAnt.init()
+//    scpAnt.setHost("ev3dev.local")
+//    scpAnt.setUsername("robot")
+//    scpAnt.setRemoteTofile(s"${artifactName()}.jar")
+    scpAnt.setLocalFile(jar().path.toString())
+    scpAnt.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+    scpAnt.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+
+    scpAnt.execute()
+
+    //todo progress or error messages?
+
+    val result = CommandResult(0,Seq.empty)
+
+    result
+  }
+
+  def commandLineScpJar():Command[CommandResult] = T.command {
 
     val scpProc = os.proc(
       'scp,
