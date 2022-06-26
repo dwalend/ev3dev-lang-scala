@@ -10,7 +10,8 @@ import ev3dev4s.sensors.SensorPort
 import ev3dev4s.measure.Conversions.*
 import net.walend.cargoconnect.Robot
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.attribute.FileTime
+import java.nio.file.{Files, Path, Paths}
 
 /**
  *
@@ -47,9 +48,9 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
   object UpdateScreenAndCheckJar extends Runnable:
     @volatile var keepGoing = true
 
-    val expectedJarFile = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.getPath)
-    val expectedJarLastModifiedTime = Files.getLastModifiedTime(expectedJarFile)
-    val jarFileSizeFile = expectedJarFile.resolve("../expectedJarFileSize.txt")
+    val expectedJarFile: Path = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.getPath)
+    val expectedJarLastModifiedTime: FileTime = Files.getLastModifiedTime(expectedJarFile)
+    val jarFileSizeFile: Path = expectedJarFile.resolve("../expectedJarFileSize.txt")
 
     override def run(): Unit =
       while(keepGoing)

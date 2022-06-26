@@ -7,10 +7,10 @@ import mill.api.Result
 import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
-import $ivy.`com.github.mwiede:jsch:0.1.61`
+import java.nio.file.Files
 //import $ivy.`com.jcraft:jsch:0.1.55`
 import $ivy.`org.apache.ant:ant-jsch:1.10.12`
-import org.apache.tools.ant.taskdefs.optional.ssh.Scp
+import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
 import org.apache.tools.ant.BuildException
 
 object Shared {
@@ -69,19 +69,19 @@ object Ev3LangScalaExample extends ScalaModule {
 
   def scpJar():Command[CommandResult] = T.command {
 
-      //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
-      val scpProc = os.proc(
-        'scp,
-        "-i", "~/.ssh/dwalend_ev3_id_rsa",
-        jar().path,
-        s"robot@ev3dev.local:${artifactName()}.jar"
-      )
+    //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
+    val scpProc = os.proc(
+      'scp,
+      "-i", "~/.ssh/dwalend_ev3_id_rsa",
+      jar().path,
+      s"robot@ev3dev.local:${artifactName()}.jar"
+    )
 
-      val result: CommandResult = scpProc.call()
-      println(result.out)
-      println(result.err)
+    val result: CommandResult = scpProc.call()
+    println(result.out)
+    println(result.err)
 
-      result
+    result
   }
 
   def scpAssembly():Command[CommandResult] = T.command {
@@ -157,16 +157,24 @@ object CargoConnect extends ScalaModule {
 
   def scpJar():Command[CommandResult] = T.command{
 
-    val scpAnt = new Scp()
-    scpAnt.init()
-//    scpAnt.setHost("ev3dev.local")
-//    scpAnt.setUsername("robot")
-//    scpAnt.setRemoteTofile(s"${artifactName()}.jar")
-    scpAnt.setLocalFile(jar().path.toString())
-    scpAnt.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
-    scpAnt.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    val jarPath: Path = jar().path
+    val fileSize: Long = Files.size(jarPath.toNIO)
 
-    scpAnt.execute()
+    val ssh = new SSHExec()
+    ssh.init()
+    ssh.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    ssh.setUsername("robot")
+    ssh.setHost("ev3dev.local")
+    ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
+    ssh.execute()
+
+    val scp = new Scp()
+    scp.init()
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(jar().path.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+
+    scp.execute()
 
     //todo progress or error messages?
 
