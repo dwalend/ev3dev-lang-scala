@@ -8,7 +8,7 @@ import mill.define.{Command, Target}
 import os.{CommandResult, Path}
 
 import java.nio.file.Files
-//import $ivy.`com.jcraft:jsch:0.1.55`
+import $ivy.`com.github.mwiede:jsch:0.1.61`
 import $ivy.`org.apache.ant:ant-jsch:1.10.12`
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
 import org.apache.tools.ant.BuildException
