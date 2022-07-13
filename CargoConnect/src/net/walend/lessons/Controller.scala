@@ -11,7 +11,7 @@ import ev3dev4s.measure.Conversions.*
 import net.walend.cargoconnect.Robot
 
 import java.nio.file.attribute.FileTime
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Path, Paths, FileSystemException}
 
 /**
  *
@@ -50,7 +50,7 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
 
     val expectedJarFile: Path = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.getPath)
     val expectedJarLastModifiedTime: FileTime = Files.getLastModifiedTime(expectedJarFile)
-    val jarFileSizeFile: Path = expectedJarFile.resolve("../expectedJarFileSize.txt")
+    val jarFileSizeFile: Path = expectedJarFile.getParent.resolve("expectedJarFileSize.txt") //todo use current working directory
 
     override def run(): Unit =
       while(keepGoing)
@@ -61,14 +61,19 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
         Thread.sleep(500)
 
     private def checkJarUploaded():Unit =
-      val jarLastModifiedTime = Files.getLastModifiedTime(expectedJarFile)
+      try
+        val jarLastModifiedTime = Files.getLastModifiedTime(expectedJarFile)
 
-      if(expectedJarLastModifiedTime != jarLastModifiedTime)
-        val jarFileSize = Files.size(expectedJarFile)
-        val expectedJarFileSize = ChannelRereader.readAsciiInt(jarFileSizeFile)
-        if(jarFileSize == expectedJarFileSize)
-          keepGoing = false
-
+        if(expectedJarLastModifiedTime != jarLastModifiedTime)
+          val jarFileSize = Files.size(expectedJarFile)
+          val expectedJarFileSize = ChannelRereader.readAsciiInt(jarFileSizeFile)
+          if(jarFileSize == expectedJarFileSize)
+            Log.log(s"New .jar file is complete")
+            Sound.playTone(175,200.milliseconds)
+      catch
+        case fxs:FileSystemException =>
+          fxs.printStackTrace()
+          Log.log(s"${fxs.getClass.getName} ${fxs.getMessage} caught. Will keep going.")
 
   object Reload extends TtyMenuAction:
     override def act(ttyMenu: TtyMenu): Unit = ttyMenu.stopLoop()

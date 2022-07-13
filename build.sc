@@ -11,7 +11,7 @@ import java.nio.file.Files
 import $ivy.`com.github.mwiede:jsch:0.1.61`
 import $ivy.`org.apache.ant:ant-jsch:1.10.12`
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
-import org.apache.tools.ant.BuildException
+import org.apache.tools.ant.{BuildException,Project}
 
 object Shared {
   val scalacOptions = Seq("-deprecation", "-source:3.0")
@@ -165,15 +165,17 @@ object CargoConnect extends ScalaModule {
     ssh.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
     ssh.setUsername("robot")
     ssh.setHost("ev3dev.local")
+    ssh.setTrust(true)
     ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
     ssh.execute()
 
     val scp = new Scp()
     scp.init()
+    scp.setProject(new Project())
     scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
     scp.setLocalFile(jar().path.toString())
     scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
-
+    scp.setTrust(true)
     scp.execute()
 
     //todo progress or error messages?

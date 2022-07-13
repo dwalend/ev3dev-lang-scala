@@ -41,6 +41,7 @@ object Ev3KeyPad extends AutoCloseable:
     bytesToKeyStates.getOrElse(keyAndState,throw new IllegalStateException(s"No key state for $keyAndState"))
   }
 
+  //todo - some day - there is no way to interrupt keyPadInputStream.readFully() - maybe there's a way to inject some fake input
   override def close(): Unit = this.synchronized{
     keyPadInputStream.close()
   }

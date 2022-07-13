@@ -30,16 +30,15 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
     if (n == -1) || (n == 0) then ""
     else if n < -1 then throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
     else
-      val bytes = byteBuffer.array
+      val bytes: Array[Byte] = byteBuffer.array
       if bytes(n - 1) == '\n' then new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
       else new String(bytes, 0, n, StandardCharsets.UTF_8)
   }
 
   def readAsciiInt(): Int = readString().toInt
 
-  override def close(): Unit = this.synchronized {
+  override def close(): Unit =
     channel.close()
-  }
 
 object ChannelRereader:
   def readString(path: Path, bufferLength:Int = 32): String =

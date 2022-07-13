@@ -14,7 +14,7 @@ import scala.util.control.NonFatal
  * @author David Walend
  * @since v0.0.0
  */
-case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:(TtyMenu => Unit)):
+case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd: TtyMenu => Unit):
 
   @volatile var index = 0
   @volatile var keepGoing = true
