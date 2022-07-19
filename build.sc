@@ -29,16 +29,18 @@ object Ev3LangScala extends ScalaModule {
 
   def scpAssembly():Command[CommandResult] = T.command {
 
-    val scpProc = os.proc(
-      'scp,
-      "-i", "~/.ssh/dwalend_ev3_id_rsa",
-      assembly().path,
-      s"robot@ev3dev.local:${artifactName()}.jar"
-    )
+    val scp = new Scp()
+    scp.init()
+    scp.setProject(new Project())
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(assembly().path.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+    scp.setTrust(true)
+    scp.execute()
 
-    val result: CommandResult = scpProc.call()
-    println(result.out)
-    println(result.err)
+    //todo progress or error messages?
+
+    val result = CommandResult(0,Seq.empty)
 
     result
   }
@@ -69,33 +71,36 @@ object Ev3LangScalaExample extends ScalaModule {
 
   def scpJar():Command[CommandResult] = T.command {
 
-    //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
-    val scpProc = os.proc(
-      'scp,
-      "-i", "~/.ssh/dwalend_ev3_id_rsa",
-      jar().path,
-      s"robot@ev3dev.local:${artifactName()}.jar"
-    )
+    val scp = new Scp()
+    scp.init()
+    scp.setProject(new Project())
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(jar().path.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+    scp.setTrust(true)
+    scp.execute()
 
-    val result: CommandResult = scpProc.call()
-    println(result.out)
-    println(result.err)
+    //todo progress or error messages?
+
+    val result = CommandResult(0,Seq.empty)
 
     result
   }
 
   def scpAssembly():Command[CommandResult] = T.command {
 
-    val scpProc = os.proc(
-      'scp,
-      "-i", "~/.ssh/dwalend_ev3_id_rsa",
-      assembly().path,
-      s"robot@ev3dev.local:${artifactName()}.jar"
-    )
+    val scp = new Scp()
+    scp.init()
+    scp.setProject(new Project())
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(assembly().path.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+    scp.setTrust(true)
+    scp.execute()
 
-    val result: CommandResult = scpProc.call()
-    println(result.out)
-    println(result.err)
+    //todo progress or error messages?
+
+    val result = CommandResult(0,Seq.empty)
 
     result
   }
@@ -128,17 +133,18 @@ object Ev3LangScalaExperimental extends ScalaModule {
 
   def scpJar():Command[CommandResult] = T.command {
 
-    //scp -i ~/.ssh/dwalend_ev3_id_rsa out/Replay/jar/dest/out.jar robot@ev3dev.local:Replay.jar
-    val scpProc = os.proc(
-      'scp,
-      "-i", "~/.ssh/dwalend_ev3_id_rsa",
-      jar().path,
-      s"robot@ev3dev.local:${artifactName()}.jar"
-    )
+    val scp = new Scp()
+    scp.init()
+    scp.setProject(new Project())
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(jar().path.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:${artifactName()}.jar")
+    scp.setTrust(true)
+    scp.execute()
 
-    val result: CommandResult = scpProc.call()
-    println(result.out)
-    println(result.err)
+    //todo progress or error messages?
+
+    val result = CommandResult(0, Seq.empty)
 
     result
   }
