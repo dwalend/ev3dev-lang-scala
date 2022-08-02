@@ -3,8 +3,8 @@ package ev3dev4s.sensors
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
-import ev3dev4s.measure.{Degrees,Percent}
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.{Degrees, Percent}
+import ev3dev4s.measure.Conversions._
 
 import java.io.File
 import java.nio.file.Path
@@ -17,7 +17,7 @@ import scala.collection.immutable.ArraySeq
  * @since v0.0.0
  */
 case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value0SensorFS(_))): //todo change to Value01SensorFS to support GYRO-G&A
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value0SensorFS(_))){ //todo change to Value01SensorFS to support GYRO-G&A
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value0SensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName)
@@ -43,46 +43,47 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   /**
    * Angle in degrees
    */
-  case class HeadingMode() extends Mode:
+  case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
-    @volatile var offset:Degrees = 0.degrees
+    @volatile var offset: Degrees = 0.degrees
     zero()
 
     /**
      * @return Angle (-32768 to 32767)
      */
-    def readRawHeading():Degrees = this.synchronized{
+    def readRawHeading(): Degrees = this.synchronized {
       checkPort(_.readValue0Int()).degrees
     }
 
-    def readHeading():Degrees = this.synchronized{
+    def readHeading(): Degrees = this.synchronized {
       readRawHeading() + offset
     }
 
-    def zero():Unit = 
+    def zero(): Unit =
       setHeading(0.degrees)
-    
 
-    def setHeading(heading:Degrees):Unit = this.synchronized{
+
+    def setHeading(heading: Degrees): Unit = this.synchronized {
       offset = heading - readRawHeading()
     }
 
-    def unwind():Unit = this.synchronized {
+    def unwind(): Unit = this.synchronized {
       offset = offset.unwind
     }
-
+  }
   /**
    * Angle change rate in degrees per second
    */
-  case class RateMode() extends Mode:
+  case class RateMode() extends Mode {
     val name = "GYRO-RATE"
 
-    def readRate():Int = this.synchronized{
+    def readRate(): Int = this.synchronized {
       checkPort(_.readValue0Int())
     }
+  }
 
-  /* todo
+    /* todo
 GYRO-CAL - does not work. Not sure what it does do, but it doesn't recalibrate the gyro
 
 GYRO-RATE	Rotational Speed	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [22]
@@ -98,27 +99,32 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
    */
 
   import ev3dev4s.Ev3System
-  val ledProgress: Seq[() => Any] = Seq(() =>
-    Ev3System.leftLed.writeRed()
-      Ev3System.rightLed.writeRed(),
-    () =>
+  val ledProgress: Seq[() => Any] = Seq(
+    () => {
       Ev3System.leftLed.writeRed()
-        Ev3System.rightLed.writeYellow(),
-    () =>
+      Ev3System.rightLed.writeRed()
+    },
+    () => {
+      Ev3System.leftLed.writeRed()
+      Ev3System.rightLed.writeYellow()
+    },
+    () => {
       Ev3System.leftLed.writeYellow()
-        Ev3System.rightLed.writeYellow(),
-    () =>
+      Ev3System.rightLed.writeYellow()
+    },
+    () => {
       Ev3System.leftLed.writeGreen()
-        Ev3System.rightLed.writeGreen()
+      Ev3System.rightLed.writeGreen()
+    }
   )
 
   /**
    *
    * @param reportProgress
    */
-  def despin(reportProgress: Seq[() => Any] = ledProgress):Unit =
-    def scanForPortDir():Path =
-      val legoPortsDir:File = new File("/sys/class/lego-port")
+  def despin(reportProgress: Seq[() => Any] = ledProgress):Unit = {
+    def scanForPortDir():Path = {
+      val legoPortsDir: File = new File("/sys/class/lego-port")
       Log.log(s"Scan $legoPortsDir for the right address")
       ArraySeq.unsafeWrapArray(legoPortsDir.listFiles()).map { (dir: File) =>
         //read the address to learn which port
@@ -126,75 +132,79 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
         val portChar: Char = ChannelRereader.readString(addressPath).last
         (portChar -> dir.toPath)
       }.toMap.get(port.name).getOrElse(throw UnpluggedException(port))
-    end scanForPortDir
+    }
 
-    def restartSensorSoftBoot(legoPortDir:Path):Unit =
+    def restartSensorSoftBoot(legoPortDir:Path):Unit = {
       //write  "auto" to the right port in /sys/class/lego-port/port1/mode
       Log.log(s"Restart sensor in $legoPortDir by writing auto to mode")
-      ChannelRewriter.writeString(legoPortDir.resolve("mode"),"auto")
+      ChannelRewriter.writeString(legoPortDir.resolve("mode"), "auto")
       Time.pause(2000.milliseconds)
-    end restartSensorSoftBoot
+    }
 
-    def scanForSensor(port:SensorPort):Boolean =
+    def scanForSensor(port:SensorPort):Boolean = {
       Log.log(s"Look for the sensor in $port for 20 seconds")
-
       val deadline = System.currentTimeMillis() + 20000L
       //some restarts don't come back give up and try again
       //todo this might be cleaner with @tailrec !
       var found = false
-      while
-        try
+      while ({
+        try {
           val maybeSensorPath: Option[Path] = SensorPortScanner.findGadgetDir(port, Ev3Gyroscope.driverName)
           Log.log(s"maybeSensorPath is $maybeSensorPath")
           maybeSensorPath.map { (sensorPath: Path) =>
             //read value0, which should have something when the gyro is ready
             val value0 = ChannelRereader.readString(sensorPath.resolve("value0"))
             Log.log(s"Read $value0 from $sensorPath")
-            ChannelRewriter.writeString(sensorPath.resolve("mode"),"GYRO-ANG")
+            ChannelRewriter.writeString(sensorPath.resolve("mode"), "GYRO-ANG")
             Log.log(s"Wrote mode to $sensorPath")
             found = true
             false //success!
-          }.getOrElse(System.currentTimeMillis() < deadline) //or try again if there's time
-        catch
+          }.getOrElse(System.currentTimeMillis() < deadline)
+        } //or try again if there's time
+        catch {
           case GadgetUnplugged(x) =>
             Log.log(s"Failed with $x")
             System.currentTimeMillis() < deadline //try again if there's time
-          case x:UnpluggedException =>
+          case x: UnpluggedException =>
             Log.log(s"Failed with $x")
             System.currentTimeMillis() < deadline // try again if there's time
-      do
-        Time.pause(500.milliseconds)
+        }
+      }){Time.pause(500.milliseconds) }
       found
-    end scanForSensor
+    }
 
     val maybeOldMode = currentMode
 
     Log.log(s"despin $this at $port")
     unsetGadgetFS()
 
-    while
-      try
+    while ({
+      try {
         reportProgress(0)()
-        val legoPortDir:Path = scanForPortDir()
+        val legoPortDir: Path = scanForPortDir()
         Log.log(s"legoPortDir is $legoPortDir")
         reportProgress(1)()
         restartSensorSoftBoot(legoPortDir)
         reportProgress(2)()
         !scanForSensor(port) //keep looking if no sensor found
-      catch
+      } catch {
         case GadgetUnplugged(x) => true
-    do
+      }
+    }){
       Time.pause()
+    }
 
     maybeOldMode.map(setMaybeWriteMode(_))
 
     reportProgress(3)()
 
     Log.log(s"Successfully despun")
-  end despin
+  }
+}
 
-object Ev3Gyroscope:
+object Ev3Gyroscope {
   val driverName = "lego-ev3-gyro"
+}
 
   /* todo another way for despin to fail - a new kind of unplugged thing
 1643172523163 Read 0 from /sys/class/lego-sensor/sensor4

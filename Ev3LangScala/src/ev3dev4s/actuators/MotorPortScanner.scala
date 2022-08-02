@@ -13,17 +13,19 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
-object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-motor"),MotorPort.values):
+object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-motor"),MotorPort.values){
   
-  def scanMotors:Map[MotorPort,Motor] =
-    scanGadgetDirs.map{(port,motorDir) =>
-      val driverName = ChannelRereader.readString(motorDir.resolve("driver_name"))
-      val motor = driverName match
-        case Ev3LargeMotor.driverName => Ev3LargeMotor(port,Option(MotorFS(motorDir)))
-        case Ev3MediumMotor.driverName => Ev3MediumMotor(port,Option(MotorFS(motorDir)))
+  def scanMotors:Map[MotorPort,Motor] = {
+    scanGadgetDirs.map{ portAndDir =>
+      val driverName = ChannelRereader.readString(portAndDir._2.resolve("driver_name"))
+      val motor = driverName match {
+        case Ev3LargeMotor.driverName => Ev3LargeMotor(portAndDir._1, Option(MotorFS(portAndDir._2)))
+        case Ev3MediumMotor.driverName => Ev3MediumMotor(portAndDir._1, Option(MotorFS(portAndDir._2)))
         case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName")
-      port -> motor
+      }
+      portAndDir._1 -> motor
     }
+  }
 
   /**
    * Always stop the motors
@@ -31,10 +33,16 @@ object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-mot
   Runtime.getRuntime.addShutdownHook(new Thread({ () =>
     scanMotors.values.foreach(_.brake())
   },"stopMotorsAtShutdown"))
+}
 
-enum MotorPort(val name:Char) extends Port:
-  case A extends MotorPort('A')
-  case B extends MotorPort('B')
-  case C extends MotorPort('C')
-  case D extends MotorPort('D')
+sealed case class MotorPort(val name:Char) extends Port
+
+object MotorPort {
+  val A = MotorPort('A')
+  val B = MotorPort('B')
+  val C = MotorPort('C')
+  val D = MotorPort('D')
+
+  val values = Array(A,B,C,D)
+}
 

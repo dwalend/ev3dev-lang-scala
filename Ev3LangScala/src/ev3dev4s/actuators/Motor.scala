@@ -11,7 +11,7 @@ import java.nio.file.AccessDeniedException
 
 import ev3dev4s.measure.DutyCycle
 import ev3dev4s.measure.DegreesPerSecond
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 import ev3dev4s.measure.Degrees
 import ev3dev4s.measure.MilliSeconds
 
@@ -21,7 +21,7 @@ import ev3dev4s.measure.MilliSeconds
  * @author David Walend
  * @since v0.0.0
  */
-sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gadget(port,motorFS):
+sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gadget(port,motorFS){
 
   def writeCommand(command: MotorCommand):Unit = checkPort(_.writeCommand(command))
 
@@ -33,12 +33,14 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def observedMaxSpeed:DegreesPerSecond
 
-  def writeSpeed(speed:DegreesPerSecond):Unit =
+  def writeSpeed(speed:DegreesPerSecond):Unit = {
     val safeSpeed = if(speed.abs < maxSpeed ) speed
-                    else
+                    else {
                       Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
                       (speed.sign * maxSpeed).degreesPerSecond
+                    }
     checkPort(_.writeSpeed(safeSpeed))
+  }
 
   def writePosition(degrees:Degrees):Unit = checkPort(_.writePosition(degrees))
 
@@ -61,133 +63,153 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   def readIsRunning():Boolean =
     readState().contains(MotorState.RUNNING)
 
-  def coast(): Unit =
+  def coast(): Unit = {
     writeStopAction(MotorStopCommand.COAST)
     writeCommand(MotorCommand.STOP)
+  }
 
-  def brake(): Unit =
+  def brake(): Unit = {
     writeStopAction(MotorStopCommand.BRAKE)
     writeCommand(MotorCommand.STOP)
-
-  def hold(): Unit =
+  }
+  def hold(): Unit = {
     writeStopAction(MotorStopCommand.HOLD)
     writeCommand(MotorCommand.STOP)
-
-  def runDutyCycle(dutyCycle:DutyCycle):Unit =
+  }
+  def runDutyCycle(dutyCycle:DutyCycle):Unit = {
     writeDutyCycle(dutyCycle)
     writeCommand(MotorCommand.RUN_DIRECT)
+  }
 
-  def run(speed:DegreesPerSecond):Unit =
+  def run(speed:DegreesPerSecond):Unit = {
     writeSpeed(speed)
     writeCommand(MotorCommand.RUN)
+  }
     
-  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Degrees):Unit =
+  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+  }
     
-  def runToRelativePosition(speed:DegreesPerSecond,degrees:Degrees):Unit =
+  def runToRelativePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
+  }
 
-  def runForDuration(speed:DegreesPerSecond,milliseconds:MilliSeconds):Unit =
+  def runForDuration(speed:DegreesPerSecond,milliseconds:MilliSeconds):Unit = {
     writeSpeed(speed)
     writeDuration(milliseconds)
     writeCommand(MotorCommand.RUN_TIME)
+  }
+}
 
-sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md):
+sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
-    MotorPortScanner.findGadgetDir(port,Ev3LargeMotor.driverName)
+    MotorPortScanner.findGadgetDir(port, Ev3LargeMotor.driverName)
       .map(MotorFS(_))
 
   override val maxSpeed: DegreesPerSecond = 1050.degreesPerSecond
   override val observedMaxSpeed: DegreesPerSecond = 700.degreesPerSecond
-
-object Ev3LargeMotor:
+}
+object Ev3LargeMotor {
   val driverName = "lego-ev3-l-motor"
+}
 
-sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md):
+sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
-    MotorPortScanner.findGadgetDir(port,Ev3MediumMotor.driverName)
+    MotorPortScanner.findGadgetDir(port, Ev3MediumMotor.driverName)
       .map(MotorFS(_))
 
-  override val maxSpeed:DegreesPerSecond = 1560.degreesPerSecond
+  override val maxSpeed: DegreesPerSecond = 1560.degreesPerSecond
   override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.value * 0.7f).degreesPerSecond
+}
 
-object Ev3MediumMotor:
+object Ev3MediumMotor {
   val driverName = "lego-ev3-m-motor"
+}
 
-enum MotorCommand(val command:String):
+sealed case class MotorCommand(val command:String)
+
+object MotorCommand {
   /**
    * run-forever: Causes the motor to run until another command is sent
    */
-  case RUN extends MotorCommand("run-forever")
+  val RUN = MotorCommand("run-forever")
 
   /**
    * run-to-abs-pos: Runs the motor to an absolute position specified by``position_sp`` and then stops the motor using the command specified in stop_action.
    */
-  case RUN_TO_ABSOLUTE_POSITION extends MotorCommand("run-to-abs-pos")
+  val RUN_TO_ABSOLUTE_POSITION = MotorCommand("run-to-abs-pos")
 
   /** 
 run-to-rel-pos: Runs the motor to a position relative to the current position value. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
-  case RUN_TO_RELATIVE_POSITION extends MotorCommand("run-to-rel-pos")  
+  val RUN_TO_RELATIVE_POSITION = MotorCommand("run-to-rel-pos")
   
   /**
 run-timed: Run the motor for the amount of time specified in time_sp and then stops the motor using the command specified by stop_action.
    */
-  case RUN_TIME extends MotorCommand("run-timed")
+  val RUN_TIME = MotorCommand("run-timed")
 
   /**
    * run-direct: Runs the motor using the duty cycle specified by duty_cycle_sp. Unlike other run commands, changing duty_cycle_sp while running will take effect immediately.
    */
-  case RUN_DIRECT extends MotorCommand("run-direct")
+  val RUN_DIRECT = MotorCommand("run-direct")
   /**
    * stop: Stop any of the run commands before they are complete using the command specified by stop_action.
    */
-  case STOP extends MotorCommand("stop")
+  val STOP = MotorCommand("stop")
 
   /**
   reset: Resets all of the motor parameter attributes to their default values. This will also have the effect of stopping the motor.
    */
-
+}
 /**
  * Determines the motors behavior when command is set to stop. Possible values are:
  */
-enum MotorStopCommand(val command:String):
+sealed case class MotorStopCommand(val command:String)
+
+object MotorStopCommand{
   /**
    * Removes power from the motor. The motor will freely coast to a stop.
    */
-  case COAST extends MotorStopCommand("coast")
+  val COAST = MotorStopCommand("coast")
 
   /**
    * Removes power from the motor and creates a passive electrical load. This is usually done by shorting the motor terminals together. This load will absorb the energy from the rotation of the motors and cause the motor to stop more quickly than coasting.
    */
-  case BRAKE extends MotorStopCommand("brake")
+  val BRAKE = MotorStopCommand("brake")
 
   /**
    * Causes the motor to actively try to hold the current position. If an external force tries to turn the motor, the motor will “push back” to maintain its position.
    */
-  case HOLD extends MotorStopCommand("hold")
+  val HOLD = MotorStopCommand("hold")
+}
 
-enum MotorState(val name:String):
+sealed case class MotorState(val name:String)
+
+object MotorState{
   /**
   running: Power is being sent to the motor.
   */
-  case RUNNING extends MotorState("running")
+  val RUNNING = MotorState("running")
   /**
   ramping: The motor is ramping up or down and has not yet reached a constant output level.
   */
-  case RAMPING extends MotorState("ramping")
+  val RAMPING = MotorState("ramping")
   /**
   holding: The motor is not turning, but rather attempting to hold a fixed position.
   */
-  case HOLDING extends MotorState("holding")
+  val HOLDING = MotorState("holding")
   /**
   overloaded: The motor is turning as fast as possible, but cannot reach its speed_sp.
   */
-  case OVERLOADED extends MotorState("overloaded")
+  val OVERLOADED = MotorState("overloaded")
   /**
     stalled: The motor is trying to run but is not turning at all.
   */
-  case STALLED extends MotorState("stalled")
+  val STALLED = MotorState("stalled")
+
+  val values = Array(RUNNING,RAMPING,HOLDING,OVERLOADED,STALLED)
+}

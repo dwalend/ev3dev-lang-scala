@@ -14,8 +14,8 @@ import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
 import org.apache.tools.ant.{BuildException,Project}
 
 object Shared {
-  val scalacOptions = Seq("-deprecation", "-source:3.0")
-  val scalaVersion = "3.1.2"
+  val scalacOptions = Seq("-deprecation")
+  val scalaVersion = "2.13.8"//"3.1.2"
   val javaVersion = "11.0.10" //todo new release?
 }
 

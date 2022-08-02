@@ -5,7 +5,7 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 import java.nio.file.Path
 
 import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 import ev3dev4s.measure.DegreesPerSecond
 import ev3dev4s.measure.MilliSeconds
 import ev3dev4s.measure.DutyCycle
@@ -18,7 +18,7 @@ import ev3dev4s.Log
  * @author David Walend
  * @since v0.0.0
  */
-private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
+private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
 
   private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
   private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
@@ -40,9 +40,10 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   def writeStopAction(command:MotorStopCommand):Unit =
     stopActionWriter.writeString(command.command)
 
-  def writeDutyCycle(dutyCycle:DutyCycle):Unit =
+  def writeDutyCycle(dutyCycle:DutyCycle):Unit = {
     if(dutyCycle.abs > 100.dutyCyclePercent) Log.log(s"abs duty cycle $dutyCycle is greater than ${100.dutyCyclePercent}")
     dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
+  }
 
   def writeSpeed(speed:DegreesPerSecond):Unit =
     speedSpWriter.writeAsciiInt(speed.round)
@@ -69,7 +70,7 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
   def readState(): Array[MotorState] =
     stateReader.readString().split(' ').filterNot(_ == "").map{stateNamesToStates(_)}
 
-  override def close(): Unit =
+  override def close(): Unit = {
     stateReader.close()
     positionReader.close()
 
@@ -79,3 +80,5 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS:
     dutyCycleSpWriter.close()
     commandWriter.close()
     timeWriter.close()
+  }
+}

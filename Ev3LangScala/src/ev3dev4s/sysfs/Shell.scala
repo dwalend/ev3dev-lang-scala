@@ -9,8 +9,9 @@ object Shell {
    * @param command Command to execute in Linux
    * @return Result from the command
    */
-  def execute(command: String): String =
+  def execute(command: String): String = {
     Log.log("Command: " + command)
+
     val p = Runtime.getRuntime.exec(command)
     p.waitFor
 
@@ -18,12 +19,13 @@ object Shell {
     val output = new ByteArrayOutputStream
     val buffer = new Array[Byte](1024)
     var length = 0
-    while 
+    while ({
       length = p.getInputStream.read(buffer)
-      length != -1
-    do output.write(buffer, 0, length)
+      length != -1 })
+    { output.write(buffer, 0, length) }
 
     p.getInputStream.close()
     output.toString("UTF-8")
+  }
 
 }

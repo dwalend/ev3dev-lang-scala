@@ -8,7 +8,7 @@ import ev3dev4s.sensors.{Ev3Battery, Ev3KeyPad, Sensor, SensorPort, SensorPortSc
  * @author David Walend
  * @since v0.0.0
  */
-object Ev3System:
+object Ev3System {
 
   lazy val leftLed: Ev3Led = Ev3Led.Left
   lazy val rightLed: Ev3Led = Ev3Led.Right
@@ -20,3 +20,5 @@ object Ev3System:
 
   lazy val portsToMotors: Map[MotorPort, Motor] = MotorPortScanner.scanMotors
   lazy val portsToSensors: Map[SensorPort, Sensor[_]] = SensorPortScanner.scanSensors
+
+}

@@ -11,7 +11,7 @@ import ev3dev4s.Log
  * @author David Walend
  * @since v0.0.0
  */
-abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadgetFS: Option[GFS]) extends AutoCloseable:
+abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadgetFS: Option[GFS]) extends AutoCloseable{
 
   private var gadgetFS:Option[GFS] = initialGadgetFS
 
@@ -22,17 +22,19 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
   }
 
   def checkPort[A](action:GFS => A):A = synchronized {
-    def handleUnpluggedGadget(t: Throwable): Nothing =
+    def handleUnpluggedGadget(t: Throwable): Nothing = {
       try {
-        gadgetFS.foreach(_.close) }
-      catch
+        gadgetFS.foreach(_.close)
+      }
+      catch {
         case iox: IOException => //don't care - just recover from the unplug
-
+      }
       gadgetFS = None //set to None so that next time this will try to find something in the port
       throw UnpluggedException(port, t)
+    }
 
-    try
-      gadgetFS.orElse { //see if the motor is plugged back in
+    try {
+      gadgetFS.orElse { //see if the gadget is plugged back in
         gadgetFS = findGadgetFS()
         gadgetFS
       }.fold[A] { //if still not plugged in
@@ -40,17 +42,20 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
       } { //otherwise do the action
         action(_)
       }
-    catch 
+    }
+    catch {
       case GadgetUnplugged(x) => handleUnpluggedGadget(x)
       case x: Throwable =>
         Log.log(s"caught $x with '${x.getMessage()}'",x)
         throw x
+    }
   }
 
   override def close(): Unit = synchronized {
     gadgetFS.foreach(_.close)
     gadgetFS = None
   }
+}
 
 trait GadgetFS extends AutoCloseable
 
@@ -60,16 +65,19 @@ trait Port {
 
 case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"$port gadget unplugged",cause)
 
-object UnpluggedException:
-  def apply(port:Port):UnpluggedException = UnpluggedException(port,null)
+object UnpluggedException {
+  def apply(port: Port): UnpluggedException = UnpluggedException(port, null)
 
-  def safeString(readSensorToString:(() => String)):String =
-    try
+  def safeString(readSensorToString: (() => String)): String =
+    try {
       readSensorToString()
-    catch
-      case _:UnpluggedException => "UnP"
+    }
+    catch {
+      case _: UnpluggedException => "UnP"
+    }
+}
 
-object GadgetUnplugged:
+object GadgetUnplugged{
   /**
    * Returns true if the provided `Throwable` is to be considered non-fatal, or false if it is to be considered fatal
    */
@@ -81,7 +89,10 @@ object GadgetUnplugged:
     case iox: IOException if iox.getMessage() == "Device or resource busy" => true
     case _ => false
   }
+
   /**
    * Returns Some(t) if NonFatal(t) == true, otherwise None
    */
-  def unapply(t: Throwable): Option[Throwable] = if (apply(t)) Some(t) else None
+  def unapply(t: Throwable): Option[Throwable] = if (apply(t)) Some(t)
+                                                  else None
+}

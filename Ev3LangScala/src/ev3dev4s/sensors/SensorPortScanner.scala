@@ -12,21 +12,29 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
-object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sensor"),SensorPort.values):
+object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sensor"),SensorPort.values){
   
-  def scanSensors:Map[SensorPort,Sensor[_]] =
-    scanGadgetDirs.map{(port,sensorDir) =>
-      val driverName = ChannelRereader.readString(sensorDir.resolve("driver_name"))
-      val sensor = driverName match
-        case Ev3Gyroscope.driverName => Ev3Gyroscope(port,Option(sensorDir))
-        case Ev3ColorSensor.driverName => Ev3ColorSensor(port,Option(sensorDir))
-        case Ev3TouchSensor.driverName => Ev3TouchSensor(port,Option(sensorDir))
-        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName in $sensorDir")
-      port -> sensor
+  def scanSensors:Map[SensorPort,Sensor[_]] = {
+    scanGadgetDirs.map{portAndDir =>
+      val driverName = ChannelRereader.readString(portAndDir._2.resolve("driver_name"))
+      val sensor = driverName match {
+        case Ev3Gyroscope.driverName => Ev3Gyroscope(portAndDir._1, Option(portAndDir._2))
+        case Ev3ColorSensor.driverName => Ev3ColorSensor(portAndDir._1, Option(portAndDir._2))
+        case Ev3TouchSensor.driverName => Ev3TouchSensor(portAndDir._1, Option(portAndDir._2))
+        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName in $portAndDir._2")
+      }
+      portAndDir._1 -> sensor
     }
+  }
+}
 
-enum SensorPort(val name:Char) extends Port:
-  case One extends SensorPort('1')
-  case Two extends SensorPort('2')
-  case Three extends SensorPort('3')
-  case Four extends SensorPort('4')
+sealed case class SensorPort(name:Char) extends Port
+
+object SensorPort {
+  val One = SensorPort ('1')
+  val Two = SensorPort ('2')
+  val Three = SensorPort ('3')
+  val Four = SensorPort ('4')
+
+  val values = Array(One,Two,Three,Four)
+}

@@ -2,7 +2,7 @@ package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.ChannelRereader
 
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 import ev3dev4s.measure.Percent
 
 import java.nio.file.Path
@@ -12,58 +12,67 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS(_))):
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS(_))) {
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
-    SensorPortScanner.findGadgetDir(port,Ev3ColorSensor.driverName)
+    SensorPortScanner.findGadgetDir(port, Ev3ColorSensor.driverName)
       .map(MultiModeSensorFS.Value012SensorFS(_))
 
 
   private lazy val onlyReflectMode = ReflectMode()
-  def reflectMode():ReflectMode =
+
+  def reflectMode(): ReflectMode =
     setMaybeWriteMode(onlyReflectMode)
 
-  case class ReflectMode() extends Mode:
+  case class ReflectMode() extends Mode {
     val name = "COL-REFLECT"
 
     /**
      * Reflected light
+     *
      * @return Reflected light intensity (0 to 100)
      */
-    def readReflect():Percent = this.synchronized{
+    def readReflect(): Percent = this.synchronized {
       checkPort(_.readValue0Int().percent)
     }
+  }
 
   private lazy val onlyAmbientMode = AmbientMode()
-  def ambientMode():AmbientMode =
+
+  def ambientMode(): AmbientMode =
     setMaybeWriteMode(onlyAmbientMode)
 
-  case class AmbientMode() extends Mode:
+  case class AmbientMode() extends Mode {
     val name = "COL-AMBIENT"
 
     /**
      * Ambient light
+     *
      * @return Ambient light intensity (0 to 100)
      */
-    def readAmbient():Percent = this.synchronized{
+    def readAmbient(): Percent = this.synchronized {
       checkPort(_.readValue0Int().percent)
     }
+  }
 
   private lazy val onlyColorMode = ColorMode()
-  def colorMode():ColorMode =
+
+  def colorMode(): ColorMode =
     setMaybeWriteMode(onlyColorMode)
 
-  case class ColorMode() extends Mode:
+  case class ColorMode() extends Mode {
     val name = "COL-COLOR"
 
     /**
      * Ambient light
+     *
      * @return color detected
      */
-    def readColor():Ev3ColorSensor.Color = this.synchronized {
+    def readColor(): Ev3ColorSensor.Color = this.synchronized {
       Ev3ColorSensor.Color.values(checkPort(_.readValue0Int()))
     }
-
+  }
+}
   /* todo
 COL-REFLECT	Reflected light - sets LED color to red	pct (percent)	0	1	value0: Reflected light intensity (0 to 100)
 COL-AMBIENT	Ambient light - sets LED color to blue (dimly lit)	pct (percent)	0	1	value0: Ambient light intensity (0 to 100)
@@ -90,13 +99,26 @@ value2: ???
 value3: ???
    */
 
-object Ev3ColorSensor:
+object Ev3ColorSensor{
   val driverName = "lego-ev3-color"
-  
+
   /**
    * @see https://docs.ev3dev.org/projects/lego-linux-drivers/en/ev3dev-stretch/sensor_data.html#lego-ev3-color-mode2-value0
    */
-  enum Color:
-    case None, Black, Blue, Green, Yellow, Red, White, Brown
+  sealed case class Color(name:String)
+
+  object Color {
+    val NoColor = Color("No")
+    val Black = Color("Black")
+    val Blue = Color("Blue")
+    val Green = Color("Green")
+    val Yellow = Color("Yellow")
+    val Red = Color("Red")
+    val White = Color("White")
+    val Brown = Color("Brown")
+
+    val values = Array(NoColor,Black,Blue,Green,Yellow,Red,White,Brown)
+  }
+}
 
 

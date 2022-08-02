@@ -4,7 +4,7 @@ import ev3dev4s.sysfs.ChannelRewriter
 
 import java.nio.file.Path
 import ev3dev4s.measure.LedIntensity
-import ev3dev4s.measure.Conversions.ledIntensity
+import ev3dev4s.measure.Conversions._
 
 /**
  *
@@ -12,56 +12,64 @@ import ev3dev4s.measure.Conversions.ledIntensity
  * @author David Walend
  */
 
-enum Ev3Led(side:Int) extends AutoCloseable:
+sealed case class Ev3Led(side:Int) extends AutoCloseable {
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
   val redName = s"leds/led$side:red:brick-status/brightness"
   //noinspection SpellCheckingInspection
   val greenName = s"leds/led$side:green:brick-status/brightness"
 
-  private val redPath = Path.of(rootName,redName)
-  private val greenPath = Path.of(rootName,greenName)
+  private val redPath = Path.of (rootName, redName)
+  private val greenPath = Path.of (rootName, greenName)
 
-  private val redWriter = ChannelRewriter(redPath)
-  private val greenWriter = ChannelRewriter(greenPath)
+  private val redWriter = ChannelRewriter (redPath)
+  private val greenWriter = ChannelRewriter (greenPath)
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
-  def writeBrightness(red:LedIntensity, green:LedIntensity):Unit = this.synchronized {
-    redWriter.writeAsciiInt(red.round)
-    greenWriter.writeAsciiInt(green.round)
+  def writeBrightness (red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
+  redWriter.writeAsciiInt (red.round)
+  greenWriter.writeAsciiInt (green.round)
   }
 
-  override def close(): Unit = this.synchronized {
-    redWriter.close()
-    greenWriter.close()
+  override def close (): Unit = this.synchronized {
+  redWriter.close ()
+  greenWriter.close ()
   }
 
-  import Ev3Led.{brightest,darkest}
-  def writeOff():Unit = writeBrightness(darkest,darkest)
-  def writeRed():Unit = writeBrightness(brightest,darkest)
-  def writeGreen():Unit = writeBrightness(darkest,brightest)
-  def writeYellow():Unit = writeBrightness(brightest,brightest)
+  import Ev3Led.{brightest, darkest}
 
-  case Left extends Ev3Led(0)
-  case Right extends Ev3Led(1)
+  def writeOff (): Unit = writeBrightness (darkest, darkest)
+  def writeRed (): Unit = writeBrightness (brightest, darkest)
+  def writeGreen (): Unit = writeBrightness (darkest, brightest)
+  def writeYellow (): Unit = writeBrightness (brightest, brightest)
 
+}
 
-object Ev3Led:
+object Ev3Led {
+
+  val Left = Ev3Led(0)
+  val Right = Ev3Led(1)
+
   val darkest = 0.ledIntensity
   val brightest = 255.ledIntensity
 
   def writeBothGreen(): Unit =
     Left.writeGreen()
-    Right.writeGreen()
+
+  Right.writeGreen()
 
   def writeBothRed(): Unit =
     Left.writeRed()
-    Right.writeRed()
+
+  Right.writeRed()
 
   def writeBothYellow(): Unit =
     Left.writeYellow()
-    Right.writeYellow()
-    
+
+  Right.writeYellow()
+
   def writeBothOff(): Unit =
     Left.writeOff()
-    Right.writeOff()
+
+  Right.writeOff()
+}

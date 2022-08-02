@@ -8,7 +8,7 @@ import javax.sound.sampled.AudioSystem
 import java.io.File
 
 import ev3dev4s.measure.{MilliSeconds,Percent}
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 
 /**
  * drives sound via shelling out
@@ -24,20 +24,20 @@ object Sound {
   def beep():Unit =
     Shell.execute("beep")
 
-  def playTone(frequency: Int, duration: MilliSeconds, volume: Percent):Unit =
+  def playTone(frequency: Int, duration: MilliSeconds, volume: Percent):Unit = {
     this.setVolume(volume)
     this.playTone(frequency, duration)
-
+  }
   /**
    * Plays a tone, given its frequency and duration.
    *
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Int, duration: MilliSeconds):Unit =
+  def playTone(frequency: Int, duration: MilliSeconds):Unit = {
     val cmdTone = s"beep -f $frequency -l $duration"
     Shell.execute(cmdTone)
-
+  }
   /**
    * Play a wav file. Must be mono, from 8kHz to 48kHz, and 8-bit or 16-bit.
    *
@@ -45,9 +45,10 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-  def playSample(file: File, volume: Percent):Unit =
+  def playSample(file: File, volume: Percent):Unit = {
     this.setVolume(volume)
     this.playSample(file)
+  }
 
   /**
    * Play a wav file. Must be mono, from 8kHz to 48kHz, and 8-bit or 16-bit.
@@ -55,7 +56,7 @@ object Sound {
    * @param file the 8-bit or 16-bit PWM (WAV) sample file
    */
   //todo draw from .jar resources
-  def playSample(file: File):Unit =
+  def playSample(file: File):Unit = {
     val audioIn: AudioInputStream = AudioSystem.getAudioInputStream(file.toURI.toURL)
     val clip = AudioSystem.getClip
     clip.open(audioIn)
@@ -63,16 +64,17 @@ object Sound {
     Thread.sleep(clip.getMicrosecondLength)
     clip.close()
     audioIn.close()
-
+  }
   /**
    * Set the master volume level
    *
    * @param volume 0-100
    */
-  def setVolume(volume: Percent):Unit =
+  def setVolume(volume: Percent):Unit = {
     this.volume = volume
     val cmdVolume = s"amixer set PCM,0 $volume%"
     Shell.execute(cmdVolume)
+  }
 
   /**
    * Get the current master volume level

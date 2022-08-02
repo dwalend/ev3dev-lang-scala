@@ -11,49 +11,55 @@ import java.nio.file.Path
  *
  * @author David Walend
  */
-case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoCloseable:
+case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoCloseable {
   private val byteBuffer = ByteBuffer.allocate(bufferLength)
   @volatile private var channel = FileChannel.open(path)
 
-  private def readBytes():Int = this.synchronized{
+  private def readBytes(): Int = this.synchronized {
     byteBuffer.clear
     try
       channel.read(byteBuffer, 0)
-    catch
-      case _:ClosedChannelException =>
+    catch {
+      case _: ClosedChannelException =>
         channel = FileChannel.open(path)
         channel.read(byteBuffer, 0)
+    }
   }
 
   def readString(): String = this.synchronized {
     val n = readBytes()
-    if (n == -1) || (n == 0) then ""
-    else if n < -1 then throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
-    else
+    if ((n == -1) || (n == 0)) ""
+    else if (n < -1) throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
+    else {
       val bytes: Array[Byte] = byteBuffer.array
-      if bytes(n - 1) == '\n' then new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
+      if (bytes(n - 1) == '\n') new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
       else new String(bytes, 0, n, StandardCharsets.UTF_8)
+    }
   }
 
   def readAsciiInt(): Int = readString().toInt
 
   override def close(): Unit =
     channel.close()
+}
 
-object ChannelRereader:
-  def readString(path: Path, bufferLength:Int = 32): String =
+object ChannelRereader {
+  def readString(path: Path, bufferLength: Int = 32): String = {
     val reader = ChannelRereader(path, bufferLength)
     try
       reader.readString()
     finally
       reader.close()
+  }
 
-  def readAsciiInt(path: Path, bufferLength:Int = 32): Int =
+  def readAsciiInt(path: Path, bufferLength: Int = 32): Int = {
     val reader = ChannelRereader(path, bufferLength)
     try
       reader.readAsciiInt()
     finally
       reader.close()
+  }
+}
 
 
 /*
