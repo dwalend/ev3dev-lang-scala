@@ -1,4 +1,4 @@
-package net.walend.lego
+package ev3dev4s.lego
 
 import ev3dev4s.measure.Percent
 import ev3dev4s.sensors.{Ev3ColorSensor, SensorPort, SensorPortScanner}

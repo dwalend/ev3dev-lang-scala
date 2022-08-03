@@ -1,8 +1,7 @@
-package net.walend.lego
+package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, Percent, Unitless}
-import net.walend.lego.Motors
 import ev3dev4s.measure.Conversions._
 
 /**

@@ -1,4 +1,4 @@
-package net.walend.lego
+package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorState, MotorStopCommand}
 import ev3dev4s.measure.{Degrees, DegreesPerSecond}
