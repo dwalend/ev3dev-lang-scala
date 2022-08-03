@@ -13,23 +13,23 @@ object Ev3KeyPad extends AutoCloseable {
   sealed case class Key(byte: Byte)
 
   object Key{
-    val Up = Key(0x67)
-    val Down = Key(0x6c)
-    val Left = Key(0x69)
-    val Right = Key(0x6a)
-    val Enter = Key(0x1c)
-    val Escape = Key(0x0e)
+    val Up: Key = Key(0x67)
+    val Down: Key = Key(0x6c)
+    val Left: Key = Key(0x69)
+    val Right: Key = Key(0x6a)
+    val Enter: Key = Key(0x1c)
+    val Escape: Key = Key(0x0e)
 
-    val values = Array(Up,Down,Left,Right,Enter,Escape)
+    val values: Array[Key] = Array(Up,Down,Left,Right,Enter,Escape)
   }
 
   sealed case class State(byte: Byte)
 
   object State {
-    val Pressed = State(0x01)
-    val Released = State(0x00)
+    val Pressed: State = State(0x01)
+    val Released: State = State(0x00)
 
-    val values = Array(Pressed,Released)
+    val values: Array[State] = Array(Pressed,Released)
   }
 
   val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] = {

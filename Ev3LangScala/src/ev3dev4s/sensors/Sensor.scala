@@ -1,7 +1,6 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget, GadgetFS}
-import ev3dev4s.Log
 
 import java.nio.file.Path
 import scala.reflect.ClassTag

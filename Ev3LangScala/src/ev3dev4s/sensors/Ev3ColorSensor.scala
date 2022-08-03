@@ -1,7 +1,5 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.sysfs.ChannelRereader
-
 import ev3dev4s.measure.Conversions._
 import ev3dev4s.measure.Percent
 
@@ -12,19 +10,19 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS(_))) {
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS)) {
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3ColorSensor.driverName)
-      .map(MultiModeSensorFS.Value012SensorFS(_))
+      .map(MultiModeSensorFS.Value012SensorFS)
 
 
-  private lazy val onlyReflectMode = ReflectMode()
+  private lazy val onlyReflectMode: ReflectMode = ReflectMode()
 
   def reflectMode(): ReflectMode =
     setMaybeWriteMode(onlyReflectMode)
 
-  case class ReflectMode() extends Mode {
+  sealed case class ReflectMode() extends Mode {
     val name = "COL-REFLECT"
 
     /**
@@ -37,12 +35,12 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
     }
   }
 
-  private lazy val onlyAmbientMode = AmbientMode()
+  private lazy val onlyAmbientMode: AmbientMode = AmbientMode()
 
   def ambientMode(): AmbientMode =
     setMaybeWriteMode(onlyAmbientMode)
 
-  case class AmbientMode() extends Mode {
+  sealed case class AmbientMode() extends Mode {
     val name = "COL-AMBIENT"
 
     /**
@@ -108,16 +106,16 @@ object Ev3ColorSensor{
   sealed case class Color(name:String)
 
   object Color {
-    val NoColor = Color("No")
-    val Black = Color("Black")
-    val Blue = Color("Blue")
-    val Green = Color("Green")
-    val Yellow = Color("Yellow")
-    val Red = Color("Red")
-    val White = Color("White")
-    val Brown = Color("Brown")
+    val NoColor: Color = Color("No")
+    val Black: Color = Color("Black")
+    val Blue: Color = Color("Blue")
+    val Green: Color = Color("Green")
+    val Yellow: Color = Color("Yellow")
+    val Red: Color = Color("Red")
+    val White: Color = Color("White")
+    val Brown: Color = Color("Brown")
 
-    val values = Array(NoColor,Black,Blue,Green,Yellow,Red,White,Brown)
+    val values: Array[Color] = Array(NoColor,Black,Blue,Green,Yellow,Red,White,Brown)
   }
 }
 

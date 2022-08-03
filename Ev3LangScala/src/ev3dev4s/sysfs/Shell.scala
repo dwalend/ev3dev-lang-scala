@@ -12,7 +12,7 @@ object Shell {
   def execute(command: String): String = {
     Log.log("Command: " + command)
 
-    val p = Runtime.getRuntime.exec(command)
+    val p: Process = Runtime.getRuntime.exec(command)
     p.waitFor
 
     import java.io.ByteArrayOutputStream

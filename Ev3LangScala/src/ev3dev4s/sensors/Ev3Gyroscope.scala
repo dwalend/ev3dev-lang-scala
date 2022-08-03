@@ -3,7 +3,7 @@ package ev3dev4s.sensors
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
-import ev3dev4s.measure.{Degrees, Percent}
+import ev3dev4s.measure.Degrees
 import ev3dev4s.measure.Conversions._
 
 import java.io.File
@@ -17,19 +17,17 @@ import scala.collection.immutable.ArraySeq
  * @since v0.0.0
  */
 case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value0SensorFS(_))){ //todo change to Value01SensorFS to support GYRO-G&A
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value0SensorFS)){ //todo change to Value01SensorFS to support GYRO-G&A
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value0SensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName)
-      .map(MultiModeSensorFS.Value0SensorFS(_))
+      .map(MultiModeSensorFS.Value0SensorFS)
 
-  private lazy val onlyHeadingMode = HeadingMode()
-  def headingMode():HeadingMode =
-    setMaybeWriteMode(onlyHeadingMode)
+  private lazy val onlyHeadingMode: HeadingMode = HeadingMode()
+  def headingMode():HeadingMode = setMaybeWriteMode(onlyHeadingMode)
 
-  private lazy val onlyRateMode = RateMode()
-  def rateMode():RateMode =
-    setMaybeWriteMode(onlyRateMode)
+  private lazy val onlyRateMode: RateMode = RateMode()
+  def rateMode():RateMode = setMaybeWriteMode(onlyRateMode)
 
   /**
    * Simulate unplugging then plugging in the gyroscope - in software
@@ -43,7 +41,7 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   /**
    * Angle in degrees
    */
-  case class HeadingMode() extends Mode {
+  sealed case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
     @volatile var offset: Degrees = 0.degrees
@@ -75,7 +73,7 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   /**
    * Angle change rate in degrees per second
    */
-  case class RateMode() extends Mode {
+  sealed case class RateMode() extends Mode {
     val name = "GYRO-RATE"
 
     def readRate(): Int = this.synchronized {
@@ -118,10 +116,6 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
     }
   )
 
-  /**
-   *
-   * @param reportProgress
-   */
   def despin(reportProgress: Seq[() => Any] = ledProgress):Unit = {
     def scanForPortDir():Path = {
       val legoPortsDir: File = new File("/sys/class/lego-port")
@@ -188,7 +182,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
         reportProgress(2)()
         !scanForSensor(port) //keep looking if no sensor found
       } catch {
-        case GadgetUnplugged(x) => true
+        case GadgetUnplugged(_) => true
       }
     }){
       Time.pause()

@@ -22,8 +22,8 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
   private val redPath = Path.of (rootName, redName)
   private val greenPath = Path.of (rootName, greenName)
 
-  private val redWriter = ChannelRewriter (redPath)
-  private val greenWriter = ChannelRewriter (greenPath)
+  private val redWriter: ChannelRewriter = ChannelRewriter (redPath)
+  private val greenWriter: ChannelRewriter = ChannelRewriter (greenPath)
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
   def writeBrightness (red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
@@ -47,11 +47,11 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
 
 object Ev3Led {
 
-  val Left = Ev3Led(0)
-  val Right = Ev3Led(1)
+  val Left: Ev3Led = Ev3Led(0)
+  val Right: Ev3Led = Ev3Led(1)
 
-  val darkest = 0.ledIntensity
-  val brightest = 255.ledIntensity
+  val darkest: LedIntensity = 0.ledIntensity
+  val brightest: LedIntensity = 255.ledIntensity
 
   def writeBothGreen(): Unit = {
     Left.writeGreen()

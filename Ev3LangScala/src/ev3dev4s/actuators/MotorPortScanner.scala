@@ -3,9 +3,6 @@ package ev3dev4s.actuators
 import ev3dev4s.sysfs.{ChannelRereader, GadgetPortScanner, Port}
 
 import java.io.File
-import java.nio.file.Path
-import scala.collection.immutable.ArraySeq
-
 
 /**
  *
@@ -35,14 +32,14 @@ object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-mot
   },"stopMotorsAtShutdown"))
 }
 
-sealed case class MotorPort(val name:Char) extends Port
+sealed case class MotorPort(name:Char) extends Port
 
 object MotorPort {
-  val A = MotorPort('A')
-  val B = MotorPort('B')
-  val C = MotorPort('C')
-  val D = MotorPort('D')
+  val A: MotorPort = MotorPort('A')
+  val B: MotorPort = MotorPort('B')
+  val C: MotorPort = MotorPort('C')
+  val D: MotorPort = MotorPort('D')
 
-  val values = Array(A,B,C,D)
+  val values: Array[MotorPort] = Array(A,B,C,D)
 }
 

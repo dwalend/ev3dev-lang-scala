@@ -2,7 +2,6 @@ package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.ChannelRereader
 
-import java.io.File
 import java.nio.file.Path
 
 /**
@@ -10,11 +9,11 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS(_))){
+  extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS)){
 
   override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3TouchSensor.driverName)
-      .map(Ev3TouchSensor.Ev3TouchSensorFS(_))
+      .map(Ev3TouchSensor.Ev3TouchSensorFS)
 
   def readTouch(): Boolean = checkPort(_.readValue0Int() == 1)
 }

@@ -95,7 +95,7 @@ class Unitless(val value:Float) extends AnyVal with Measured[Unitless] {
 
 class Microvolts(val value:Float) extends AnyVal with Measured[Microvolts]{
   def create(i:Float) = new Microvolts(i)
-  override def toString():String = s"${value}uv"
+  override def toString():String = s"${value}uV"
 }
 
 class DutyCycle(val value:Float) extends AnyVal with Measured[DutyCycle] {
@@ -107,7 +107,7 @@ class DutyCycle(val value:Float) extends AnyVal with Measured[DutyCycle] {
 class LedIntensity(val value:Float) extends AnyVal with Measured[LedIntensity] {
   def create(i: Float) = new LedIntensity(i)
 
-  override def toString(): String = s"${value}"
+  override def toString(): String = s"${value}i"
 }
 
 

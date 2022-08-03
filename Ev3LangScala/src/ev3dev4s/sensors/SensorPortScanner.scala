@@ -3,8 +3,6 @@ package ev3dev4s.sensors
 import ev3dev4s.sysfs.{ChannelRereader, GadgetPortScanner, Port}
 
 import java.io.File
-import java.nio.file.Path
-import scala.collection.immutable.ArraySeq
 
 /**
  *
@@ -31,10 +29,10 @@ object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sen
 sealed case class SensorPort(name:Char) extends Port
 
 object SensorPort {
-  val One = SensorPort ('1')
-  val Two = SensorPort ('2')
-  val Three = SensorPort ('3')
-  val Four = SensorPort ('4')
+  val One: SensorPort = SensorPort ('1')
+  val Two: SensorPort = SensorPort ('2')
+  val Three: SensorPort = SensorPort ('3')
+  val Four: SensorPort = SensorPort ('4')
 
-  val values = Array(One,Two,Three,Four)
+  val values: Array[SensorPort] = Array(One,Two,Three,Four)
 }

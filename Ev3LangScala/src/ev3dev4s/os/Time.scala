@@ -1,6 +1,5 @@
 package ev3dev4s.os
 
-import ev3dev4s.measure.Conversions._
 import ev3dev4s.measure.MilliSeconds
 
 /**
@@ -13,10 +12,10 @@ object Time {
 
   def now(): Long = System.currentTimeMillis()
 
-  def pause(milliseconds: MilliSeconds = 1000.milliseconds): Unit = {
-    val deadline = now() + milliseconds.value
+  def pause(milliseconds: MilliSeconds): Unit = {
+    val deadline: Float = now() + milliseconds.value
     System.gc()
-    val sleepTime = deadline - now()
+    val sleepTime: Float = deadline - now()
     if (sleepTime > 0) Thread.sleep(sleepTime.round)
   }
 

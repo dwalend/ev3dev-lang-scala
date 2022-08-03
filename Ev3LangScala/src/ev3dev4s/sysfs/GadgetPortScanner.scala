@@ -33,7 +33,7 @@ abstract class GadgetPortScanner[P <: Port](gadgetDir:File,ports:Array[P]) {
         }
     }
     catch {
-      case nsfx: NoSuchFileException => None
+      case _: NoSuchFileException => None
     }
 }
 

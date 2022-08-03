@@ -27,7 +27,7 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
         gadgetFS.foreach(_.close)
       }
       catch {
-        case iox: IOException => //don't care - just recover from the unplug
+        case _: IOException => //don't care - just recover from the unplug
       }
       gadgetFS = None //set to None so that next time this will try to find something in the port
       throw UnpluggedException(port, t)
@@ -46,7 +46,7 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
     catch {
       case GadgetUnplugged(x) => handleUnpluggedGadget(x)
       case x: Throwable =>
-        Log.log(s"caught $x with '${x.getMessage()}'",x)
+        Log.log(s"caught $x with '${x.getMessage}'",x)
         throw x
     }
   }
@@ -68,7 +68,7 @@ case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"$p
 object UnpluggedException {
   def apply(port: Port): UnpluggedException = UnpluggedException(port, null)
 
-  def safeString(readSensorToString: (() => String)): String =
+  def safeString(readSensorToString: () => String): String =
     try {
       readSensorToString()
     }
@@ -84,15 +84,14 @@ object GadgetUnplugged{
   def apply(t: Throwable): Boolean = t match {
     // VirtualMachineError includes OutOfMemoryError and other fatal errors
     case _: NoSuchFileException | _: AccessDeniedException  => true
-    case iox: IOException if iox.getMessage() == "No such device" => true
-    case iox: IOException if iox.getMessage() == "No such device or address" => true
-    case iox: IOException if iox.getMessage() == "Device or resource busy" => true
+    case iox: IOException if iox.getMessage == "No such device" => true
+    case iox: IOException if iox.getMessage == "No such device or address" => true
+    case iox: IOException if iox.getMessage == "Device or resource busy" => true
     case _ => false
   }
 
   /**
    * Returns Some(t) if NonFatal(t) == true, otherwise None
    */
-  def unapply(t: Throwable): Option[Throwable] = if (apply(t)) Some(t)
-                                                  else None
+  def unapply(t: Throwable): Option[Throwable] = Some(t).filter(apply)
 }
