@@ -2,7 +2,7 @@ package net.walend.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorState, MotorStopCommand}
 import ev3dev4s.measure.{Degrees, DegreesPerSecond}
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 import ev3dev4s.os.Time
 
 /**
@@ -16,47 +16,53 @@ object Motors {
   val motors:Map[MotorPort,Motor]  = MotorPortScanner.scanMotors
 
   def watchForStop(motor:Motor):Unit =
-    while{
+    while({
       motor.readState().contains(MotorState.RUNNING)  //todo use isRunning after recompile
-    } do {
-      Time.pause(1.milliseconds)
-    }
+    }) { Time.pause(1.milliseconds)}
 
-  def runForDegrees(port:MotorPort,degrees: Degrees): Unit =
+  def runForDegrees(port:MotorPort,degrees: Degrees): Unit = {
     val motor: Motor = motors(port)
     motor.writeGoalPosition(degrees)
     motor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
     watchForStop(motor)
+  }
 
-  def start(port: MotorPort): Unit =
+  def start(port: MotorPort): Unit = {
     val motor: Motor = motors(port)
     motor.writeCommand(MotorCommand.RUN)
+  }
 
-  def setSpeed(port: MotorPort,speed:DegreesPerSecond): Unit =
+  def setSpeed(port: MotorPort,speed:DegreesPerSecond): Unit = {
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
+  }
 
-  def stop(port: MotorPort): Unit =
+  def stop(port: MotorPort): Unit = {
     val motor: Motor = motors(port)
     motor.writeCommand(MotorCommand.STOP)
+  }
 
-  def runForDegrees(port:MotorPort,degrees: Degrees,speed:DegreesPerSecond): Unit =
+  def runForDegrees(port:MotorPort,degrees: Degrees,speed:DegreesPerSecond): Unit = {
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
     motor.writeGoalPosition(degrees)
     motor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
     watchForStop(motor)
+  }
 
-  def start(port: MotorPort,speed: DegreesPerSecond): Unit =
+  def start(port: MotorPort,speed: DegreesPerSecond): Unit = {
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
     motor.writeCommand(MotorCommand.RUN)
+  }
 
-  def resetDegreesCounted(port: MotorPort): Unit =
+  def resetDegreesCounted(port: MotorPort): Unit = {
     val motor: Motor = motors(port)
     motor.writePosition(0.degrees)
+  }
 
-  def degreesCounted(port: MotorPort): Degrees =
+  def degreesCounted(port: MotorPort): Degrees = {
     val motor: Motor = motors(port)
     motor.readPosition()
+  }
 }
