@@ -45,7 +45,7 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-  def playSample(file: File, volume: Percent):Unit = {
+  def playSample(file: File, volume: Percent = this.volume):Unit = {
     this.setVolume(volume)
     this.playSample(file)
   }
@@ -56,7 +56,7 @@ object Sound {
    * @param file the 8-bit or 16-bit PWM (WAV) sample file
    */
   //todo draw from .jar resources
-  def playSample(file: File):Unit = {
+  def playSampleUntilDone(file: File):Unit = {
     val audioIn: AudioInputStream = AudioSystem.getAudioInputStream(file.toURI.toURL)
     val clip = AudioSystem.getClip
     clip.open(audioIn)

@@ -69,6 +69,11 @@ object Lcd extends AutoCloseable {
   def set(row:Int,column:Int,char: Char):Unit =
     characters(row)(column) = char
 
+  def set(row: Int, column:Int, string: String): Unit = {
+    val chars: Array[Char] = string.toCharArray
+    chars.copyToArray(characters(row), column)
+  }
+
   def set(row:Int,string:String,justification: Justify = LEFT):Unit = {
     val chars: Array[Char] = string.toCharArray
     val start = justification.start(chars.length)

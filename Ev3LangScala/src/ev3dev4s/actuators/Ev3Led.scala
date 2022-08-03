@@ -27,13 +27,13 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
   def writeBrightness (red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
-  redWriter.writeAsciiInt (red.round)
-  greenWriter.writeAsciiInt (green.round)
+    redWriter.writeAsciiInt (red.round)
+    greenWriter.writeAsciiInt (green.round)
   }
 
   override def close (): Unit = this.synchronized {
-  redWriter.close ()
-  greenWriter.close ()
+    redWriter.close ()
+    greenWriter.close ()
   }
 
   import Ev3Led.{brightest, darkest}
@@ -53,23 +53,23 @@ object Ev3Led {
   val darkest = 0.ledIntensity
   val brightest = 255.ledIntensity
 
-  def writeBothGreen(): Unit =
+  def writeBothGreen(): Unit = {
     Left.writeGreen()
+    Right.writeGreen()
+  }
 
-  Right.writeGreen()
-
-  def writeBothRed(): Unit =
+  def writeBothRed(): Unit = {
     Left.writeRed()
+    Right.writeRed()
+  }
 
-  Right.writeRed()
-
-  def writeBothYellow(): Unit =
+  def writeBothYellow(): Unit = {
     Left.writeYellow()
+    Right.writeYellow()
+  }
 
-  Right.writeYellow()
-
-  def writeBothOff(): Unit =
+  def writeBothOff(): Unit = {
     Left.writeOff()
-
-  Right.writeOff()
+    Right.writeOff()
+  }
 }
