@@ -3,7 +3,7 @@ package ev3dev4s.examples
 import ev3dev4s.Ev3System
 import ev3dev4s.actuators.Ev3Led
 
-import ev3dev4s.measure.Conversions.ledIntensity
+import ev3dev4s.measure.Conversions._
 
 /**
  * Run via
@@ -13,14 +13,18 @@ import ev3dev4s.measure.Conversions.ledIntensity
  * @author David Walend
  * @since v0.0.0
  */
-object JarRunnerExample extends Runnable:
-  override def run(): Unit =
+object JarRunnerExample extends Runnable {
+  override def run(): Unit = {
     Ev3System.leftLed.writeOff()
     Ev3System.rightLed.writeOff()
 
-    for _ <- 1 to 10 do
-      for b <- Ev3Led.darkest.round to Ev3Led.brightest.round do
+    for (_ <- 1 to 10) {
+      for (b <- Ev3Led.darkest.round to Ev3Led.brightest.round) {
         val brightness = b.ledIntensity
-        Ev3System.leftLed.writeBrightness(brightness,brightness)
-        Ev3System.rightLed.writeBrightness(brightness,Ev3Led.brightest - brightness)
+        Ev3System.leftLed.writeBrightness(brightness, brightness)
+        Ev3System.rightLed.writeBrightness(brightness, Ev3Led.brightest - brightness)
         Thread.sleep(10)
+      }
+    }
+  }
+}

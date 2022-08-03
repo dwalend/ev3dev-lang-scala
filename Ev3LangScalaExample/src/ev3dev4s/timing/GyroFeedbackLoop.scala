@@ -5,7 +5,7 @@ import ev3dev4s.os.Time
 import ev3dev4s.Log
 
 import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 
 import ev3dev4s.sensors.Ev3KeyPad
 import ev3dev4s.measure.DutyCycle
@@ -25,45 +25,53 @@ import ev3dev4s.measure.DutyCycle
  * With Floats instead of Ints underlying the units
  * 1645127290993 18331 loop closures in 60000 for 3.2731438 milliseconds per loop closure
  */ 
-object GyroFeedbackLoop extends Runnable:
+object GyroFeedbackLoop extends Runnable {
   def main(args: Array[String]): Unit =
     run()
 
-  override def run(): Unit =
-//    Robot.gyroscope.despin()
+  override def run(): Unit = {
+    //    Robot.gyroscope.despin()
     Robot.headingMode.zero()
-    driveGyroFeedbackTime(0.degrees,0.dutyCyclePercent,20000)
+    driveGyroFeedbackTime(0.degrees, 0.dutyCyclePercent, 20000)
 
     Robot.hold()
-    driveGyroFeedbackTime(0.degrees,0.dutyCyclePercent,60000)
+    driveGyroFeedbackTime(0.degrees, 0.dutyCyclePercent, 60000)
 
     Robot.hold()
     Robot.hold()
     Log.log(s"holding motors - waiting for button")
 
-    while(Robot.keypad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {}
+    while (Robot.keypad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
+    }
+  }
 
 
   /**
    * Gyro straight with the duty cycle
    *
    * @param goalHeading that the gyroscope should read during this traverse
-   * @param dutyCycle degrees per second to turn the motors
-   * @param distanceMm distance to travel
+   * @param dutyCycle   degrees per second to turn the motors
+   * @param milliseconds  time to travel
    */
   def driveGyroFeedbackTime(
-                                 goalHeading: Degrees,
-                                 dutyCycle: DutyCycle,
-                                 milliseconds: Int
-                           ): Unit =
+                             goalHeading: Degrees,
+                             dutyCycle: DutyCycle,
+                             milliseconds: Int
+                           ): Unit = {
     val startTime = Time.now()
 
     var count = 0
-    def notDoneYet():Boolean =
+
+    def notDoneYet(): Boolean = {
       val tac = Robot.leftMotor.readPosition()
       count = count + 1
       Time.now() < startTime + milliseconds
+    }
 
-    Log.log(s"Start timing study")  
-    GyroDriveStraight.driveGyroFeedback(goalHeading,dutyCycle,notDoneYet)
-    Log.log(s"$count loop closures in $milliseconds for ${milliseconds.toFloat/count} milliseconds per loop closure")
+    Log.log(s"Start timing study")
+    GyroDriveStraight.driveGyroFeedback(goalHeading, dutyCycle, notDoneYet)
+    Log.log(s"$count loop closures in $milliseconds for ${
+      milliseconds.toFloat / count
+    } milliseconds per loop closure")
+  }
+}

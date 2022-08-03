@@ -1,8 +1,8 @@
 package ev3dev4s.lcd.tty.examples
 
-import ev3dev4s.{Ev3System, Log}
+import ev3dev4s.Ev3System
 import ev3dev4s.lcd.tty.Lcd
-import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
+import ev3dev4s.sensors.Ev3Gyroscope
 import ev3dev4s.sysfs.UnpluggedException
 
 /**
@@ -11,11 +11,11 @@ import ev3dev4s.sysfs.UnpluggedException
  * @author David Walend
  * @since v0.0.0
  */
-object TtySensorDisplay extends Runnable:
+object TtySensorDisplay extends Runnable {
   def main(args: Array[String]): Unit =
     run()
 
-  override def run(): Unit =
+  override def run(): Unit = {
     val timeThread = new Thread(UpdateScreen)
     timeThread.setDaemon(true)
     timeThread.start()
@@ -23,8 +23,9 @@ object TtySensorDisplay extends Runnable:
     ttyMenu.run()
 
     UpdateScreen.keepGoing = false
+  }
 
-  val ttyMenu =
+  val ttyMenu: TtyMenu = {
     val actions: Array[TtyMenuAction] = Array(
       LedAction("Green", { () =>
         Ev3System.leftLed.writeGreen()
@@ -42,32 +43,40 @@ object TtySensorDisplay extends Runnable:
       TtyMenu.Reload
     )
     TtyMenu(actions, setLcd)
+  }
 
-  def setLcd(ttyMenu: TtyMenu):Unit =
+  def setLcd(ttyMenu: TtyMenu): Unit = {
     ttyMenu.setActionRow(2)
     setSensorRows()
+  }
 
-  var startTime = System.currentTimeMillis()
-  def elapsedTime = (System.currentTimeMillis() - startTime)/1000
+  var startTime: Long = System.currentTimeMillis()
 
-  val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
+  def elapsedTime: Long = (System.currentTimeMillis() - startTime) / 1000
 
-  def setSensorRows():Unit =
-    Lcd.set(0,s"${elapsedTime}s",Lcd.RIGHT)
-    val heading = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading()}d")
-    Lcd.set(0,heading,Lcd.LEFT)
+  val gyroscope: Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst { case g: Ev3Gyroscope => g }.get
 
-  object UpdateScreen extends Runnable:
+  def setSensorRows(): Unit = {
+    Lcd.set(0, s"${elapsedTime}s", Lcd.RIGHT)
+    val heading: String = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading()}d")
+    Lcd.set(0, heading, Lcd.LEFT)
+  }
+
+  object UpdateScreen extends Runnable {
     @volatile var keepGoing = true
 
     override def run(): Unit =
-      while(keepGoing)
-        if(!ttyMenu.doingAction) ttyMenu.drawScreen()
+      while (keepGoing) {
+        if (!ttyMenu.doingAction) ttyMenu.drawScreen()
         Thread.sleep(500)
+      }
+  }
+}
 
-object DespinGyro extends TtyMenuAction:
+object DespinGyro extends TtyMenuAction {
 
-  val gyroscope:Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst{case g:Ev3Gyroscope => g}.get
+  val gyroscope: Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst { case g: Ev3Gyroscope => g }.get
 
   override def run(menu: TtyMenu): Unit =
     gyroscope.despin()
+}

@@ -10,19 +10,24 @@ import ev3dev4s.sysfs.UnpluggedException
  * @author David Walend
  * @since v0.0.0
  */
-object MotorUnplugExample:
+object MotorUnplugExample {
 
-  def main(args: Array[String]): Unit =
+  def main(args: Array[String]): Unit = {
 
     val firstMotor: Motor = Ev3System.portsToMotors.values.head
     println(firstMotor)
 
     //unplug the motor, plug it back in, to see the behavior
-    while(true)
+    while (true) {
       Thread.sleep(1000)
-      try
+      try {
         //println(firstMotor.readPosition())
         firstMotor.brake()
         println("firstMotor.brake()")
-      catch
-        case x:UnpluggedException => x.printStackTrace()
+      }
+      catch {
+        case x: UnpluggedException => x.printStackTrace()
+      }
+    }
+  }
+}

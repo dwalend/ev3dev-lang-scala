@@ -3,7 +3,7 @@ package ev3dev4s.actuators.examples
 import ev3dev4s.Ev3System
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
 
-import ev3dev4s.measure.Conversions.*
+import ev3dev4s.measure.Conversions._
 
 /**
  *
@@ -11,9 +11,9 @@ import ev3dev4s.measure.Conversions.*
  * @author David Walend
  * @since v0.0.0
  */
-object MotorExample:
+object MotorExample {
 
-  def main(args: Array[String]): Unit =
+  def main(args: Array[String]): Unit = {
 
     val firstMotor: Motor = Ev3System.portsToMotors.values.head
     println(firstMotor)
@@ -25,7 +25,7 @@ object MotorExample:
     Thread.sleep(1000)
     firstMotor.writeCommand(MotorCommand.STOP)
     Thread.sleep(1000)
-    
+
     firstMotor.writeDutyCycle(10.dutyCyclePercent)
     firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
     Thread.sleep(1000)
@@ -38,11 +38,13 @@ object MotorExample:
     firstMotor.brake()
     Thread.sleep(1000)
 
-/*
-    firstMotor.run(500)
-    Thread.sleep(1000)
-    firstMotor.brake()
-*/
+    /*
+        firstMotor.run(500)
+        Thread.sleep(1000)
+        firstMotor.brake()
+    */
     println(firstMotor.readPosition())
+  }
+}
 
 

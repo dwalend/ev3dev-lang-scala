@@ -11,10 +11,12 @@ import ev3dev4s.actuators.Ev3Led
  * @author David Walend
  * @since v0.0.0
  */
-object Simplest extends Runnable:
-  override def run(): Unit =
+object Simplest extends Runnable {
+  override def run(): Unit = {
     println("Hi!")
     System.exit(0)
+  }
 
   def main(args: Array[String]): Unit =
     run()
+}
