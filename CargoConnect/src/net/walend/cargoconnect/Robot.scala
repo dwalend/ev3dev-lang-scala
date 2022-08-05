@@ -67,7 +67,7 @@ object Robot {
 
   def directDrive(leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
     def speedToDutyCycle(speed: DegreesPerSecond, motor: Motor): DutyCycle =
-      (100f * speed.value / motor.observedMaxSpeed.value).dutyCyclePercent
+      (100f * speed.v / motor.observedMaxSpeed.v).dutyCyclePercent
 
     leftDriveMotor.writeDutyCycle(speedToDutyCycle(leftSpeed, leftDriveMotor))
     rightDriveMotor.writeDutyCycle(speedToDutyCycle(rightSpeed, rightDriveMotor))
@@ -87,9 +87,9 @@ object Robot {
   val Hold: StopMove = StopMove(MotorStopCommand.HOLD)
 
   val wheelDiameter: MilliMeters = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
-  val wheelCircumference: MilliMeters = (wheelDiameter.value * Math.PI.toFloat).mm
+  val wheelCircumference: MilliMeters = (wheelDiameter.v * Math.PI.toFloat).mm
 
-  def distanceToWheelRotation(distance: MilliMeters): Degrees = (distance.value * 360 / wheelCircumference.value).degrees
+  def distanceToWheelRotation(distance: MilliMeters): Degrees = (distance.v * 360 / wheelCircumference.v).degrees
 
   def wheelRotationToDistance(degrees: Degrees): MilliMeters = (wheelCircumference * degrees / 360).mm
 

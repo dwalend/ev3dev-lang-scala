@@ -119,7 +119,7 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
       .map(MotorFS)
 
   override val maxSpeed: DegreesPerSecond = 1560.degreesPerSecond
-  override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.value * 0.7f).degreesPerSecond
+  override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.v * 0.7f).degreesPerSecond
 }
 
 object Ev3MediumMotor {
@@ -140,7 +140,7 @@ object MotorCommand {
   val RUN_TO_ABSOLUTE_POSITION: MotorCommand = MotorCommand("run-to-abs-pos")
 
   /** 
-run-to-rel-pos: Runs the motor to a position relative to the current position value. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
+run-to-rel-pos: Runs the motor to a position relative to the current position v. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
   val RUN_TO_RELATIVE_POSITION: MotorCommand = MotorCommand("run-to-rel-pos")
   
   /**

@@ -1,9 +1,14 @@
 package ev3dev4s.lcd.tty.examples
 
-import ev3dev4s.Ev3System
+import ev3dev4s.actuators.Sound
+import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
+import ev3dev4s.measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3Gyroscope
-import ev3dev4s.sysfs.UnpluggedException
+import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException}
+
+import java.nio.file.attribute.FileTime
+import java.nio.file.{FileSystemException, Files, Path, Paths}
 
 /**
  *
@@ -11,18 +16,18 @@ import ev3dev4s.sysfs.UnpluggedException
  * @author David Walend
  * @since v0.0.0
  */
-object TtySensorDisplay extends Runnable {
+object TtySensorsAndMenu extends Runnable {
   def main(args: Array[String]): Unit =
     run()
 
   override def run(): Unit = {
-    val timeThread = new Thread(UpdateScreen)
+    val timeThread = new Thread(PeriodicUpdate)
     timeThread.setDaemon(true)
     timeThread.start()
 
     ttyMenu.run()
 
-    UpdateScreen.keepGoing = false
+    PeriodicUpdate.keepGoing = false
   }
 
   val ttyMenu: TtyMenu = {
@@ -62,14 +67,48 @@ object TtySensorDisplay extends Runnable {
     Lcd.set(0, heading, Lcd.LEFT)
   }
 
-  object UpdateScreen extends Runnable {
+  object PeriodicUpdate extends Runnable {
     @volatile var keepGoing = true
+
+    val expectedJarFile: Path = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.getPath)
+    val currentJarLastModifiedTime: FileTime = Files.getLastModifiedTime(expectedJarFile)
+    val jarFileSizeFile: Path = expectedJarFile.getParent.resolve("expectedJarFileSize.txt") //todo use current working directory
+
+    @volatile var expectedJarLastModifiedTime = currentJarLastModifiedTime
 
     override def run(): Unit =
       while (keepGoing) {
-        if (!ttyMenu.doingAction) ttyMenu.drawScreen()
+        if (!ttyMenu.doingAction) {
+          ttyMenu.drawScreen()
+          checkJarUploaded()
+        }
         Thread.sleep(500)
       }
+
+
+    private def checkJarUploaded(): Unit = {
+      try {
+        val jarLastModifiedTime = Files.getLastModifiedTime(expectedJarFile)
+
+        if (expectedJarLastModifiedTime != jarLastModifiedTime) {
+          val jarFileSize = Files.size(expectedJarFile)
+          val expectedJarFileSize = ChannelRereader.readAsciiInt(jarFileSizeFile)
+          if (jarFileSize == expectedJarFileSize) {
+            expectedJarLastModifiedTime = jarLastModifiedTime
+            Log.log(s"New .jar file is complete")
+            Sound.playTone(175, 200.milliseconds)
+          }
+        }
+      } catch {
+        case fxs: FileSystemException =>
+          fxs.printStackTrace()
+          Log.log(s"${
+            fxs.getClass.getName
+          } ${
+            fxs.getMessage
+          } caught. Will keep going.")
+      }
+    }
   }
 }
 

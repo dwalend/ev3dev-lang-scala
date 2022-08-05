@@ -18,17 +18,17 @@ object GyroArc {
     val outerMotor = if (turnSign > 0) Robot.leftDriveMotor
     else Robot.rightDriveMotor
 
-    val totalDistance = ((2 * Math.PI.toFloat * radius.value * totalDegrees.value * turnSign) / 360).mm //outer wheel
+    val totalDistance = ((2 * Math.PI.toFloat * radius.v * totalDegrees.v * turnSign) / 360).mm //outer wheel
 
     val remainingDegrees = goalHeading - reading.heading
     val remainingDistance = totalDistance - Robot.wheelRotationToDistance(reading.tachometerAngle - initial.tachometerAngle)
 
-    val expectedRemainingDegrees = ((remainingDistance.value / totalDistance.value) * totalDegrees.value).degrees
+    val expectedRemainingDegrees = ((remainingDistance.v / totalDistance.v) * totalDegrees.v).degrees
 
-    val steerAdjust = (turnSign * (remainingDegrees - expectedRemainingDegrees).value * goalSpeed.abs.value / 30).degreesPerSecond
+    val steerAdjust = (turnSign * (remainingDegrees - expectedRemainingDegrees).v * goalSpeed.abs.v / 30).degreesPerSecond
 
     val outerSpeed = goalSpeed + steerAdjust
-    val innerSpeed = (((goalSpeed - steerAdjust).value * (radius - Robot.wheelToWheel).value) / radius.value).degreesPerSecond
+    val innerSpeed = (((goalSpeed - steerAdjust).v * (radius - Robot.wheelToWheel).v) / radius.v).degreesPerSecond
 
     if (outerMotor == Robot.leftDriveMotor) Robot.drive(outerSpeed, innerSpeed)
     else Robot.drive(innerSpeed, outerSpeed)

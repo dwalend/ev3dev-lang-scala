@@ -178,7 +178,7 @@ java.io.IOException: Invalid argument
   private lazy val deliverBlueFromSouthOfBlueCircle = Seq(
     GyroTurn.rightRotate(270.degrees, Robot.fineSpeed),
     //touches back wall - might stall
-    GyroDrive.driveForwardDistance(270.degrees, Robot.fineSpeed, (800 + 80 - (2 * Robot.driveAxelToExtendedFork.value)).mm),
+    GyroDrive.driveForwardDistance(270.degrees, Robot.fineSpeed, (800 + 80 - (2 * Robot.driveAxelToExtendedFork.v)).mm),
     GyroDrive.driveBackwardDistance(270.degrees, -Robot.fineSpeed, -104.mm),
     Robot.Hold,
     ForkMoves.ForkIn,

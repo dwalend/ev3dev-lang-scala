@@ -7,113 +7,113 @@ package ev3dev4s.measure
  * This provides general-purpose operations for those things.
  */
 trait Measured[M <: Measured[M]] extends Any {
-  def value: Float //todo fine to change to Ratio if Float doesn't work out
+  def v: Float //todo fine to change to Ratio if Float doesn't work out
 
   def create(i: Float): M
 
   def toString(): String
 
   //todo figure out def toString():String
-  def unary_- = create(-this.value) //todo add type annotation when allowed
+  def unary_- = create(-this.v) //todo add type annotation when allowed
 
-  def +(m: M): M = create(this.value + m.value)
+  def +(m: M): M = create(this.v + m.v)
 
-  def -(m: M): M = create(this.value - m.value)
+  def -(m: M): M = create(this.v - m.v)
 
-  def <(m: M): Boolean = this.value < m.value
+  def <(m: M): Boolean = this.v < m.v
 
-  def >(m: M): Boolean = this.value > m.value
+  def >(m: M): Boolean = this.v > m.v
 
-  def <=(m: M): Boolean = this.value <= m.value
+  def <=(m: M): Boolean = this.v <= m.v
 
-  def >=(m: M): Boolean = this.value >= m.value
+  def >=(m: M): Boolean = this.v >= m.v
 
-  def !=(m: M): Boolean = this.value != m.value
+  def !=(m: M): Boolean = this.v != m.v
 
-  def *(m: Measured[_]): Float = this.value * m.value
+  def *(m: Measured[_]): Float = this.v * m.v
 
-  def /(m: Measured[_]): Float = this.value / m.value
+  def /(m: Measured[_]): Float = this.v / m.v
 
-  def %(m: Measured[_]): M = create(this.value % m.value)
+  def %(m: Measured[_]): M = create(this.v % m.v)
 
-  def abs: M = create(this.value.abs)
+  def abs: M = create(this.v.abs)
 
-  def sign: Unitless = new Unitless(this.value.sign)
+  def sign: Unitless = new Unitless(this.v.sign)
 
-  def round: Int = value.round
+  def round: Int = v.round
 
   //todo figure out how to do a Range
 }
 
 object Measured{
-  def min[M <: Measured[M]](m1:M,m2:M):M = if(m1.value < m2.value) m1
+  def min[M <: Measured[M]](m1:M,m2:M):M = if(m1.v < m2.v) m1
                                             else m2
-  def max[M <: Measured[M]](m1:M,m2:M):M = if(m1.value > m2.value) m1
+  def max[M <: Measured[M]](m1:M,m2:M):M = if(m1.v > m2.v) m1
                                             else m2
 }
 
 
-class Degrees(val value:Float) extends AnyVal with Measured[Degrees] {
+class Degrees(val v:Float) extends AnyVal with Measured[Degrees] {
   def create(i: Float) = new Degrees(i)
 
-  override def toString(): String = s"${value}d"
+  override def toString(): String = s"${v.round}d"
 
   /**
-   * @return a value between -180 and +179 
+   * @return a v between -180 and +179
    */
   def unwind: Degrees = {
-    val remainder = value % 360
+    val remainder = v % 360
     if (remainder < -180) create(remainder + 360)
     else if (remainder >= 180) create(remainder - 360)
     else create(remainder)
   }
 }
 
-class Percent(val value:Float) extends AnyVal with Measured[Percent] {
+class Percent(val v:Float) extends AnyVal with Measured[Percent] {
   def create(i: Float) = new Percent(i)
 
-  override def toString(): String = s"$value%"
+  override def toString(): String = s"$v%"
 }
 
-class MilliSeconds(val value:Float) extends AnyVal with Measured[MilliSeconds] {
+class MilliSeconds(val v:Float) extends AnyVal with Measured[MilliSeconds] {
   def create(i: Float) = new MilliSeconds(i)
 
-  override def toString(): String = s"${value}ms"
+  override def toString(): String = s"${v}ms"
 }
 
-class DegreesPerSecond(val value:Float) extends AnyVal with Measured[DegreesPerSecond] {
+class DegreesPerSecond(val v:Float) extends AnyVal with Measured[DegreesPerSecond] {
   def create(i: Float) = new DegreesPerSecond(i)
 
-  override def toString(): String = s"${value}dps"
+  override def toString(): String = s"${v}dps"
 }
 
-class Unitless(val value:Float) extends AnyVal with Measured[Unitless] {
+class Unitless(val v:Float) extends AnyVal with Measured[Unitless] {
   def create(i: Float) = new Unitless(i)
 
-  override def toString(): String = s"${value}"
+  override def toString(): String = s"${v}"
 }
 
-class Microvolts(val value:Float) extends AnyVal with Measured[Microvolts]{
+class Microvolts(val v:Float) extends AnyVal with Measured[Microvolts]{
   def create(i:Float) = new Microvolts(i)
-  override def toString():String = s"${value}uV"
+  override def toString():String = s"${v}uV"
 }
 
-class DutyCycle(val value:Float) extends AnyVal with Measured[DutyCycle] {
+class DutyCycle(val v:Float) extends AnyVal with Measured[DutyCycle] {
   def create(i: Float) = new DutyCycle(i)
 
-  override def toString(): String = s"${value}%"
+  override def toString(): String = s"${v}%"
 }
 
-class LedIntensity(val value:Float) extends AnyVal with Measured[LedIntensity] {
+class LedIntensity(val v:Float) extends AnyVal with Measured[LedIntensity] {
   def create(i: Float) = new LedIntensity(i)
 
-  override def toString(): String = s"${value}i"
+  override def toString(): String = s"${v}i"
 }
 
 
-class MilliMeters(val value:Float) extends AnyVal with Measured[MilliMeters] {
+class MilliMeters(val v:Float) extends AnyVal with Measured[MilliMeters] {
   def create(i: Float) = new MilliMeters(i)
 
-  override def toString(): String = s"${value}mm"
+  override def toString(): String = s"${v}mm"
 }
 

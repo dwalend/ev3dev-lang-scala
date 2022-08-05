@@ -60,13 +60,13 @@ object Movement {
   else (rightMotor, leftMotor)
 
   private def innerMotorProportion(steer: Percent): Unitless =
-    ((100f - 2f * steer.abs.value) / 100f).unitless
+    ((100f - 2f * steer.abs.v) / 100f).unitless
 
 
   def moveSteer(steer: Percent, speed: DegreesPerSecond, degrees: Degrees): Unit = {
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed = (speed.value * innerMotorProportion(steer).value).degreesPerSecond
-    val innerDegrees = (degrees.value * innerMotorProportion(steer).value).degrees
+    val innerSpeed = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
+    val innerDegrees = (degrees.v * innerMotorProportion(steer).v).degrees
 
     outerMotor.foreach(_.writeGoalPosition(degrees))
     innerMotor.foreach(_.writeGoalPosition(innerDegrees))
@@ -81,7 +81,7 @@ object Movement {
 
   def startMovingSteer(steer: Percent, speed: DegreesPerSecond): Unit = {
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed = (speed.value * innerMotorProportion(steer).value).degreesPerSecond
+    val innerSpeed = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
     outerMotor.foreach(_.writeSpeed(speed))
     innerMotor.foreach(_.writeSpeed(innerSpeed))
     outerMotor.foreach(_.writeCommand(MotorCommand.RUN))

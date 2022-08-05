@@ -45,8 +45,8 @@ object GyroTurn {
     if (absHeadingDiff > fullSpeedThreshold) goalSpeed
     else if (absHeadingDiff > minSpeedThreshold) {
       val threshholdDiff = fullSpeedThreshold - minSpeedThreshold
-      ((goalSpeed.value * (absHeadingDiff - minSpeedThreshold).value / threshholdDiff.value) +
-        (minSpeed.value * (fullSpeedThreshold - absHeadingDiff).value / threshholdDiff.value)).degreesPerSecond
+      ((goalSpeed.v * (absHeadingDiff - minSpeedThreshold).v / threshholdDiff.v) +
+        (minSpeed.v * (fullSpeedThreshold - absHeadingDiff).v / threshholdDiff.v)).degreesPerSecond
     }
     else minSpeed
   }
@@ -121,7 +121,7 @@ object GyroTurn {
     )
 
   def rightRotateDrive(goalHeading: Degrees, goalSpeed: DegreesPerSecond)(initial: GyroReading)(gyroReading: GyroReading): Unit = {
-    val s = (speed(goalHeading, goalSpeed, gyroReading).value / 2).degreesPerSecond
+    val s = (speed(goalHeading, goalSpeed, gyroReading).v / 2).degreesPerSecond
     Robot.drive(s, -s)
   }
 
@@ -141,7 +141,7 @@ object GyroTurn {
     )
 
   def leftRotateDrive(goalHeading: Degrees, goalSpeed: DegreesPerSecond)(initial: GyroReading)(gyroReading: GyroReading): Unit = {
-    val s = (speed(goalHeading, goalSpeed, gyroReading).value / 2).degreesPerSecond
+    val s = (speed(goalHeading, goalSpeed, gyroReading).v / 2).degreesPerSecond
     Robot.drive(-s, s)
   }
 

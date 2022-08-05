@@ -83,8 +83,8 @@ object FeedbackDriveTest extends Runnable {
       lcdView.elapsedTime
     }s", Lcd.RIGHT)
     val heading: String = UnpluggedException.safeString(() => s"${
-      Robot.gyroscope.headingMode().readHeading().value
-    }d")
+      Robot.gyroscope.headingMode().readHeading()
+    }")
     Lcd.set(0, heading, Lcd.LEFT)
     val leftColor: String = UnpluggedException.safeString(() => s"${
       Robot.leftColorSensor.reflectMode().readReflect().round
@@ -98,8 +98,8 @@ object FeedbackDriveTest extends Runnable {
 
 
     val forkDegrees = UnpluggedException.safeString(() => s"Fork ${
-      Robot.forkMotor.readPosition().value
-    }d")
+      Robot.forkMotor.readPosition()
+    }")
     Lcd.set(2, forkDegrees, Lcd.LEFT)
   }
 

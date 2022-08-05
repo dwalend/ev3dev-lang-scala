@@ -20,8 +20,8 @@ object LineDrive {
 
     val calibrationCenter = CalibrateReflect.colorSensorsToCalibrated(colorSensor).middle
 
-    val gyroSteerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
-    val colorSteerAdjust = (blackOn.steerSign * (sensorResults.trackIntensity - calibrationCenter).value * goalSpeed.abs.value / 300).degreesPerSecond //todo 600 seems really high
+    val gyroSteerAdjust = ((goalHeading - sensorResults.heading).v * goalSpeed.abs.v / 30).degreesPerSecond
+    val colorSteerAdjust = (blackOn.steerSign * (sensorResults.trackIntensity - calibrationCenter).v * goalSpeed.abs.v / 300).degreesPerSecond //todo 600 seems really high
 
     val steerAdjust = gyroSteerAdjust + colorSteerAdjust
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
@@ -199,7 +199,7 @@ object CalibrateReflect extends Move {
   case class CalibratedReflect(darkest: Percent, brightest: Percent) {
     val darkFuzz = 15.percent
     val brightFuzz = 15.percent
-    lazy val middle = ((darkest.value + brightest.value) / 2).percent
+    lazy val middle = ((darkest.v + brightest.v) / 2).percent
 
     def dark(sensed: Percent): Boolean = sensed < darkest + darkFuzz
 

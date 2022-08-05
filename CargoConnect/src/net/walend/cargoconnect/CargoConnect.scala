@@ -21,14 +21,15 @@ object CargoConnect extends Runnable {
 
   val actions: Array[TtyMenuAction] = Array(
     MovesMenuAction("WarmUp", Seq(GyroArc.WarmUp, GyroDrive.WarmUp)),
-/*    SortingCenterMenu,
+
+    SortingCenterMenu,
 
     MovesMenuAction("WBW Test", Seq(
       WhiteBlackWhite.driveForwardToWhiteBlackWhite(0.degrees, Robot.fineSpeed, 500.millimeters),
       Robot.Hold
     )),
-     */
-    /*
+
+
     MovesMenuAction("Start-Park", SortingCenter.startToParkRoad),
     MovesMenuAction("Park-ShipRd", SortingCenter.parkRoadToShipRoad),
 
@@ -43,7 +44,7 @@ object CargoConnect extends Runnable {
     MovesMenuAction("EscapeShip", LoadShip.escapeShip),
     MovesMenuAction("RaiseCrane", LoadShip.raiseCrane),
     MovesMenuAction("EscapeCrane", LoadShip.escapeCrane),
-    */
+
     MovesMenuAction("Despin", Seq(DespinGyro)),
     MovesMenuAction("ColorCalibrate", Seq(CalibrateReflect)),
     MovesMenuAction("Zero", GyroSetHeading(0.degrees)),
@@ -57,10 +58,10 @@ object CargoConnect extends Runnable {
   def setSensorRows(): Unit = {
     Lcd.set(0, s"${lcdView.elapsedTime}s", Lcd.RIGHT)
 
-    val heading: String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading().value}d")
+    val heading: String = UnpluggedException.safeString(() => s"${Robot.gyroscope.headingMode().readHeading()}")
     Lcd.set(0, heading, Lcd.LEFT)
 
-    val forkDegrees = UnpluggedException.safeString(() => s"Fork ${Robot.forkMotor.readPosition().value}d")
+    val forkDegrees = UnpluggedException.safeString(() => s"Fork ${Robot.forkMotor.readPosition()}")
     Lcd.set(1, forkDegrees, Lcd.LEFT)
   }
   val lcdView: Controller = Controller(actions, setSensorRows)

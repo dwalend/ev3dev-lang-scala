@@ -52,7 +52,7 @@ object GyroDriveStraight extends Runnable {
                                  distanceMm: Int
                                ): Unit = {
     val startTac: Degrees = Robot.leftMotor.readPosition()
-    val goalTac = (startTac.value + (360 * distanceMm) / Robot.driveWheelCircumference.value).degrees
+    val goalTac = (startTac.v + (360 * distanceMm) / Robot.driveWheelCircumference.v).degrees
 
     def notThereYet(): Boolean = {
       val tac = Robot.leftMotor.readPosition()
@@ -102,8 +102,8 @@ object GyroDriveStraight extends Runnable {
         //val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)
         //todo for fractions
         //if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
-        //else if(steerAdjust.value > 0) (leftIdeal+1,rightIdeal)
-        //else if(steerAdjust.value < 0) (leftIdeal,rightIdeal+1)
+        //else if(steerAdjust.v > 0) (leftIdeal+1,rightIdeal)
+        //else if(steerAdjust.v < 0) (leftIdeal,rightIdeal+1)
         //else (leftIdeal,rightIdeal)
         //todo speed up very slow movement by 10. Not sure this is usefulif(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
         //todo speed up very slow movement by 10. Not sure this is useful else (leftSteering+10,rightSteering+10)
@@ -271,7 +271,7 @@ object GyroDriveStraight extends Runnable {
 object Robot {
 
   val driveWheelDiameter = 11.studs
-  val driveWheelCircumference = (driveWheelDiameter.value * Math.PI.toFloat).mm
+  val driveWheelCircumference = (driveWheelDiameter.v * Math.PI.toFloat).mm
 
   val robotWheelbase = 18.studs
 

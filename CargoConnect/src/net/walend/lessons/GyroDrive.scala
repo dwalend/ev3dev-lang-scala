@@ -24,7 +24,7 @@ object GyroDrive {
   }
 
   private[lessons] def driveAdjust(goalHeading: Degrees, goalSpeed: DegreesPerSecond)(initial: GyroHeading)(sensorResults: GyroHeading): Unit = {
-    val steerAdjust = ((goalHeading - sensorResults.heading).value * goalSpeed.abs.value / 30).degreesPerSecond
+    val steerAdjust = ((goalHeading - sensorResults.heading).v * goalSpeed.abs.v / 30).degreesPerSecond
     Log.log(s"steerAdjust $steerAdjust goalSpeed $goalSpeed sensorResults $sensorResults")
     Robot.directDrive(goalSpeed + steerAdjust, goalSpeed - steerAdjust)
   }
