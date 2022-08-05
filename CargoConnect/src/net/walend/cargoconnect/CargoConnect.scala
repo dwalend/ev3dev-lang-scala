@@ -16,15 +16,19 @@ import net.walend.lessons.{CalibrateReflect, Controller, DespinGyro, GyroArc, Gy
  * @since v0.0.0
  */
 object CargoConnect extends Runnable {
+
+  Log.log("Start init of CargoConnect")
+
   val actions: Array[TtyMenuAction] = Array(
     MovesMenuAction("WarmUp", Seq(GyroArc.WarmUp, GyroDrive.WarmUp)),
-    SortingCenterMenu,
+/*    SortingCenterMenu,
 
     MovesMenuAction("WBW Test", Seq(
       WhiteBlackWhite.driveForwardToWhiteBlackWhite(0.degrees, Robot.fineSpeed, 500.millimeters),
       Robot.Hold
     )),
-
+     */
+    /*
     MovesMenuAction("Start-Park", SortingCenter.startToParkRoad),
     MovesMenuAction("Park-ShipRd", SortingCenter.parkRoadToShipRoad),
 
@@ -39,13 +43,15 @@ object CargoConnect extends Runnable {
     MovesMenuAction("EscapeShip", LoadShip.escapeShip),
     MovesMenuAction("RaiseCrane", LoadShip.raiseCrane),
     MovesMenuAction("EscapeCrane", LoadShip.escapeCrane),
-
+    */
     MovesMenuAction("Despin", Seq(DespinGyro)),
     MovesMenuAction("ColorCalibrate", Seq(CalibrateReflect)),
     MovesMenuAction("Zero", GyroSetHeading(0.degrees)),
 
     MovesMenuAction("Stop", Robot.Coast),
   )
+
+  Log.log("Made menu actions")
 
   //todo add color sensors
   def setSensorRows(): Unit = {

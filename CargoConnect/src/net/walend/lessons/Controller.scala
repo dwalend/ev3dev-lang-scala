@@ -1,17 +1,13 @@
 package net.walend.lessons
 
+import ev3dev4s.Log
 import ev3dev4s.actuators.Sound
-import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.lcd.tty.Lcd
-import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
-import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException}
-import ev3dev4s.sensors.Ev3ColorSensor
-import ev3dev4s.sensors.SensorPort
 import ev3dev4s.measure.Conversions._
+import ev3dev4s.sysfs.ChannelRereader
 import net.walend.cargoconnect.Robot
 
 import java.nio.file.attribute.FileTime
-import java.nio.file.{Files, Path, Paths, FileSystemException}
+import java.nio.file.{FileSystemException, Files, Path, Paths}
 
 /**
  *
@@ -54,8 +50,10 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
     @volatile var keepGoing = true
 
     val expectedJarFile: Path = Paths.get(this.getClass.getProtectionDomain.getCodeSource.getLocation.getPath)
-    val expectedJarLastModifiedTime: FileTime = Files.getLastModifiedTime(expectedJarFile)
+    val currentJarLastModifiedTime: FileTime = Files.getLastModifiedTime(expectedJarFile)
     val jarFileSizeFile: Path = expectedJarFile.getParent.resolve("expectedJarFileSize.txt") //todo use current working directory
+
+    @volatile var expectedJarLastModifiedTime = currentJarLastModifiedTime
 
     override def run(): Unit = {
       while (keepGoing) {
@@ -76,6 +74,7 @@ case class Controller(actions:Array[TtyMenuAction],setSensorRows:() => Unit) ext
           val jarFileSize = Files.size(expectedJarFile)
           val expectedJarFileSize = ChannelRereader.readAsciiInt(jarFileSizeFile)
           if (jarFileSize == expectedJarFileSize) {
+            expectedJarLastModifiedTime = jarLastModifiedTime
             Log.log(s"New .jar file is complete")
             Sound.playTone(175, 200.milliseconds)
           }

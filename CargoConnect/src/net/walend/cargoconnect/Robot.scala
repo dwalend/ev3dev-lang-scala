@@ -9,12 +9,11 @@ import ev3dev4s.actuators.{Ev3LargeMotor, Ev3MediumMotor, Motor, MotorCommand, M
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.actuators.MotorStopCommand
 import ev3dev4s.measure.Conversions._
-import net.walend.lessons.{BlackSide, GyroAndTachometer, GyroDrive, GyroSetHeading, Move, GyroArc}
+import net.walend.lessons.{GyroDrive, GyroSetHeading, Move, GyroArc}
 import ev3dev4s.actuators.Sound
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
-import ev3dev4s.sensors.Ev3KeyPad.{Key, State}
-import net.walend.cargoconnect.Robot.gyroscope
+import ev3dev4s.sensors.Ev3KeyPad.State
 
 import scala.annotation.tailrec
 
@@ -34,17 +33,19 @@ object Robot {
   @tailrec
   def check(): Unit = {
     try {
+      Log.log("Starting robot check")
       gyroHeading.readHeading()
       leftColorSensor.reflectMode().readReflect()
       rightColorSensor.reflectMode().readReflect()
       forkMotor.readPosition()
       leftDriveMotor.readPosition()
       rightDriveMotor.readPosition()
+      Log.log("Finished robot check")
     }
     catch {
       case x:Throwable =>
         Lcd.set(0, "Gadget Check")
-        Lcd.set(1, x.getMessage())
+        Lcd.set(1, x.getMessage)
         Sound.playTone(440, 200.milliseconds)
         Sound.playTone(220, 200.milliseconds)
         Ev3KeyPad.blockUntilAnyKey()
@@ -85,20 +86,20 @@ object Robot {
   val Brake: StopMove = StopMove(MotorStopCommand.BRAKE)
   val Hold: StopMove = StopMove(MotorStopCommand.HOLD)
 
-  val wheelDiameter = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
-  val wheelCircumference = (wheelDiameter.value * Math.PI.toFloat).mm
+  val wheelDiameter: MilliMeters = 94.millimeters //todo try the other size of tires 92 mm vs 94.2 mm
+  val wheelCircumference: MilliMeters = (wheelDiameter.value * Math.PI.toFloat).mm
 
   def distanceToWheelRotation(distance: MilliMeters): Degrees = (distance.value * 360 / wheelCircumference.value).degrees
 
   def wheelRotationToDistance(degrees: Degrees): MilliMeters = (wheelCircumference * degrees / 360).mm
 
-  val wheelToWheel = 23.studs //todo is that right?
+  val wheelToWheel: MilliMeters = 23.studs //todo is that right?
 
-  val driveAxelToExtendedFork = 33.studs
+  val driveAxelToExtendedFork: MilliMeters = 33.studs
 
-  val cruiseSpeed = 500.degreesPerSecond //todo figure out a good cruise speed
-  val fineSpeed = 200.degreesPerSecond
-  val noSlipSpeed = 5.degreesPerSecond
+  val cruiseSpeed: DegreesPerSecond = 500.degreesPerSecond //todo figure out a good cruise speed
+  val fineSpeed: DegreesPerSecond = 200.degreesPerSecond
+  val noSlipSpeed: DegreesPerSecond = 5.degreesPerSecond
 
   object Beep extends Move {
     def move(): Unit = Sound.beep()
@@ -128,7 +129,7 @@ object Robot {
         afterFirst - start
       }")
 
-      for (i <- 1 to 100) {
+      for (_ <- 1 to 100) {
         timingCheckTask()
       }
 

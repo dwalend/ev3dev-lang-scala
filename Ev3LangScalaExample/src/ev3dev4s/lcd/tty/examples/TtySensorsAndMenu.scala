@@ -58,7 +58,7 @@ object TtySensorDisplay extends Runnable {
 
   def setSensorRows(): Unit = {
     Lcd.set(0, s"${elapsedTime}s", Lcd.RIGHT)
-    val heading: String = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading()}d")
+    val heading: String = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading().round}d")
     Lcd.set(0, heading, Lcd.LEFT)
   }
 

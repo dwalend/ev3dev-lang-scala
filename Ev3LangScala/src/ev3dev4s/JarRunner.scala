@@ -27,17 +27,16 @@ object JarRunner {
 
     try
       while (keepGoing) {
-        println(s"Reloading and rerunning $className from $jarFile")
+        Log.log(s"Start run() of $className from $jarFile")
         val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
-        //todo here's the spot to pass in the name of the .jar file to watch - instead of the object instance
         classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()
-        println(s"Finished run() of $className from $jarFile")
+        Log.log(s"Finished run() of $className from $jarFile")
       }
     catch {
       case x: Throwable =>
         x.printStackTrace()
-        println(s"End JarRunner ")
-        Sound.playTone(110, 200.milliseconds)
+        Log.log(s"End JarRunner ")
+        Sound.playTone(55, 200.milliseconds)
     }
   }
 }
