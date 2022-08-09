@@ -12,12 +12,18 @@ import ev3dev4s.sensors.Ev3KeyPad
  * @author
  * @since v0.0.0
  */
-//todo use an array of Runnables instead
-case class Menu(actions:Array[_ <: MenuAction], setLcd:Menu => Unit) extends Runnable {
+object Menu extends Runnable {
 
-  @volatile var index = 0
-  @volatile var keepGoing = true
-  @volatile var doingAction = false
+  val actions: Seq[Runnable] = Seq(
+    Green,
+    Yellow,
+    Red,
+    Off,
+    Reload
+  )
+
+  @volatile var selectedAction: Runnable = actions.head
+  @volatile var keepGoing: Boolean = true
 
   override def run(): Unit = {
     drawScreen()
@@ -31,20 +37,18 @@ case class Menu(actions:Array[_ <: MenuAction], setLcd:Menu => Unit) extends Run
       val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3System.keyPad.blockUntilAnyKey()
       key match {
         case (Ev3KeyPad.Key.Enter, Ev3KeyPad.State.Released) => doAction()
-        case (Ev3KeyPad.Key.Escape, Ev3KeyPad.State.Released) => stopLoop()
         case (Ev3KeyPad.Key.Right, Ev3KeyPad.State.Released) => incrementMenu()
         case (Ev3KeyPad.Key.Left, Ev3KeyPad.State.Released) => decrementMenu()
-        case _ => ; //do nothing
+        case (Ev3KeyPad.Key.Escape, Ev3KeyPad.State.Released) => stopLoop()
+        case _ => //do nothing
       }
     }
     Log.log("end memu loop")
   } //run
 
   def doAction(): Unit = {
-    doingAction = true
-    actions(index).run(this)
-    System.gc() //ha ha just wait 'til you learn about this!
-    doingAction = false
+    selectedAction.run()
+    System.gc()
     drawScreen()
   }
 
@@ -53,76 +57,81 @@ case class Menu(actions:Array[_ <: MenuAction], setLcd:Menu => Unit) extends Run
   }
 
   def incrementMenu(): Unit = {
-    index = if (index == actions.length - 1) 0
-    else index + 1
+    selectedAction = if(selectedAction == actions.last) actions.head
+                      else actions(actions.indexOf(selectedAction)+1)
     drawScreen()
   }
 
   def decrementMenu(): Unit = {
-    index = if (index == 0) actions.length - 1
-            else index - 1
+    selectedAction = if(selectedAction == actions.head) actions.last
+                      else actions(actions.indexOf(selectedAction)-1)
     drawScreen()
   }
 
   def drawScreen(): Unit = this.synchronized {
     Lcd.clear()
-    setLcd(this)
+    drawActionWidget(3)
     Lcd.flush()
   }
 
-  def drawActionName(row: Int): Unit = {
-    Lcd.set(row, actions(index).label, Lcd.CENTER)
+  def drawActionWidget(row: Int): Unit = {
+    val label = selectedAction match {
+      case menuAction: MenuAction => menuAction.label
+      case runnable: Runnable => runnable.getClass.getSimpleName.dropRight(1)
+    }
+
+    Lcd.set(row, label, Lcd.CENTER)
     Lcd.set(row, 0, '<')
     Lcd.set(row, 10, '>')
   }
-}
 
-trait MenuAction {
-  def label: String = this.getClass.getSimpleName.dropRight(1)
+  object Reload extends MenuAction {
+    val label = "Reload"
 
-  def run(menu: Menu): Unit
-}
+    override def run(): Unit = stopLoop()
+  }
 
-object Menu extends Runnable {
   def main(args: Array[String]): Unit = {
     run()
   }
+}
 
-  object Reload extends MenuAction {
-    override def run(ttyMenu: Menu): Unit = ttyMenu.stopLoop()
-  }
+trait MenuAction extends Runnable {
+  def label: String
+}
 
-  def drawLcd(ttyMenu: Menu): Unit = {
-    ttyMenu.drawActionName(3)
-  }
+object Green extends MenuAction {
+  val label = "Green"
 
   override def run(): Unit = {
-    val actions: Array[MenuAction] = Array(
-      LedAction("Green", {
-        () =>
-          Ev3System.leftLed.writeGreen()
-          Ev3System.rightLed.writeGreen()
-      }),
-      LedAction("Yellow", {
-        () =>
-          Ev3System.leftLed.writeYellow()
-          Ev3System.rightLed.writeYellow()
-      }),
-      LedAction("Red", {
-        () =>
-          Ev3System.leftLed.writeRed()
-          Ev3System.rightLed.writeRed()
-      }),
-      Reload
-    )
-    Menu(actions, drawLcd).run()
+    Ev3System.leftLed.writeGreen()
+    Ev3System.rightLed.writeGreen()
   }
 }
 
-//todo can this just be Runnable - or an extension of Runnable?
-case class LedAction(aLabel:String,action:() => Unit) extends MenuAction {
-  override def label: String = aLabel
+object Red extends MenuAction {
+  val label = "Red"
 
-  override def run(menu: Menu): Unit =
-    action()
+  override def run(): Unit = {
+    Ev3System.leftLed.writeRed()
+    Ev3System.rightLed.writeRed()
+  }
+}
+
+object Yellow extends MenuAction {
+  val label = "Yellow"
+
+  override def run(): Unit = {
+    Ev3System.leftLed.writeYellow()
+    Ev3System.rightLed.writeYellow()
+  }
+}
+
+object Off extends MenuAction {
+  val label = "Off"
+
+  override def run(): Unit = {
+    Ev3System.leftLed.writeOff()
+    Ev3System.rightLed.writeOff()
+  }
 }
