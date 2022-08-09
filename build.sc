@@ -15,6 +15,10 @@ object Shared {
   val scalaVersion = "2.13.8"
   val javaVersion = "11.0.10"
 
+  /**
+   * Copy a jar file to the ev3 via scp - and write the expected size in another file (in hopes of detecting that the
+   * jar file is complete.)
+   */
   def scpJar(artifactName:String,jarPath: Path): CommandResult = {
 
     val fileSize: Long = Files.size(jarPath.toNIO)
@@ -44,6 +48,9 @@ object Shared {
     result
   }
 
+  /**
+   * Copy an assembly file - a jar file that includes all needed dependencies - to the Ev3
+   */
   def scpAssembly(artifactName:String,assemblyPath: Path): CommandResult = {
 
     val scp = new Scp()
@@ -108,9 +115,9 @@ object Ev3LangScalaExample extends ScalaModule {
   }
 }
 
-object CargoConnect extends ScalaModule {
-  override def artifactName: T[String] = "CargoConnect"
-  override def mainClass: T[Option[String]] = Some("net.walend.cargoconnect.CargoConnect")
+object SuperPowered extends ScalaModule {
+  override def artifactName: T[String] = "SuperPowered"
+  override def mainClass: T[Option[String]] = Some("superpowered.TtyMenu")
 
   def scalaVersion = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
