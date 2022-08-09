@@ -24,7 +24,7 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
 
   private val redWriter: ChannelRewriter = ChannelRewriter (redPath)
   private val greenWriter: ChannelRewriter = ChannelRewriter (greenPath)
-  //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any v
+  //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
   def writeBrightness (red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
     redWriter.writeAsciiInt (red.round)

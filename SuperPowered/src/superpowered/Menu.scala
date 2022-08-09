@@ -27,10 +27,7 @@ object Menu extends Runnable {
 
   override def run(): Unit = {
     drawScreen()
-    Ev3System.leftLed.writeOff()
-    Ev3System.rightLed.writeOff()
-    Ev3System.leftLed.writeGreen()
-    Ev3System.rightLed.writeGreen()
+    Green.run()
 
     Log.log("start menu loop")
     while (keepGoing) {
@@ -43,7 +40,7 @@ object Menu extends Runnable {
         case _ => //do nothing
       }
     }
-    Log.log("end memu loop")
+    Log.log("end menu loop")
   } //run
 
   def doAction(): Unit = {
@@ -68,7 +65,7 @@ object Menu extends Runnable {
     drawScreen()
   }
 
-  def drawScreen(): Unit = this.synchronized {
+  def drawScreen(): Unit = {
     Lcd.clear()
     drawActionWidget(3)
     Lcd.flush()
@@ -97,6 +94,9 @@ object Menu extends Runnable {
 }
 
 trait MenuAction extends Runnable {
+  /**
+   * @return 9-or-fewer characters as the label for this menu action
+   */
   def label: String
 }
 
