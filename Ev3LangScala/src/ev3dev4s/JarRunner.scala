@@ -25,18 +25,21 @@ object JarRunner {
     val className = args(1)
     Sound.playTone(110, 200.milliseconds)
 
-    try
+    try {
       while (keepGoing) {
         Log.log(s"Start run() of $className from $jarFile")
         val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
         classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()
         Log.log(s"Finished run() of $className from $jarFile")
       }
+    }
     catch {
       case x: Throwable =>
         x.printStackTrace()
-        Log.log(s"End JarRunner ")
-        Sound.playTone(55, 200.milliseconds)
+    }
+    finally {
+      Log.log(s"End JarRunner ")
+      Sound.playTone(55, 200.milliseconds)
     }
   }
 }

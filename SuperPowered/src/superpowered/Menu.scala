@@ -1,7 +1,6 @@
 package superpowered
 
 //todo change over to use lego package instead
-//todo force import of things like Runnable
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
