@@ -15,6 +15,17 @@ object Shared {
   val scalaVersion = "2.13.8"
   val javaVersion = "11.0.10"
 
+  def scpFile(fromLocalFile:Path,toRemoteFile:String):Unit = {
+    val scp = new Scp()
+    scp.init()
+    scp.setProject(new Project())
+    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setLocalFile(fromLocalFile.toString())
+    scp.setRemoteTofile(s"robot@ev3dev.local:$toRemoteFile")
+    scp.setTrust(true)
+    scp.execute()
+  }
+
   /**
    * Copy a jar file to the ev3 via scp - and write the expected size in another file (in hopes of detecting that the
    * jar file is complete.)
@@ -32,14 +43,7 @@ object Shared {
     ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
     ssh.execute()
 
-    val scp = new Scp()
-    scp.init()
-    scp.setProject(new Project())
-    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
-    scp.setLocalFile(jarPath.toString())
-    scp.setRemoteTofile(s"robot@ev3dev.local:$artifactName.jar")
-    scp.setTrust(true)
-    scp.execute()
+    scpFile(jarPath,s"$artifactName.jar")
 
     //todo progress or error messages?
 
@@ -53,14 +57,7 @@ object Shared {
    */
   def scpAssembly(artifactName:String,assemblyPath: Path): CommandResult = {
 
-    val scp = new Scp()
-    scp.init()
-    scp.setProject(new Project())
-    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
-    scp.setLocalFile(assemblyPath.toString())
-    scp.setRemoteTofile(s"robot@ev3dev.local:$artifactName.jar")
-    scp.setTrust(true)
-    scp.execute()
+    scpFile(assemblyPath,s"$artifactName.jar")
 
     //todo progress or error messages?
 
@@ -68,6 +65,27 @@ object Shared {
 
     result
   }
+
+  def scpBash(fromBashFile:Path,toBashFile:String):CommandResult = {
+    scpFile(fromBashFile, toBashFile)
+
+    val ssh = new SSHExec()
+    ssh.init()
+    ssh.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    ssh.setUsername("robot")
+    ssh.setHost("ev3dev.local")
+    ssh.setTrust(true)
+    ssh.setCommand(s"chmod +x $toBashFile")
+    ssh.execute()
+
+    //todo progress or error messages?
+
+    val result = CommandResult(0, Seq.empty)
+
+    result
+
+  }
+
 }
 
 object Ev3LangScala extends ScalaModule {
@@ -130,6 +148,11 @@ object SuperPowered extends ScalaModule {
     Shared.scpJar(artifactName(), jar().path)
   }
 
+  def scpBash() = T.command {
+    val bashFile = millSourcePath / "SuperPowered.bash"
+    Shared.scpBash(bashFile,"SuperPowered.bash")
+  }
+  
   def scpAssembly(): Command[CommandResult] = T.command {
     Shared.scpAssembly(artifactName(), assembly().path)
   }
