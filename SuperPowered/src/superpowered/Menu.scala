@@ -1,9 +1,12 @@
 package superpowered
 
-//todo change over to use lego package instead
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
+
+import java.lang.{Runnable, System}
+import scala.Predef._
+import scala.{Array, Boolean, Int, Seq, Unit, volatile}
 
 /**
  * Copied from Ev3LangScalaExample as a starting point.
@@ -14,6 +17,7 @@ import ev3dev4s.sensors.Ev3KeyPad
 object Menu extends Runnable {
 
   val actions: Seq[Runnable] = Seq(
+    Starter,
     Green,
     Yellow,
     Red,
@@ -103,6 +107,8 @@ object Green extends MenuAction {
   val label = "Green"
 
   override def run(): Unit = {
+    Ev3System.leftLed.writeOff()
+    Ev3System.rightLed.writeOff()
     Ev3System.leftLed.writeGreen()
     Ev3System.rightLed.writeGreen()
   }
@@ -112,6 +118,8 @@ object Red extends MenuAction {
   val label = "Red"
 
   override def run(): Unit = {
+    Ev3System.leftLed.writeOff()
+    Ev3System.rightLed.writeOff()
     Ev3System.leftLed.writeRed()
     Ev3System.rightLed.writeRed()
   }
@@ -121,6 +129,8 @@ object Yellow extends MenuAction {
   val label = "Yellow"
 
   override def run(): Unit = {
+    Ev3System.leftLed.writeOff()
+    Ev3System.rightLed.writeOff()
     Ev3System.leftLed.writeYellow()
     Ev3System.rightLed.writeYellow()
   }

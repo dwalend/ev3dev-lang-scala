@@ -4,6 +4,9 @@ import ev3dev4s.lego.{Display, Sound}
 import ev3dev4s.measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3KeyPad
 
+import java.lang.Runnable
+import scala.Unit
+
 object Starter extends Runnable {
   override def run(): Unit = {
     Display.write("Simple Start",0)

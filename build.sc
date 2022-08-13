@@ -11,7 +11,7 @@ import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
 import org.apache.tools.ant.Project
 
 object Shared {
-  val scalacOptions = Seq("-deprecation")
+  val scalacOptions: Seq[String] = Seq("-deprecation")
   val scalaVersion = "2.13.8"
   val javaVersion = "11.0.10"
 
@@ -135,12 +135,12 @@ object Ev3LangScalaExample extends ScalaModule {
 
 object SuperPowered extends ScalaModule {
   override def artifactName: T[String] = "SuperPowered"
-  override def mainClass: T[Option[String]] = Some("superpowered.TtyMenu")
+  override def mainClass: T[Option[String]] = Some("superpowered.Menu")
 
   def scalaVersion = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
-  override def scalacOptions = Shared.scalacOptions
+  override def scalacOptions = Shared.scalacOptions.appended("-Yno-imports")
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 
@@ -152,7 +152,7 @@ object SuperPowered extends ScalaModule {
     val bashFile = millSourcePath / "SuperPowered.bash"
     Shared.scpBash(bashFile,"SuperPowered.bash")
   }
-  
+
   def scpAssembly(): Command[CommandResult] = T.command {
     Shared.scpAssembly(artifactName(), assembly().path)
   }
