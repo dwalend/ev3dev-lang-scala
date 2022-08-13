@@ -1,6 +1,7 @@
 package superpowered
 
-import ev3dev4s.{Ev3System, Log}
+import ev3dev4s.actuators.Ev3Led
+import ev3dev4s.Log
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
 
@@ -34,7 +35,7 @@ object Menu extends Runnable {
 
     Log.log("start menu loop")
     while (keepGoing) {
-      val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3System.keyPad.blockUntilAnyKey()
+      val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
       key match {
         case (Ev3KeyPad.Key.Enter, Ev3KeyPad.State.Released) => doAction()
         case (Ev3KeyPad.Key.Right, Ev3KeyPad.State.Released) => incrementMenu()
@@ -107,10 +108,10 @@ object Green extends MenuAction {
   val label = "Green"
 
   override def run(): Unit = {
-    Ev3System.leftLed.writeOff()
-    Ev3System.rightLed.writeOff()
-    Ev3System.leftLed.writeGreen()
-    Ev3System.rightLed.writeGreen()
+    Ev3Led.Left.writeOff()
+    Ev3Led.Right.writeOff()
+    Ev3Led.Left.writeGreen()
+    Ev3Led.Right.writeGreen()
   }
 }
 
@@ -118,10 +119,10 @@ object Red extends MenuAction {
   val label = "Red"
 
   override def run(): Unit = {
-    Ev3System.leftLed.writeOff()
-    Ev3System.rightLed.writeOff()
-    Ev3System.leftLed.writeRed()
-    Ev3System.rightLed.writeRed()
+    Ev3Led.Left.writeOff()
+    Ev3Led.Right.writeOff()
+    Ev3Led.Left.writeRed()
+    Ev3Led.Right.writeRed()
   }
 }
 
@@ -129,10 +130,10 @@ object Yellow extends MenuAction {
   val label = "Yellow"
 
   override def run(): Unit = {
-    Ev3System.leftLed.writeOff()
-    Ev3System.rightLed.writeOff()
-    Ev3System.leftLed.writeYellow()
-    Ev3System.rightLed.writeYellow()
+    Ev3Led.Left.writeOff()
+    Ev3Led.Right.writeOff()
+    Ev3Led.Left.writeYellow()
+    Ev3Led.Right.writeYellow()
   }
 }
 
@@ -140,7 +141,7 @@ object Off extends MenuAction {
   val label = "Off"
 
   override def run(): Unit = {
-    Ev3System.leftLed.writeOff()
-    Ev3System.rightLed.writeOff()
+    Ev3Led.Left.writeOff()
+    Ev3Led.Right.writeOff()
   }
 }
