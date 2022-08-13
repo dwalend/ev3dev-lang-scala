@@ -10,24 +10,24 @@ import java.io.{DataInputStream, FileInputStream}
  */
 object Ev3KeyPad extends AutoCloseable {
 
-  sealed case class Key(byte: Byte)
+  sealed case class Key(byte: Byte, name:String)
 
   object Key{
-    val Up: Key = Key(0x67)
-    val Down: Key = Key(0x6c)
-    val Left: Key = Key(0x69)
-    val Right: Key = Key(0x6a)
-    val Enter: Key = Key(0x1c)
-    val Escape: Key = Key(0x0e)
+    val Up: Key = Key(0x67,"Up")
+    val Down: Key = Key(0x6c,"Down")
+    val Left: Key = Key(0x69,"Left")
+    val Right: Key = Key(0x6a,"Right")
+    val Enter: Key = Key(0x1c,"Enter")
+    val Escape: Key = Key(0x0e,"Escape")
 
     val values: Array[Key] = Array(Up,Down,Left,Right,Enter,Escape)
   }
 
-  sealed case class State(byte: Byte)
+  sealed case class State(byte: Byte, name:String)
 
   object State {
-    val Pressed: State = State(0x01)
-    val Released: State = State(0x00)
+    val Pressed: State = State(0x01,"Pressed")
+    val Released: State = State(0x00,"Released")
 
     val values: Array[State] = Array(Pressed,Released)
   }

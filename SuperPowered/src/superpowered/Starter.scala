@@ -6,13 +6,14 @@ import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
 import scala.Unit
+import scala.StringContext
 
 object Starter extends Runnable {
   override def run(): Unit = {
     Display.write("Simple Start",0)
 
     val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
-    Display.write("Key pushed",1)
+    Display.write(s"${key._1.name} ${key._2.name}",1)
     Display.setLedsTo(Display.LedColor.Orange)
 
     Sound.playBeep(440,200.ms)
