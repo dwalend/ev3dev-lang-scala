@@ -8,9 +8,9 @@ import java.lang.Runnable
 import scala.Unit
 import scala.StringContext
 
-object Starter extends Runnable {
+object HelloWorld extends Runnable {
   override def run(): Unit = {
-    Display.write("Simple Start",0)
+    Display.write("Hello World!",0)
 
     val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
     Display.write(s"${key._1.name} ${key._2.name}",1)

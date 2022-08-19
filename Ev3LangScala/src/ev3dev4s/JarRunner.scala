@@ -7,7 +7,7 @@ import java.net.URLClassLoader
 import java.nio.file.Path
 
 /**
- *
+ * Loads a .jar file, then run()s a Runnable.
  *
  * @author David Walend
  * @since v0.0.0
@@ -17,7 +17,9 @@ object JarRunner {
   @volatile var keepGoing: Boolean = true
 
   /**
-   * @param args First arg is a path to a .jar file. Second arg is the fully-qualified class name of a Runnable Object
+   * Loads the .jar file named in the first arg, runs the Runnable named in the second arg, until something sets keepGoing to false.
+   *
+   * @param args the first arg is a path to a .jar file. The second arg is the fully-qualified class name of a Runnable Object
    */
   def main(args: Array[String]): Unit = {
 

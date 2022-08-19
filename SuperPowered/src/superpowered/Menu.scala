@@ -18,7 +18,7 @@ import scala.{Array, Boolean, Int, Seq, Unit, volatile}
 object Menu extends Runnable {
 
   val actions: Seq[Runnable] = Seq(
-    Starter,
+    HelloWorld,
     Green,
     Yellow,
     Red,
