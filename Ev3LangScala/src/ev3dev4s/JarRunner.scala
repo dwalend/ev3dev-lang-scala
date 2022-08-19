@@ -5,6 +5,7 @@ import ev3dev4s.measure.Conversions._
 
 import java.net.URLClassLoader
 import java.nio.file.Path
+import scala.annotation.tailrec
 
 /**
  * Loads a .jar file, then run()s a Runnable.
@@ -24,24 +25,34 @@ object JarRunner {
   def main(args: Array[String]): Unit = {
 
     val jarFile: Path = Path.of(args(0))
-    val className = args(1)
-    Sound.playTone(110, 200.milliseconds)
+    val className: String = args(1)
+    Sound.playTone(55, 200.milliseconds)
 
     try {
-      while (keepGoing) {
-        Log.log(s"Start run() of $className from $jarFile")
-        val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
-        classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()
-        Log.log(s"Finished run() of $className from $jarFile")
-      }
+      runIt(jarFile, className)
+    }
+    finally {
+      Log.log(s"End JarRunner ")
+      Sound.playTone(55, 200.milliseconds)
+    }
+  }
+
+  @tailrec
+  def runIt(jarFile:Path,className:String):Unit = {
+    Sound.playTone(110, 200.milliseconds)
+    try {
+      Log.log(s"Start run() of $className from $jarFile")
+      val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
+      classLoader.loadClass(className + "$").getField("MODULE$").get(Array.empty[Object]).asInstanceOf[Runnable].run()
     }
     catch {
       case x: Throwable =>
         x.printStackTrace()
     }
     finally {
-      Log.log(s"End JarRunner ")
-      Sound.playTone(55, 200.milliseconds)
+      Sound.playTone(110, 200.milliseconds)
+      Log.log(s"Finished run() of $className from $jarFile")
     }
+    runIt(jarFile, className)
   }
 }
