@@ -47,7 +47,7 @@ object Sound {
     //todo draw from .jar resources
   def playSample(file: File, volume: Percent = this.volume):Unit = {
     this.setVolume(volume)
-    this.playSample(file)
+    this.playSampleUntilDone(file)
   }
 
   /**
