@@ -15,13 +15,17 @@ object Shared {
   val scalaVersion = "2.13.8"
   val javaVersion = "11.0.10"
 
-  def scpFile(fromLocalFile:Path,toRemoteFile:String):Unit = {
+  val ev3UserName = "robot"
+  val ev3Password = System.getProperty("ev3Password") //todo do something clever to allow key files
+  val ev3Hostname = "ev3dev.local"
+
+  def scpFile(fromLocalFile:Path, toRemoteFile:String):Unit = {
     val scp = new Scp()
     scp.init()
     scp.setProject(new Project())
-    scp.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
+    scp.setPassword(ev3Password)
     scp.setLocalFile(fromLocalFile.toString())
-    scp.setRemoteTofile(s"robot@ev3dev.local:$toRemoteFile")
+    scp.setRemoteTofile(s"$ev3UserName@$ev3Hostname:$toRemoteFile")
     scp.setTrust(true)
     scp.execute()
   }
@@ -36,9 +40,9 @@ object Shared {
 
     val ssh = new SSHExec()
     ssh.init()
-    ssh.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
-    ssh.setUsername("robot")
-    ssh.setHost("ev3dev.local")
+    ssh.setPassword(ev3Password)
+    ssh.setUsername(ev3UserName)
+    ssh.setHost(ev3Hostname)
     ssh.setTrust(true)
     ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
     ssh.execute()
@@ -71,9 +75,9 @@ object Shared {
 
     val ssh = new SSHExec()
     ssh.init()
-    ssh.setKeyfile("~/.ssh/dwalend_ev3_id_rsa")
-    ssh.setUsername("robot")
-    ssh.setHost("ev3dev.local")
+    ssh.setPassword(ev3Password)
+    ssh.setUsername(ev3UserName)
+    ssh.setHost(ev3Hostname)
     ssh.setTrust(true)
     ssh.setCommand(s"chmod +x $toBashFile")
     ssh.execute()
