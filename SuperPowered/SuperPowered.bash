@@ -1,6 +1,6 @@
 #!/bin/bash
-#Command line for getting the superpowered jar up and running
-java -cp Ev3LangScala.jar ev3dev4s.JarRunner SuperPowered.jar superpowered.Starter
+#Command line for getting SuperPowered.jar up and running
+java -DlogFile=log.txt -cp Ev3LangScala.jar ev3dev4s.JarRunner SuperPowered.jar superpowered.HelloWorld
 
 # In a shell use
 # brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner SuperPowered.jar superpowered.HelloWorld

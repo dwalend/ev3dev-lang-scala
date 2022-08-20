@@ -10,3 +10,8 @@ To build and upload the SuperPowered library
 To upload the SuperPowered bash file
 ```./millw -D ev3Password=maker SuperPowered.scpBash```
 
+To shell into the Ev3
+
+
+To run in the shell
+```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner SuperPowered.jar superpowered.HelloWorld```

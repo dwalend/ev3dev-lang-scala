@@ -29,6 +29,7 @@ object JarRunner {
     val className: String = args(1)
     Sound.playTone(55.Hz, 200.milliseconds)
     try {
+      Sound.playTone(110.Hz, 200.milliseconds)
       runIt(jarFile, className)
     }
     finally {
@@ -39,7 +40,6 @@ object JarRunner {
 
   @tailrec
   def runIt(jarFile:Path,className:String):Unit = {
-    Sound.playTone(110.Hz, 200.milliseconds)
     try {
       Log.log(s"Start run() of $className from $jarFile")
       val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))

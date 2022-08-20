@@ -1,5 +1,7 @@
 package ev3dev4s
 
+import java.io.PrintStream
+
 /**
  *
  *
@@ -7,11 +9,12 @@ package ev3dev4s
  * @since v0.0.0
  */
 object Log {
-  def log(text: String): Unit =
-    println(s"${System.currentTimeMillis()} $text")
+  private val logStream: PrintStream = Option(System.getProperty("logFile")).map(new PrintStream(_)).getOrElse(System.out)
+
+  def log(text: String): Unit =  logStream.println(s"${System.currentTimeMillis()} $text")
 
   def log(text: String, x: Throwable): Unit = {
-    println(s"${System.currentTimeMillis()} $text")
-    x.printStackTrace()
+    logStream.println(s"${System.currentTimeMillis()} $text")
+    x.printStackTrace(logStream)
   }
 }
