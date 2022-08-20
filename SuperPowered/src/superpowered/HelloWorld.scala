@@ -12,13 +12,12 @@ object HelloWorld extends Runnable {
   override def run(): Unit = {
     Display.write("Hello World!",0)
 
-    val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
-    Display.write(s"${key._1.name} ${key._2.name}",1)
-    Display.setLedsTo(Display.LedColor.Orange)
+    while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {}
+    Display.setLedsTo(Display.LedColor.Green)
 
     Sound.playBeep(440.Hz,200.ms)
 
     Display.clearLcd()
-    Display.setLedsTo(Display.LedColor.Green)
+    Display.setLedsTo(Display.LedColor.Off)
   }
 }
