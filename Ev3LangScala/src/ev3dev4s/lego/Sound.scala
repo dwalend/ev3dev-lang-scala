@@ -27,4 +27,8 @@ object Sound {
   def playBeep(frequency: Hertz, duration: MilliSeconds): Unit = {
     Ev3Sound.playTone(frequency, duration)
   }
+
+  def speak(say:String):Unit = {
+    Ev3Sound.speak(say)
+  }
 }

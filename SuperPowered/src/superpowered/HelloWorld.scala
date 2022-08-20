@@ -10,12 +10,14 @@ import scala.StringContext
 
 object HelloWorld extends Runnable {
   override def run(): Unit = {
-    Display.write("Hello World!",0)
-
-    while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {}
-    Display.setLedsTo(Display.LedColor.Green)
-
     Sound.playBeep(440.Hz,200.ms)
+    Display.write("Hello World!",0)
+    Display.setLedsTo(Display.LedColor.Green)
+    Sound.speak("Hello World!")
+
+    while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
+      //don't do anything
+    }
 
     Display.clearLcd()
     Display.setLedsTo(Display.LedColor.Off)

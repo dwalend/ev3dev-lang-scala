@@ -34,7 +34,7 @@ object Sound {
    * @param duration  The duration of the tone4, in milliseconds.
    */
   def playTone(frequency: Hertz, duration: MilliSeconds):Unit = {
-    val cmdTone = s"beep -f ${frequency.round} -l ${duration.round}"
+    val cmdTone = s"/usr/bin/beep -f ${frequency.round} -l ${duration.round}"
     Shell.execute(cmdTone)
   }
   /**
@@ -71,7 +71,7 @@ object Sound {
    */
   def setVolume(volume: Percent):Unit = {
     this.volume = volume
-    val cmdVolume = s"amixer set PCM,0 $volume%"
+    val cmdVolume = s"/usr/bin/amixer set PCM,0 $volume%"
     Shell.execute(cmdVolume)
   }
 
@@ -80,5 +80,8 @@ object Sound {
    */ 
   def getVolume:Percent = volume
 
-  //todo text to speech from https://www.ev3dev.org/docs/tutorials/using-ev3-speaker/
+  def speak(say:String):Unit = {
+    val speakCommand = s"""/usr/bin/espeak -ven "$say" --stdout | aplay"""
+    Shell.execute(Array("/bin/sh","-c",speakCommand))
+  }
 }
