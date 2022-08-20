@@ -16,7 +16,7 @@ object HelloWorld extends Runnable {
     Display.write(s"${key._1.name} ${key._2.name}",1)
     Display.setLedsTo(Display.LedColor.Orange)
 
-    Sound.playBeep(440,200.ms)
+    Sound.playBeep(440.Hz,200.ms)
 
     Display.clearLcd()
     Display.setLedsTo(Display.LedColor.Green)

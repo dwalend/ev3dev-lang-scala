@@ -96,7 +96,7 @@ object TtySensorsAndMenu extends Runnable {
           if (jarFileSize == expectedJarFileSize) {
             expectedJarLastModifiedTime = jarLastModifiedTime
             Log.log(s"New .jar file is complete")
-            Sound.playTone(175, 200.milliseconds)
+            Sound.playTone(175.Hz, 200.milliseconds)
           }
         }
       } catch {

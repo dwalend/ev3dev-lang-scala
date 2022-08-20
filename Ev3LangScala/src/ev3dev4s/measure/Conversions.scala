@@ -26,6 +26,8 @@ object Conversions {
     def mm = new MilliMeters(i.toFloat)
 
     def studs = new MilliMeters(i.toFloat * 8)
+
+    def Hz = new Hertz(i.toFloat)
   }
 
   implicit class FloatConversions(f: Float) {
@@ -52,5 +54,7 @@ object Conversions {
     def mm = new MilliMeters(f)
 
     def studs = new MilliMeters(f * 8)
+
+    def Hz = new Hertz(f)
   }
 }

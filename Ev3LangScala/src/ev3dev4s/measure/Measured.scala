@@ -110,10 +110,15 @@ class LedIntensity(val v:Float) extends AnyVal with Measured[LedIntensity] {
   override def toString(): String = s"${v}i"
 }
 
-
 class MilliMeters(val v:Float) extends AnyVal with Measured[MilliMeters] {
   def create(i: Float) = new MilliMeters(i)
 
   override def toString(): String = s"${v}mm"
+}
+
+class Hertz(val v:Float) extends AnyVal with Measured[Hertz] {
+  override def create(i: Float): Hertz = new Hertz(i)
+
+  override def toString(): String = s"${v}Hz"
 }
 

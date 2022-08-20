@@ -1,7 +1,8 @@
 package ev3dev4s
 
-import ev3dev4s.actuators.Sound
+import ev3dev4s.actuators.{Ev3Led, Sound}
 import ev3dev4s.measure.Conversions._
+import ev3dev4s.sensors.Ev3KeyPad
 
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -26,20 +27,19 @@ object JarRunner {
 
     val jarFile: Path = Path.of(args(0))
     val className: String = args(1)
-    Sound.playTone(55, 200.milliseconds)
-
+    Sound.playTone(55.Hz, 200.milliseconds)
     try {
       runIt(jarFile, className)
     }
     finally {
       Log.log(s"End JarRunner ")
-      Sound.playTone(55, 200.milliseconds)
+      Sound.playTone(55.Hz, 200.milliseconds)
     }
   }
 
   @tailrec
   def runIt(jarFile:Path,className:String):Unit = {
-    Sound.playTone(110, 200.milliseconds)
+    Sound.playTone(110.Hz, 200.milliseconds)
     try {
       Log.log(s"Start run() of $className from $jarFile")
       val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
@@ -47,10 +47,14 @@ object JarRunner {
     }
     catch {
       case x: Throwable =>
-        x.printStackTrace()
+        Log.log("Caught in top-level",x)
+        Ev3Led.writeBothRed()
+        Sound.playTone(55.Hz, 200.milliseconds)
+        Ev3KeyPad.blockUntilAnyKey()
+        Ev3Led.writeBothOff()
     }
     finally {
-      Sound.playTone(110, 200.milliseconds)
+      Sound.playTone(110.Hz, 200.milliseconds)
       Log.log(s"Finished run() of $className from $jarFile")
     }
     runIt(jarFile, className)

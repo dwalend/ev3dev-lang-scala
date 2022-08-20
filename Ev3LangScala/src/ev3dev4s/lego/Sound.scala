@@ -1,7 +1,7 @@
 package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Sound => Ev3Sound}
-import ev3dev4s.measure.MilliSeconds
+import ev3dev4s.measure.{Hertz, MilliSeconds}
 
 import java.io.File
 
@@ -24,7 +24,7 @@ object Sound {
     Ev3Sound.playSampleUntilDone(file)
   }
 
-  def playBeep(frequency: Int, duration: MilliSeconds): Unit = {
+  def playBeep(frequency: Hertz, duration: MilliSeconds): Unit = {
     Ev3Sound.playTone(frequency, duration)
   }
 }

@@ -6,8 +6,7 @@ import ev3dev4s.sysfs.Shell
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import java.io.File
-
-import ev3dev4s.measure.{MilliSeconds,Percent}
+import ev3dev4s.measure.{Hertz, MilliSeconds, Percent}
 import ev3dev4s.measure.Conversions._
 
 /**
@@ -24,7 +23,7 @@ object Sound {
   def beep():Unit =
     Shell.execute("beep")
 
-  def playTone(frequency: Int, duration: MilliSeconds, volume: Percent):Unit = {
+  def playTone(frequency: Hertz, duration: MilliSeconds, volume: Percent):Unit = {
     this.setVolume(volume)
     this.playTone(frequency, duration)
   }
@@ -34,8 +33,8 @@ object Sound {
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Int, duration: MilliSeconds):Unit = {
-    val cmdTone = s"beep -f $frequency -l $duration"
+  def playTone(frequency: Hertz, duration: MilliSeconds):Unit = {
+    val cmdTone = s"beep -f ${frequency.round} -l ${duration.round}"
     Shell.execute(cmdTone)
   }
   /**
