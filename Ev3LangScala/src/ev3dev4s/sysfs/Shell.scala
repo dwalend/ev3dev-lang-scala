@@ -31,8 +31,9 @@ object Shell {
   def execute(command: Array[String]): String = {
     Log.log("Command: " + command.mkString(" "))
 
-    val p: Process = Runtime.getRuntime.exec(command.mkString(" "))
+    val p: Process = Runtime.getRuntime.exec(command)
     p.waitFor
+    Log.log("Completed "+command.mkString(" "))
 
     import java.io.ByteArrayOutputStream
     val output = new ByteArrayOutputStream
