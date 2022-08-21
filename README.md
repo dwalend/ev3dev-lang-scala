@@ -1,4 +1,4 @@
-Set up Intellij Idea to write Ev# code
+Set up Intellij Idea to write Ev3 code
 
 Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
 
@@ -34,6 +34,8 @@ Close intellij. Reopen it.
 
 File -> New -> Project from Existing Sources -> ev3dev-lang-scala
 Import project from external model -> BSP -> Create
+
+Test that you can navigate in the source code. Open up SuperPowered/src/superpowered/HelloWorld.scala , then select Ev3KeyPad and touch Command-b . It should open the Ev3KeyPad.scala file.
 
 ---
 
