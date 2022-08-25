@@ -9,6 +9,9 @@ import java.lang.Runnable
 import scala.Unit
 import scala.StringContext
 
+/**
+ * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
+ */
 object HelloWorld extends Runnable {
   override def run(): Unit = {
     Sound.playBeep(220.Hz,200.ms)
