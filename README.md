@@ -29,7 +29,7 @@ In intellij's terminal,
 
 ```./millw mill.bsp.BSP/install```
 
-In intellij's terminal, 
+In intellij's Terminal (at the bottom of the screen), 
 
 ```rm -rf .idea```
 
@@ -44,7 +44,18 @@ Test that you can navigate in the source code. Open up SuperPowered/src/superpow
 
 Moving compiled code to the Ev3
 
-(Always change the Ev3 password from the default `maker`)
+(Always change the Ev3 password from the default `maker` when setting up the OS on the Ev3.)
+
+./millw won't be able to use scp until after you've ssh'ed at least once.
+
+Shell into the Ev3
+```ssh robot@ev3dev.local```
+And enter your password when prompted. 
+You are sure you want to continue connecting.
+
+then 
+
+```exit```
 
 Build and upload the Ev3LangScala library (Do this if you change the code library - rarely)
 ```./millw -D ev3Password=maker Ev3LangScala.scpAssembly```
@@ -67,11 +78,12 @@ Run in the shell
 
 (It will blink green for about 45 seconds before honking and starting)
 
-When you're done, 
+Intellij Idea will let you open up a second shell with the big +, so you can build and copy up code without stopping 
+the JarRunner on the Ev3. It will reload your .jar file every time the previous Runnable finishes.
 
-```exit```
+(When you're done running your code exit the shell in the Ev3 with
 
-Intellij Idea will let you open up a second shell with the big +, so you can build and copy up code without stopping the JarRunner on the Ev3.
+```exit```)
 
 ---
 Run without the shell (for competitions)
