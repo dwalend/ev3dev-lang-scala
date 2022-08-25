@@ -20,6 +20,7 @@ object HelloWorld extends Runnable {
     while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
+    Log.log("Button pushed")
     Sound.speak("Thank you")
 
     Display.clearLcd()

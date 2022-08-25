@@ -1,6 +1,6 @@
 Set up Intellij Idea to write Ev3 code
 
-Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
+Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac . Be agreeable.
 
 Clone (copy the source code onto this computer) the Ev3LangScala project from github
 
@@ -24,13 +24,16 @@ In the upper right Set Up JDK -> Version 11 , Eclipse Temurin 11.0.16 -> OK
 In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> OK
 
 Set up for mill in intellij (So that intellij will know how everything hangs togeter)
+
+In intellij's terminal,
+
 ```./millw mill.bsp.BSP/install```
 
 In intellij's terminal, 
 
 ```rm -rf .idea```
 
-Close intellij. Reopen it. 
+File -> Close Project . Quit intellij. Reopen it. 
 
 File -> New -> Project from Existing Sources -> ev3dev-lang-scala
 Import project from external model -> BSP -> Create
