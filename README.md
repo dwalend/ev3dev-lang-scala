@@ -1,8 +1,8 @@
-Set up Intellij Idea to write Ev3 code
+# Set up Intellij Idea to write Ev3 code
 
-Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
+## Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
 
-Clone (copy the source code onto this computer) the Ev3LangScala project from github
+## Clone (copy the source code onto this computer) the Ev3LangScala project from github
 
 When you first start Intellij - "Get From VCS" . (Or - if intellij is already installed) Top Menu Bar -> Git -> Clone)
 Agree to install XCode if asked. 
@@ -11,7 +11,7 @@ Select ev3-dev-lang-scala -> Clone
 (You might get an error - small red dot in bottom right corner. Install Xcode's git, then run around the "Get from VCS" again)
 Trust the project.
 
-Install the Scala plugin. 
+## Install the Scala plugin. 
 
 Open up the SuperPowered/src/superpowered/HelloWorld.scala file. (It will look monochrome.)
 You'll be invited to install the Scala plugin (upper right corner). 
@@ -22,6 +22,8 @@ Restart Intellij to get the Scala plugin going
 In the upper right Set Up JDK -> Version 11 , Eclipse Temurin 11.0.16 -> OK
 
 In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> OK
+       
+## Have Intellij understand the project structure
 
 Set up for mill in intellij (So that intellij will know how everything hangs togeter)
 ```./millw mill.bsp.BSP/install```
@@ -39,25 +41,32 @@ Test that you can navigate in the source code. Open up SuperPowered/src/superpow
 
 ---
 
-Moving compiled code to the Ev3
+# Moving compiled code to the Ev3
 
 (Always change the Ev3 password from the default `maker`)
 
-Build and upload the Ev3LangScala library (Do this if you change the code library - rarely)
+## Build and upload the Ev3LangScala library (Do this if you change the code library - first and rarely)
+
 ```./millw -D ev3Password=maker Ev3LangScala.scpAssembly```
 
-Build and upload the SuperPowered library (Do this every time you want to see your addtions to the team's code run in the Ev3)
+## Build and upload the SuperPowered library (Do this every time you want to see your addtions to the team's code run in the Ev3)
+
 ```./millw -D ev3Password=maker SuperPowered.scpJar```
 
-Upload the SuperPowered bash file (Probably once)
+## Upload the SuperPowered bash file (Probably once)
+
 ```./millw -D ev3Password=maker SuperPowered.scpBash```
 
 ---
-Running code in the Ev3 ev3dev OS shell
 
-Shell into the Ev3
+# Running code in the Ev3 ev3dev OS shell
+
+Intellij Idea will let you open up a second terminal with the big +, so you can build and copy up code without stopping the JarRunner on the Ev3.
+
+## Shell into the Ev3
+
 ```ssh robot@ev3dev.local```
-And enter your password when prompted. You are sure you want to continue connecting.
+And enter your password when prompted. (You are sure you want to continue connecting.)
 
 Run in the shell
 ```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner SuperPowered.jar superpowered.HelloWorld```
@@ -68,10 +77,8 @@ When you're done,
 
 ```exit```
 
-Intellij Idea will let you open up a second shell with the big +, so you can build and copy up code without stopping the JarRunner on the Ev3.
-
 ---
-Run without the shell (for competitions)
+# Run without the shell (for competitions)
 
 In the ev3dev OS menu on the Ev3
 
