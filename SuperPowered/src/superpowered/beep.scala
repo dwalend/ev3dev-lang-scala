@@ -1,18 +1,13 @@
 package superpowered
 
-import ev3dev4s.Log
 import ev3dev4s.lego.{Display, Sound}
 import ev3dev4s.measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
 import scala.Unit
-import scala.StringContext
 
-/**
- * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
- */
-object HelloWorld extends Runnable {
+object beep extends Runnable {
   override def run(): Unit = {
     Sound.playBeep(220.Hz,200.ms)
     Display.write("Hello World!",0)
@@ -23,8 +18,8 @@ object HelloWorld extends Runnable {
     while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
-    Log.log("Button pushed")
-    Sound.speak("Thank you")
+
+    Sound.speak( "am I a cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat  ")
 
     Display.clearLcd()
     Display.setLedsTo(Display.LedColor.Off)

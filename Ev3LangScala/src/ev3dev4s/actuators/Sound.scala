@@ -80,8 +80,33 @@ object Sound {
    */ 
   def getVolume:Percent = volume
 
-  def speak(say:String):Unit = {
-    val speakCommand = s"""/usr/bin/espeak -ven "$say" --stdout | aplay"""
-    Shell.execute(Array("/bin/sh","-c",speakCommand))
+
+  /**
+   *
+   * @param say
+   * this is what you want it to say
+   * @param voice
+   * en works, mb-en1 is very quiet
+   * to change the voice, add +f/+m and a number 1-4
+   * other fun modifiers for the voice (no spaces): +croak, +whisper
+   * @param pitch
+   * pitch to say it at, sale from 0-99
+   * we don't know where they are as notes. will figure out
+   * @param amplitude
+   * volume, scale from 0-200
+   * @param speeeeed
+   * words per minute. lower limit 80, no upper limit (stop at about 500)
+   * from
+   * http://espeak.sourceforge.net/commands.html
+   */
+  def speak(
+             say: String,
+             voice: String = "en",
+             pitch: Int = 50,
+             amplitude: Int = 100,
+             speeeeed: Int = 150
+           ): Unit = {
+    val speakCommand = s"""/usr/bin/espeak -v$voice -p$pitch -a$amplitude -s$speeeeed "$say" --stdout | aplay"""
+    Shell.execute(Array("/bin/sh", "-c", speakCommand))
   }
 }

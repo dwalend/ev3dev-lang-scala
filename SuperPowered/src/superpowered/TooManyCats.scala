@@ -8,17 +8,22 @@ import ev3dev4s.sensors.Ev3KeyPad
 import java.lang.Runnable
 import scala.Unit
 import scala.StringContext
+import scala.collection.immutable.Seq
 
 /**
- * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
+ * Says cat too many times.
  */
-object HelloWorld extends Runnable {
+object TooManyCats extends Runnable {
   override def run(): Unit = {
     Sound.playBeep(220.Hz,200.ms)
     Display.write("Hello World!",0)
     Display.setLedsTo(Display.LedColor.Green)
     Sound.speak("Hello World")
     Display.write("Push Button",1)
+
+    val tooManyCats = Seq.fill(9)("cat").mkString(" ")
+
+    Sound.speak(s"I'm a $tooManyCats")
 
     while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
