@@ -10,7 +10,7 @@ import ev3dev4s.measure.LedIntensity
  * @author David Walend
  * @since v0.0.0
  */
-object Display {
+object Display{
 
   sealed case class LedColor(redIntensity: LedIntensity, greenIntensity: LedIntensity)
 
@@ -20,7 +20,6 @@ object Display {
     val Orange: LedColor = LedColor(Ev3Led.brightest,Ev3Led.brightest)
     val Off:LedColor = LedColor(Ev3Led.darkest,Ev3Led.darkest)
   }
-
   def setLedsTo(color:LedColor): Unit = setLedsTo(color,color)
 
   def setLedsTo(left:LedColor,right:LedColor): Unit = {
