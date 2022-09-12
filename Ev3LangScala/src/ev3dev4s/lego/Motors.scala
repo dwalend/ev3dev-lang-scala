@@ -18,7 +18,10 @@ object Motors {
   def watchForStop(motor:Motor):Unit =
     while({
       motor.readState().contains(MotorState.RUNNING)  //todo use isRunning after recompile
-    }) { Time.pause(1.milliseconds)}
+    }) {
+      //Hand over control to the OS to let it update motor state
+      Time.pause(1.milliseconds)
+    }
 
   def runForDegrees(port:MotorPort,degrees: Degrees): Unit = {
     val motor: Motor = motors(port)

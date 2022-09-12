@@ -20,10 +20,15 @@ object Movement {
     rightMotor = Motors.motors.get(right)
   }
 
-
-  def move(degrees: Degrees, speed: DegreesPerSecond): Unit = {
-    leftMotor.foreach(_.writeGoalPosition(degrees))
-    rightMotor.foreach(_.writeGoalPosition(degrees))
+  /**
+   * Turn the pair of motors the number of degrees at the same speed.
+   *
+   * @param motorDegrees The absolute distance to turn the motor
+   * @param speed    Left motor speed. Negative is backwards.
+   */
+  def move(motorDegrees: Degrees, speed: DegreesPerSecond): Unit = {
+    leftMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, speed)))
+    rightMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, speed)))
     leftMotor.foreach(_.writeSpeed(speed))
     rightMotor.foreach(_.writeSpeed(speed))
     leftMotor.foreach(_.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION))
@@ -33,6 +38,9 @@ object Movement {
     rightMotor.foreach(Motors.watchForStop)
   }
 
+  private def relativeGoalPosition(motorDegrees: Degrees, speed: DegreesPerSecond): Degrees = {
+    (motorDegrees.abs * speed.sign).degrees
+  }
 
   def startMoving(leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
     leftMotor.foreach(_.writeSpeed(leftSpeed))
@@ -41,12 +49,19 @@ object Movement {
     rightMotor.foreach(_.writeCommand(MotorCommand.RUN))
   }
 
-
-  def move(degrees: Degrees, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
+  /**
+   * Turn the pair of motors the number of degrees at two different speeds.
+   *
+   *
+   * @param motorDegrees The absolute distance to turn the motor
+   * @param leftSpeed Left motor speed. Negative is backwards.
+   * @param rightSpeed Right motor speed. Negative is backwards.
+   */
+  def move(motorDegrees: Degrees, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
     val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
     else (rightMotor, leftMotor)
-    leftMotor.foreach(_.writeGoalPosition(degrees))
-    rightMotor.foreach(_.writeGoalPosition(degrees))
+    leftMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees,leftSpeed)))
+    rightMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees,rightSpeed)))
     leftMotor.foreach(_.writeSpeed(leftSpeed))
     rightMotor.foreach(_.writeSpeed(rightSpeed))
     leftMotor.foreach(_.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION))
@@ -56,7 +71,7 @@ object Movement {
     notWatched.foreach(_.writeCommand(MotorCommand.STOP))
   }
 
-  private def steerMotors(steer: Percent) = if (steer < 0.percent) (leftMotor, rightMotor)
+  private def steerMotors(steer: Percent): (Option[Motor], Option[Motor]) = if (steer < 0.percent) (leftMotor, rightMotor)
   else (rightMotor, leftMotor)
 
   private def innerMotorProportion(steer: Percent): Unitless =
@@ -65,7 +80,7 @@ object Movement {
 
   def moveSteer(steer: Percent, speed: DegreesPerSecond, degrees: Degrees): Unit = {
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
+    val innerSpeed: DegreesPerSecond = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
     val innerDegrees = (degrees.v * innerMotorProportion(steer).v).degrees
 
     outerMotor.foreach(_.writeGoalPosition(degrees))
@@ -81,7 +96,7 @@ object Movement {
 
   def startMovingSteer(steer: Percent, speed: DegreesPerSecond): Unit = {
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
+    val innerSpeed: DegreesPerSecond = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
     outerMotor.foreach(_.writeSpeed(speed))
     innerMotor.foreach(_.writeSpeed(innerSpeed))
     outerMotor.foreach(_.writeCommand(MotorCommand.RUN))
