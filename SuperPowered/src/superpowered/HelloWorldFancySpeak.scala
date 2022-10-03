@@ -30,7 +30,7 @@ object HelloWorldFancySpeak extends Runnable {
     Gyroscope.reset(SensorPort.One)
     Motors.runForDegrees(MotorPort.C, 200.degrees)
     while (ColorSensor.readReflected(SensorPort.Two)>24.percent)
-      Movement.startMoving(40.degreesPerSecond, 40.degreesPerSecond) //Time.pause(some milliseconds)
+      Movement.startMoving(40.degreesPerSecond, 40.degreesPerSecond) //Time.pause(milliseconds)
     Movement.stop()
     Movement.move(28.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
     while (Gyroscope.readHeading(SensorPort.Four)> -90.degrees)
