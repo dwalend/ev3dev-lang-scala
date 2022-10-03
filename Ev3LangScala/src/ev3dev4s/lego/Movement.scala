@@ -1,7 +1,7 @@
 package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand}
-import ev3dev4s.measure.{Degrees, DegreesPerSecond, Percent, Unitless}
+import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliSeconds, Percent, Unitless}
 import ev3dev4s.measure.Conversions._
 
 /**
@@ -52,7 +52,6 @@ object Movement {
   /**
    * Turn the pair of motors the number of degrees at two different speeds.
    *
-   *
    * @param motorDegrees The absolute distance to turn the motor
    * @param leftSpeed Left motor speed. Negative is backwards.
    * @param rightSpeed Right motor speed. Negative is backwards.
@@ -66,6 +65,27 @@ object Movement {
     rightMotor.foreach(_.writeSpeed(rightSpeed))
     leftMotor.foreach(_.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION))
     rightMotor.foreach(_.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION))
+
+    watched.foreach(Motors.watchForStop)
+    notWatched.foreach(_.writeCommand(MotorCommand.STOP))
+  }
+
+  /**
+   * Turn the pair of motors the number of degrees at two different speeds.
+   *
+   * @param duration The time to turn the motor before stopping it.
+   * @param leftSpeed    Left motor speed. Negative is backwards.
+   * @param rightSpeed   Right motor speed. Negative is backwards.
+   */
+  def moveDuration(duration: MilliSeconds, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
+    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
+    else (rightMotor, leftMotor)
+    leftMotor.foreach(_.writeDuration(duration))
+    rightMotor.foreach(_.writeDuration(duration))
+    leftMotor.foreach(_.writeSpeed(leftSpeed))
+    rightMotor.foreach(_.writeSpeed(rightSpeed))
+    leftMotor.foreach(_.writeCommand(MotorCommand.RUN_TIME))
+    rightMotor.foreach(_.writeCommand(MotorCommand.RUN_TIME))
 
     watched.foreach(Motors.watchForStop)
     notWatched.foreach(_.writeCommand(MotorCommand.STOP))

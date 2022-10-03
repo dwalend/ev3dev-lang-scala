@@ -1,7 +1,7 @@
 package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorState, MotorStopCommand}
-import ev3dev4s.measure.{Degrees, DegreesPerSecond}
+import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliSeconds}
 import ev3dev4s.measure.Conversions._
 import ev3dev4s.os.Time
 
@@ -50,6 +50,14 @@ object Motors {
     motor.writeSpeed(speed)
     motor.writeGoalPosition(degrees)
     motor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
+    watchForStop(motor)
+  }
+
+  def runForDuration(port:MotorPort,duration: MilliSeconds,speed:DegreesPerSecond): Unit = {
+    val motor:Motor = motors(port)
+    motor.writeSpeed(speed)
+    motor.writeDuration(duration)
+    motor.writeCommand(MotorCommand.RUN_TIME)
     watchForStop(motor)
   }
 

@@ -19,6 +19,9 @@ object HelloWorld extends Runnable {
     Display.write("Hello World!", 0)
     Display.write("Push Button", 1)
 
+    Robot.movestraight(320.mm,500.degreesPerSecond)
+
+/*
     Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
     //todo try making functions for these and stringing them together
@@ -26,7 +29,7 @@ object HelloWorld extends Runnable {
 //Forward
     Movement.move(
       motorDegrees = 900.degrees,
-      leftSpeed = 500.degreesPerSecond,
+      leftSpeed = ,
       rightSpeed = 500.degreesPerSecond
     )
 //Backward
@@ -86,7 +89,7 @@ object HelloWorld extends Runnable {
 
     Log.log("Button pushed")
     Sound.speak("cat no cat no cat")
-
+*/
     Display.clearLcd()
     Display.setLedsTo(Display.LedColor.Off)
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
