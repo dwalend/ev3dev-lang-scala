@@ -35,7 +35,7 @@ object Shared {
    * jar file is complete.)
    */
   def scpJar(artifactName:String,jarPath: Path): CommandResult = {
-
+/*
     val fileSize: Long = Files.size(jarPath.toNIO)
 
     val ssh = new SSHExec()
@@ -46,7 +46,7 @@ object Shared {
     ssh.setTrust(true)
     ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
     ssh.execute()
-
+*/
     scpFile(jarPath,s"$artifactName.jar")
 
     //todo progress or error messages?

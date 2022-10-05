@@ -1,7 +1,7 @@
 package superpowered
 
-import ev3dev4s.actuators.MotorPort
-import ev3dev4s.lego.Movement
+import ev3dev4s.actuators.{MotorPort, MotorStopCommand}
+import ev3dev4s.lego.{Motors, Movement}
 import ev3dev4s.measure.Conversions.{FloatConversions, IntConversions}
 import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliMeters}
 

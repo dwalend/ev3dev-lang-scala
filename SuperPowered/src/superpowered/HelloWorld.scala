@@ -15,12 +15,10 @@ import scala.{None, Option, StringContext, Unit}
 object HelloWorld extends Runnable {
   override def run(): Unit = {
     Sound.playBeep(220.Hz, 200.ms)
-
     Display.write("Hello World!", 0)
-    Display.write("Push Button", 1)
 
     Robot.movestraight(320.mm,500.degreesPerSecond)
-
+    //    GuidedMission.run()
 /*
     Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
@@ -92,6 +90,9 @@ object HelloWorld extends Runnable {
 */
     Display.clearLcd()
     Display.setLedsTo(Display.LedColor.Off)
+
+    Display.write("Push Button", 1)
+
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }

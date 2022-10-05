@@ -9,6 +9,7 @@ import ev3dev4s.lego.Motors
 import ev3dev4s.lego.Movement
 import ev3dev4s.lego.Gyroscope
 import ev3dev4s.lego.ColorSensor
+import ev3dev4s.os.Time
 
 import java.lang.Runnable
 import scala.Unit
@@ -29,19 +30,25 @@ object HelloWorldFancySpeak extends Runnable {
     Movement.setMovementMotorsTo(MotorPort.A, MotorPort.B)
     Gyroscope.reset(SensorPort.One)
     Motors.runForDegrees(MotorPort.C, 200.degrees)
-    while (ColorSensor.readReflected(SensorPort.Two)>24.percent)
-      Movement.startMoving(40.degreesPerSecond, 40.degreesPerSecond) //Time.pause(milliseconds)
+    Movement.startMoving(40.degreesPerSecond, 40.degreesPerSecond)
+    while (ColorSensor.readReflected(SensorPort.Two)>24.percent) {
+       Time.pause(10.milliseconds)
+    }
     Movement.stop()
     Movement.move(28.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
-    while (Gyroscope.readHeading(SensorPort.Four)> -90.degrees)
-      Movement.startMoving(-100.degreesPerSecond,0.degreesPerSecond)
+    Movement.startMoving(-100.degreesPerSecond,0.degreesPerSecond)
+    while (Gyroscope.readHeading(SensorPort.Four) > -90.degrees) {
+      Time.pause(10.milliseconds)
+    }
     Movement.stop()
     Movement.move(684.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
     Motors.runForDegrees(MotorPort.C, -200.degrees)
     Movement.move(-28.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
     Motors.runForDegrees(MotorPort.C, 200.degrees)
-    while (Gyroscope.readHeading(SensorPort.Four) < 90.degrees)
-      Movement.startMoving(0.degreesPerSecond, -100.degreesPerSecond)
+    Movement.startMoving(0.degreesPerSecond, -100.degreesPerSecond)
+    while (Gyroscope.readHeading(SensorPort.Four) < 90.degrees) {
+      Time.pause(10.milliseconds)
+    }
     Movement.stop()
 
 
