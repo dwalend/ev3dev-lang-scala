@@ -1,15 +1,10 @@
 package superpowered
 
 import ev3dev4s.Log
-import ev3dev4s.actuators.{MotorPort, Sound}
+import ev3dev4s.actuators.Sound
 import ev3dev4s.lego.Display
 import ev3dev4s.measure.Conversions.IntConversions
-import ev3dev4s.sensors.{Ev3KeyPad, SensorPort}
-import ev3dev4s.lego.Motors
-import ev3dev4s.lego.Movement
-import ev3dev4s.lego.Gyroscope
-import ev3dev4s.lego.ColorSensor
-import ev3dev4s.os.Time
+import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
 import scala.Unit
@@ -23,34 +18,18 @@ import scala.Unit
  */
 object HelloWorldFancySpeak extends Runnable {
   override def run(): Unit = {
+
+    Sound.playTone(220.Hz, 200.ms)
+    Display.write("Hello World!", 0)
+    Display.setLedsTo(Display.LedColor.Green)
+    Sound.speak("Hello World", "mb-en1+f1")
+    Display.write("Push Button", 1)
+
     while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
     Log.log("Button pushed")
-    Movement.setMovementMotorsTo(MotorPort.A, MotorPort.B)
-    Gyroscope.reset(SensorPort.One)
-    Motors.runForDegrees(MotorPort.C, 200.degrees)
-    Movement.startMoving(40.degreesPerSecond, 40.degreesPerSecond)
-    while (ColorSensor.readReflected(SensorPort.Two)>24.percent) {
-       Time.pause(10.milliseconds)
-    }
-    Movement.stop()
-    Movement.move(28.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
-    Movement.startMoving(-100.degreesPerSecond,0.degreesPerSecond)
-    while (Gyroscope.readHeading(SensorPort.Four) > -90.degrees) {
-      Time.pause(10.milliseconds)
-    }
-    Movement.stop()
-    Movement.move(684.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
-    Motors.runForDegrees(MotorPort.C, -200.degrees)
-    Movement.move(-28.degrees, 40.degreesPerSecond, 40.degreesPerSecond)
-    Motors.runForDegrees(MotorPort.C, 200.degrees)
-    Movement.startMoving(0.degreesPerSecond, -100.degreesPerSecond)
-    while (Gyroscope.readHeading(SensorPort.Four) < 90.degrees) {
-      Time.pause(10.milliseconds)
-    }
-    Movement.stop()
-
+    Sound.speak("Thank you")
 
     Display.setLedsTo(Display.LedColor.Off)
   }
