@@ -9,7 +9,7 @@ import ev3dev4s.os.Time
 import ev3dev4s.sensors.SensorPort
 
 import scala.annotation.tailrec
-import scala.{StringContext, Unit}
+import scala.{Left, StringContext, Unit}
 
 
 
@@ -44,6 +44,25 @@ object Robot {
       rightRotation(goalHeading)
     }else {
       Movement.stop()
-    }}
+    }
+  }
+
+  @tailrec
+  def leftRotation(goalHeading: Degrees): Unit = {
+
+    val heading = Gyroscope.readHeading(SensorPort.One)
+    val toGo = -goalHeading + heading
+
+    val speed = (200 * (toGo.v / 90)).degreesPerSecond
+
+    Log.log(s"heading is $heading speed is $speed")
+    if (goalHeading < heading) {
+      Movement.startMoving(-speed, speed)
+      //Time.pause(10.milliseconds)
+      leftRotation(goalHeading)
+    } else {
+      Movement.stop()
+    }
+  }
 }
 // :D :[]
