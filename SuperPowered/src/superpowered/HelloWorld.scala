@@ -2,9 +2,10 @@ package superpowered
 
 import ev3dev4s.Log
 import ev3dev4s.actuators.MotorPort
-import ev3dev4s.lego.{Display, Movement, Sound}
+import ev3dev4s.lego.{Display, Gyroscope, Movement, Sound}
 import ev3dev4s.measure.Conversions.IntConversions
-import ev3dev4s.sensors.Ev3KeyPad
+import ev3dev4s.measure.Degrees
+import ev3dev4s.sensors.{Ev3KeyPad, SensorPort}
 
 import java.lang.Runnable
 import scala.{None, Option, StringContext, Unit}
@@ -13,11 +14,19 @@ import scala.{None, Option, StringContext, Unit}
  * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
  */
 object HelloWorld extends Runnable {
-  override def run(): Unit = {
-    Sound.playBeep(220.Hz, 200.ms)
-    Display.write("Hello World!", 0)
 
-    Robot.movestraight(320.mm,500.degreesPerSecond)
+
+  override def run(): Unit = {
+    Display.clearLcd()
+    Sound.playBeep(220.Hz, 200.ms)
+    Display.write(s"Hello World!", 0)
+    Gyroscope.reset(SensorPort.One)
+    Robot.rightRotation(90.degrees )
+    val heading = Gyroscope.readHeading(SensorPort.One)
+
+    Display.write(heading.toString(), 1)
+
+    //Robot.movestraight(320.mm,500.degreesPerSecond)
     //    GuidedMission.run()
 /*
     Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
@@ -88,10 +97,10 @@ object HelloWorld extends Runnable {
     Log.log("Button pushed")
     Sound.speak("cat no cat no cat")
 */
-    Display.clearLcd()
-    Display.setLedsTo(Display.LedColor.Off)
+//    Display.clearLcd()
+//    Display.setLedsTo(Display.LedColor.Off)
 
-    Display.write("Push Button", 1)
+    Display.write("Push Button", 2)
 
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything

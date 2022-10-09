@@ -61,7 +61,6 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
     def zero(): Unit =
       setHeading(0.degrees)
 
-
     def setHeading(heading: Degrees): Unit = this.synchronized {
       offset = heading - readRawHeading()
     }
