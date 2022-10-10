@@ -13,33 +13,21 @@ import scala.{None, Option, StringContext, Unit}
 /**
  * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
  */
-object HelloWorld extends Runnable {
+object lastWorld extends Runnable {
 
 
   override def run(): Unit = {
-
-    lastWorld.run()
-    /*
     Display.clearLcd()
     Sound.playBeep(220.Hz, 200.ms)
-    Display.write(s"Hello World!", 0)
-    Gyroscope.reset(SensorPort.One)
-    Robot.leftRotation(-200.degrees )
-    val heading = Gyroscope.readHeading(SensorPort.One)
 
-    Display.write(heading.toString(), 1)
-
-    //Robot.movestraight(320.mm,500.degreesPerSecond)
-    //    GuidedMission.run()
-
-    //    Display.clearLcd()
-    //    Display.setLedsTo(Display.LedColor.Off)
+    Robot.movestraight(740.mm,200.degreesPerSecond)
+    //    GuidedMission.run
 
     Display.write("Push Button", 2)
 
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
-       */
+
   }
 }
