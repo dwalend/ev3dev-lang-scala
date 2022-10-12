@@ -21,7 +21,7 @@ object HelloWorld extends Runnable {
     Sound.playBeep(220.Hz, 200.ms)
 
     //WindmillTrip.run()
-    lastWorld.run()
+    LastWorld.run()
     /*
     Display.write(s"Hello World!", 0)
     Gyroscope.reset(SensorPort.One)

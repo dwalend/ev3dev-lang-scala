@@ -13,7 +13,7 @@ import scala.{None, Option, StringContext, Unit}
 /**
  * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.
  */
-object lastWorld extends Runnable {
+object LastWorld extends Runnable {
 
 
   override def run(): Unit = {
