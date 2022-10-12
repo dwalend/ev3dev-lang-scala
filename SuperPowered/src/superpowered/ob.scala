@@ -23,11 +23,5 @@ object lastWorld extends Runnable {
     Robot.movestraight(740.mm,200.degreesPerSecond)
     //    GuidedMission.run
 
-    Display.write("Push Button", 2)
-
-    while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
-      //don't do anything
-    }
-
   }
 }

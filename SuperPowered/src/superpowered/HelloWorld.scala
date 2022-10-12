@@ -17,11 +17,12 @@ object HelloWorld extends Runnable {
 
 
   override def run(): Unit = {
-
-    lastWorld.run()
-    /*
     Display.clearLcd()
     Sound.playBeep(220.Hz, 200.ms)
+
+    //WindmillTrip.run()
+    lastWorld.run()
+    /*
     Display.write(s"Hello World!", 0)
     Gyroscope.reset(SensorPort.One)
     Robot.leftRotation(-200.degrees )
@@ -35,11 +36,12 @@ object HelloWorld extends Runnable {
     //    Display.clearLcd()
     //    Display.setLedsTo(Display.LedColor.Off)
 
+
+         */
     Display.write("Push Button", 2)
 
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
-       */
   }
 }
