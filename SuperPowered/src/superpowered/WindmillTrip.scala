@@ -8,7 +8,7 @@ import java.lang.Runnable
 import scala.Unit
 
 object WindmillTrip extends Runnable{
-  override def run(): Unit = {
+   def starttowindmill(): Unit = {
     //start with back of robot on very back wall - zero there.
     Gyroscope.reset(SensorPort.One)
 
@@ -32,4 +32,23 @@ object WindmillTrip extends Runnable{
     Robot.movestraight(-40.mm, -400.degreesPerSecond)
 
   }
+
+  override def run(): Unit = {
+
+    Gyroscope.reset(SensorPort.One)
+
+    Robot.movestraight(500.mm, 200.degreesPerSecond)
+
+    Robot.movestraight(-50.mm,speed = -200.degreesPerSecond)
+
+    Robot.leftRotation(-45.degrees)
+
+    Robot.movestraight(380.mm,speed=200.degreesPerSecond)
+
+    Robot.rightRotation(45.degrees)
+
+
+  }
+
+
 }
