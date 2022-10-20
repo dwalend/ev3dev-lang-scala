@@ -18,7 +18,6 @@ import scala.{Array, Boolean, Int, Seq, Unit, volatile}
 object Menu extends Runnable {
 
   val actions: Seq[Runnable] = Seq(
-    HelloWorld,
     Green,
     Yellow,
     Red,
@@ -38,8 +37,8 @@ object Menu extends Runnable {
       val key: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
       key match {
         case (Ev3KeyPad.Key.Enter, Ev3KeyPad.State.Released) => doAction()
-        case (Ev3KeyPad.Key.Right, Ev3KeyPad.State.Released) => incrementMenu()
-        case (Ev3KeyPad.Key.Left, Ev3KeyPad.State.Released) => decrementMenu()
+        case (Ev3KeyPad.Key.Right, Ev3KeyPad.State.Released) => incrementSelected()
+        case (Ev3KeyPad.Key.Left, Ev3KeyPad.State.Released) => decrementSelected()
         case (Ev3KeyPad.Key.Escape, Ev3KeyPad.State.Released) => stopLoop()
         case _ => //do nothing
       }
@@ -53,19 +52,18 @@ object Menu extends Runnable {
     drawScreen()
   }
 
+
   def stopLoop(): Unit = {
     keepGoing = false
   }
 
-  def incrementMenu(): Unit = {
-    selectedAction = if(selectedAction == actions.last) actions.head
-                      else actions(actions.indexOf(selectedAction)+1)
+  def incrementSelected(): Unit = {
+    selectedAction = actions.span(_ != selectedAction)._2.tail.headOption.getOrElse(actions.head)
     drawScreen()
   }
 
-  def decrementMenu(): Unit = {
-    selectedAction = if(selectedAction == actions.head) actions.last
-                      else actions(actions.indexOf(selectedAction)-1)
+  def decrementSelected(): Unit = {
+    selectedAction = actions.span(_ != selectedAction)._1.lastOption.getOrElse(actions.last)
     drawScreen()
   }
 
