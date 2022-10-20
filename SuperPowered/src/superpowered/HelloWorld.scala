@@ -20,7 +20,8 @@ object HelloWorld extends Runnable {
     Display.clearLcd()
     Sound.playBeep(220.Hz, 200.ms)
 
-    WindmillTrip.run()
+    dino.run()
+    //WindmillTrip.run()
    // LastWorld.run()
     /*
     Display.write(s"Hello World!", 0)
