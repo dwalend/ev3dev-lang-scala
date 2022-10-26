@@ -73,12 +73,13 @@ Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
 
     Robot.movestraight(-80.mm, speed = -400.degreesPerSecond)
 
-  //-90
+//  badery for toy dinowsor
+
    Robot.leftRotation(-90.degrees)
 
-     Robot.movestraight(190.mm, speed = 200.degreesPerSecond)
+     Robot.movestraight(60.mm, speed = 200.degreesPerSecond)
 
-    Robot.leftRotation(-225.degrees)
+    Robot.leftRotation(-200.degrees)
 
     Robot.movestraight(800.mm, speed = 700.degreesPerSecond)
 
