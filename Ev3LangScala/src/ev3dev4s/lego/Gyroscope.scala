@@ -2,6 +2,7 @@ package ev3dev4s.lego
 
 import ev3dev4s.measure.Degrees
 import ev3dev4s.sensors.{Ev3Gyroscope, SensorPort, SensorPortScanner}
+import ev3dev4s.sysfs.UnpluggedException
 
 /**
  *
@@ -11,13 +12,18 @@ import ev3dev4s.sensors.{Ev3Gyroscope, SensorPort, SensorPortScanner}
  */
 object Gyroscope {
 
-  val sensors: Map[SensorPort, Ev3Gyroscope] = SensorPortScanner.scanSensors.collect {
-    case (port:SensorPort, sensor:Ev3Gyroscope) => port -> sensor
+  private var sensors: Map[SensorPort, Ev3Gyroscope] = _
+  private def scanSensors():Unit = {
+    sensors = SensorPortScanner.scanSensors.collect {
+      case (port: SensorPort, sensor: Ev3Gyroscope) => port -> sensor
+    }
   }
+  scanSensors()
 
-  def readHeading(port: SensorPort): Degrees = sensors(port).headingMode().readHeading()
+  def readHeading(port: SensorPort): Degrees = handleUnplugged[SensorPort,Degrees](port,sensors(_).headingMode().readHeading(),scanSensors)
 
-  def reset(port: SensorPort): Unit = sensors(port).headingMode().zero()
+  def reset(port: SensorPort): Unit = handleUnplugged[SensorPort,Unit](port, sensors(_).headingMode().zero(),scanSensors)
+
 }
 
   

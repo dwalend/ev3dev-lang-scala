@@ -1,6 +1,6 @@
 package ev3dev4s
 
-import ev3dev4s.actuators.{Ev3Led, Sound}
+import ev3dev4s.actuators.{Ev3Led, MotorPortScanner, Sound}
 import ev3dev4s.measure.Conversions._
 import ev3dev4s.sensors.Ev3KeyPad
 
@@ -49,6 +49,7 @@ object JarRunner {
     catch {
       case x: Throwable =>
         Log.log("Caught in top-level",x)
+        MotorPortScanner.stopAllMotors()
         Ev3Led.writeBothRed()
         Sound.playTone(55.Hz, 200.milliseconds)
         Ev3KeyPad.blockUntilAnyKey()

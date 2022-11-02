@@ -24,11 +24,15 @@ object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-mot
     }
   }
 
+  def stopAllMotors():Unit = {
+    scanMotors.values.foreach(_.brake())
+  }
+
   /**
    * Always stop the motors
    */
   Runtime.getRuntime.addShutdownHook(new Thread({ () =>
-    scanMotors.values.foreach(_.brake())
+    stopAllMotors()
   },"stopMotorsAtShutdown"))
 }
 

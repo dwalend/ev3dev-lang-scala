@@ -1,5 +1,6 @@
 package ev3dev4s.sensors
 
+import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, GadgetPortScanner, Port}
 
 import java.io.File
@@ -15,6 +16,7 @@ object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sen
   def scanSensors:Map[SensorPort,Sensor[_]] = {
     scanGadgetDirs.map{portAndDir =>
       val driverName = ChannelRereader.readString(portAndDir._2.resolve("driver_name"))
+      Log.log(s"$portAndDir $driverName")
       val sensor = driverName match {
         case Ev3Gyroscope.driverName => Ev3Gyroscope(portAndDir._1, Option(portAndDir._2))
         case Ev3ColorSensor.driverName => Ev3ColorSensor(portAndDir._1, Option(portAndDir._2))
