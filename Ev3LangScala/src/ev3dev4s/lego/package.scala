@@ -1,6 +1,6 @@
 package ev3dev4s
 
-import ev3dev4s.sysfs.{Port, UnpluggedException}
+import ev3dev4s.sysfs.UnpluggedException
 
 import scala.util.control.NonFatal
 
@@ -12,18 +12,18 @@ import scala.util.control.NonFatal
  */
 package object lego {
 
-  private[lego] def handleUnplugged[P <:Port,A](port: P, block: P => A, scan:() => Unit): A = {
+  private[lego] def handleUnplugged[A](block: => A, scan:() => Unit): A = {
     def scanAndTryAgain(t:Throwable):A = {
       scan()
       try {
-        block(port)
+        block
       } catch {
         case NonFatal(_) => throw t
       }
     }
 
     try {
-      block(port)
+      block
     } catch {
       case upx: UnpluggedException => scanAndTryAgain(upx)
       case nsx: NoSuchElementException => scanAndTryAgain(nsx)

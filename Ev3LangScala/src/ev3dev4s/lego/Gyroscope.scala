@@ -20,9 +20,9 @@ object Gyroscope {
   }
   scanSensors()
 
-  def readHeading(port: SensorPort): Degrees = handleUnplugged[SensorPort,Degrees](port,sensors(_).headingMode().readHeading(),scanSensors)
+  def readHeading(port: SensorPort): Degrees = handleUnplugged[Degrees](sensors(port).headingMode().readHeading(),scanSensors)
 
-  def reset(port: SensorPort): Unit = handleUnplugged[SensorPort,Unit](port, sensors(_).headingMode().zero(),scanSensors)
+  def reset(port: SensorPort): Unit = handleUnplugged[Unit](sensors(port).headingMode().zero(),scanSensors)
 
 }
 

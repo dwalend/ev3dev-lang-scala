@@ -16,9 +16,6 @@ import scala.{Left, StringContext, Unit}
 object Robot {
   Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
-  Motors.motors.get(MotorPort.A).foreach(_.writeStopAction(MotorStopCommand.HOLD))
-  Motors.motors.get(MotorPort.C).foreach(_.writeStopAction(MotorStopCommand.HOLD))
-
   val cir: MilliMeters = 275.mm
   def dtd(distance :MilliMeters): Degrees = {
     (360 * distance.v / cir.v).degrees

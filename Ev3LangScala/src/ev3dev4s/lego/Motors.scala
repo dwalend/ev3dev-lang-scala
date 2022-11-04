@@ -13,9 +13,19 @@ import ev3dev4s.os.Time
  */
 object Motors {
 
-  val motors:Map[MotorPort,Motor]  = MotorPortScanner.scanMotors
+  private[lego] var motors:Map[MotorPort,Motor] = _
+  private def scanMotors(): Unit = {
+    motors = MotorPortScanner.scanMotors
+    //induce lego default halt behavior
+    motors.values.foreach(_.writeStopAction(MotorStopCommand.HOLD))
+  }
+  scanMotors()
 
-  def watchForStop(motor:Motor):Unit =
+  private[lego] def handleUnpluggedMotor[A](block:  => A):A = {
+    handleUnplugged(block,scanMotors)
+  }
+
+  private[lego] def watchForStop(motor:Motor):Unit =
     while({
       motor.readState().contains(MotorState.RUNNING)  //todo use isRunning after recompile
     }) {
@@ -23,29 +33,29 @@ object Motors {
       Time.pause(1.milliseconds)
     }
 
-  def runForDegrees(port:MotorPort,degrees: Degrees): Unit = {
+  def runForDegrees(port:MotorPort,degrees: Degrees): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeGoalPosition(degrees)
     motor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
     watchForStop(motor)
   }
 
-  def start(port: MotorPort): Unit = {
+  def start(port: MotorPort): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeCommand(MotorCommand.RUN)
   }
 
-  def setSpeed(port: MotorPort,speed:DegreesPerSecond): Unit = {
+  def setSpeed(port: MotorPort,speed:DegreesPerSecond): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
   }
 
-  def stop(port: MotorPort): Unit = {
+  def stop(port: MotorPort): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeCommand(MotorCommand.STOP)
   }
 
-  def runForDegrees(port:MotorPort,degrees: Degrees,speed:DegreesPerSecond): Unit = {
+  def runForDegrees(port:MotorPort,degrees: Degrees,speed:DegreesPerSecond): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
     motor.writeGoalPosition(degrees)
@@ -53,7 +63,7 @@ object Motors {
     watchForStop(motor)
   }
 
-  def runForDuration(port:MotorPort,duration: MilliSeconds,speed:DegreesPerSecond): Unit = {
+  def runForDuration(port:MotorPort,duration: MilliSeconds,speed:DegreesPerSecond): Unit = handleUnpluggedMotor{
     val motor:Motor = motors(port)
     motor.writeSpeed(speed)
     motor.writeDuration(duration)
@@ -61,18 +71,18 @@ object Motors {
     watchForStop(motor)
   }
 
-  def start(port: MotorPort,speed: DegreesPerSecond): Unit = {
+  def start(port: MotorPort,speed: DegreesPerSecond): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writeSpeed(speed)
     motor.writeCommand(MotorCommand.RUN)
   }
 
-  def resetDegreesCounted(port: MotorPort): Unit = {
+  def resetDegreesCounted(port: MotorPort): Unit = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.writePosition(0.degrees)
   }
 
-  def degreesCounted(port: MotorPort): Degrees = {
+  def degreesCounted(port: MotorPort): Degrees = handleUnpluggedMotor{
     val motor: Motor = motors(port)
     motor.readPosition()
   }

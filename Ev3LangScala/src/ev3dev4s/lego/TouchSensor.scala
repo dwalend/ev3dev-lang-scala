@@ -1,6 +1,5 @@
 package ev3dev4s.lego
 
-import ev3dev4s.measure.Percent
 import ev3dev4s.sensors.{Ev3TouchSensor, SensorPort, SensorPortScanner}
 
 /**
@@ -11,9 +10,13 @@ import ev3dev4s.sensors.{Ev3TouchSensor, SensorPort, SensorPortScanner}
  */
 object TouchSensor {
 
-  val sensors: Map[SensorPort, Ev3TouchSensor] = SensorPortScanner.scanSensors.collect {
-    case (port:SensorPort, sensor:Ev3TouchSensor) => port -> sensor
+  private var sensors: Map[SensorPort, Ev3TouchSensor] = _
+  private def scanSensors(): Unit = {
+    sensors = SensorPortScanner.scanSensors.collect {
+      case (port: SensorPort, sensor: Ev3TouchSensor) => port -> sensor
+    }
   }
+  scanSensors()
 
-  def readTouch(port:SensorPort):Boolean = sensors(port).readTouch()
+  def readTouch(port:SensorPort):Boolean = handleUnplugged(sensors(port).readTouch(),scanSensors)
 }

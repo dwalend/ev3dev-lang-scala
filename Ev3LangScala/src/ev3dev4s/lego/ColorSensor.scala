@@ -11,13 +11,20 @@ import ev3dev4s.sensors.{Ev3ColorSensor, SensorPort, SensorPortScanner}
  */
 object ColorSensor {
 
-  val sensors: Map[SensorPort, Ev3ColorSensor] = SensorPortScanner.scanSensors.collect {
-    case (port:SensorPort, sensor:Ev3ColorSensor) => port -> sensor
+  private var sensors: Map[SensorPort, Ev3ColorSensor] = _
+  private def scanSensors(): Unit = {
+    sensors = SensorPortScanner.scanSensors.collect {
+      case (port: SensorPort, sensor: Ev3ColorSensor) => port -> sensor
+    }
   }
+  scanSensors()
 
-  def readReflected(port: SensorPort): Percent = sensors(port).reflectMode().readReflect()
+  def readReflected(port: SensorPort): Percent = handleUnplugged(
+    sensors(port).reflectMode().readReflect(),
+    scanSensors
+  )
 
-  def readColor(port: SensorPort): Ev3ColorSensor.Color = sensors(port).colorMode().readColor()
+  def readColor(port: SensorPort): Ev3ColorSensor.Color = handleUnplugged(sensors(port).colorMode().readColor(),scanSensors)
 
-  def readAmbient(port: SensorPort): Percent = sensors(port).ambientMode().readAmbient()
+  def readAmbient(port: SensorPort): Percent = handleUnplugged(sensors(port).ambientMode().readAmbient(),scanSensors)
 }

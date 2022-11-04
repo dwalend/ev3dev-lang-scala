@@ -20,9 +20,6 @@ import scala.Unit
 object GuidedMission extends Runnable {
   override def run(): Unit = {
 
-    Motors.motors.get(MotorPort.A).foreach(m => m.writeStopAction(MotorStopCommand.HOLD))
-    Motors.motors.get(MotorPort.C).foreach(m => m.writeStopAction(MotorStopCommand.HOLD))
-
     while(Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
