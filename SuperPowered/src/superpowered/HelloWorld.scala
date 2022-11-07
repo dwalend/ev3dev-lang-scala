@@ -39,11 +39,13 @@ object HelloWorld extends Runnable {
     //    Display.setLedsTo(Display.LedColor.Off)
 
 
-         */
+
     Display.write("Push Button", 2)
 
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
+
+     */
   }
 }

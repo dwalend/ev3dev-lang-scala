@@ -8,12 +8,65 @@ import java.lang.Runnable
 import scala.Unit
 
 object WindmillTrip extends Runnable{
-   def starttowindmill(): Unit = {
+  //start with back of robot on very back wall - zero there.
+  override def run(): Unit = {
+    startToTv()
+    tvToWindmill()
+    eatWindmill()
+    foodForDinoAtHome()
+  }
+
+  def startToTv() = {
+    Gyroscope.reset(SensorPort.One)
+    Robot.movestraight(500.mm, 200.degreesPerSecond)
+    Robot.movestraight(-50.mm, speed = -200.degreesPerSecond)
+  }
+
+  def tvToWindmill() = {
+    Robot.leftRotation(-45.degrees)
+    Robot.movestraight(380.mm, speed = 200.degreesPerSecond)
+    Robot.rightRotation(45.degrees)
+  }
+
+  def eatWindmill() = {
+    Robot.movestraight(200.mm, speed = 400.degreesPerSecond)
+
+    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
+
+    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
+
+    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
+
+    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
+
+    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
+
+    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
+
+    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
+
+    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
+
+    Robot.movestraight(-80.mm, speed = -400.degreesPerSecond)
+  }
+
+
+  def foodForDinoAtHome() = {
+    Robot.leftRotation(-90.degrees)
+
+    Robot.movestraight(60.mm, speed = 200.degreesPerSecond)
+
+    Robot.leftRotation(-200.degrees)
+
+    Robot.movestraight(800.mm, speed = 700.degreesPerSecond)
+  }
+
+  def startToWindmill(): Unit = {
     //start with back of robot on very back wall - zero there.
     Gyroscope.reset(SensorPort.One)
 
     //forward 73 cm = 730 mm
-    Robot.movestraight(730.mm,200.degreesPerSecond)
+    Robot.movestraight(730.mm, 200.degreesPerSecond)
 
     //rotate right 45
     Robot.rightRotation(45.degrees)
@@ -32,59 +85,5 @@ object WindmillTrip extends Runnable{
     Robot.movestraight(-40.mm, -400.degreesPerSecond)
 
   }
-
-  override def run(): Unit = {
-
-     // This is form start to TV
-
-    Gyroscope.reset(SensorPort.One)
-
-    Robot.movestraight(500.mm, 200.degreesPerSecond)
-
-    Robot.movestraight(-50.mm,speed = -200.degreesPerSecond)
-
-    // frome TV to wind mill
-
-    Robot.leftRotation(-45.degrees)
-
-    Robot.movestraight(380.mm,speed=200.degreesPerSecond)
-
-    Robot.rightRotation(45.degrees)
-
-    // do Wind mil task
-
-   Robot.movestraight(200.mm,speed=400.degreesPerSecond)
-
-    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
-
-  Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
-
-Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
-
-Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
-
-    Robot.movestraight(-40.mm, speed = -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, speed = 400.degreesPerSecond)
-
-    Robot.movestraight(-80.mm, speed = -400.degreesPerSecond)
-
-//  badery for toy dinowsor
-
-   Robot.leftRotation(-90.degrees)
-
-     Robot.movestraight(60.mm, speed = 200.degreesPerSecond)
-
-    Robot.leftRotation(-200.degrees)
-
-    Robot.movestraight(800.mm, speed = 700.degreesPerSecond)
-
-
-  }
-
 
 }
