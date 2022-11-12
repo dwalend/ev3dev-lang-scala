@@ -17,7 +17,7 @@ object Shared {
 
   val ev3UserName = "robot"
   def ev3Password:String = System.getProperty("ev3Password") //todo do something clever to allow key files
-  def ev3Hostname = s"${Option(System.getProperty("robotHostname")).getOrElse("ev3dev")}.local"
+  def ev3Hostname = s"${Option(System.getProperty("robotHostname")).getOrElse("ev3dev.local")}"
 
   def scpFile(fromLocalFile:Path, toRemoteFile:String):Unit = {
     val scp = new Scp()
