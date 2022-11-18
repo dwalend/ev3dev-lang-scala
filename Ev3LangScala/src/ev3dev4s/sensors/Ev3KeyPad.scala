@@ -1,6 +1,10 @@
 package ev3dev4s.sensors
 
+import ev3dev4s.Log
+import ev3dev4s.os.Time
+
 import java.io.{DataInputStream, FileInputStream}
+import scala.annotation.tailrec
 
 /**
  *
@@ -42,13 +46,19 @@ object Ev3KeyPad extends AutoCloseable {
   private val keyPadInputStream = new DataInputStream(new FileInputStream(keyPadEventPath))
   private val bytes32: Array[Byte] = Array.fill[Byte](32)(0x0)
 
-  def blockUntilAnyKey(): (Key, State) = this.synchronized {
+  @tailrec
+  def blockUntilAnyKey(startTime:Long = Time.now()): (Key, State) = this.synchronized {
     val KEY_INDEX = 10 // should be a key.byte
     val STATE_INDEX = 12 // should be a state.byte
 
+    //debounce the keypad
     keyPadInputStream.readFully(bytes32)
-    val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
-    bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
+    if(Time.now() - startTime <= 100) //not long enough to clear the old pushes
+      blockUntilAnyKey(startTime)
+    else {
+      val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
+      bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
+    }
   }
 
   //todo - some day - there is no way to interrupt keyPadInputStream.readFully() - maybe there's a way to inject some fake input
