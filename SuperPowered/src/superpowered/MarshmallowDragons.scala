@@ -22,14 +22,14 @@ object MarshmallowDragons extends Runnable {
   )
 
   override def run(): Unit = {
-      trips.foreach{trip =>
-        Display.write(trip.getClass.getSimpleName,0)
-        Display.write("Push Button",1)
-        Sound.speak("watermelon choaclate " +
-          "cherry never gonna give you up never gonna let you down never gonna run around and desert you")
-        waitForKey()
-        trip.run()
-      }
+    trips.foreach{trip =>
+      Display.write(trip.getClass.getSimpleName,0)
+      Display.write("Push Button",1)
+      Sound.speak("watermelon choaclate " +
+        "cherry never gonna give you up never gonna let you down never gonna run around and desert you")
+      waitForKey()
+      trip.run()
+    }
   }
 
   def waitForKey():Unit = {
