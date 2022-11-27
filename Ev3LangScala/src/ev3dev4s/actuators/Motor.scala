@@ -16,6 +16,7 @@ import ev3dev4s.measure.MilliSeconds
  * @author David Walend
  * @since v0.0.0
  */
+//todo rename Ev3Motor
 sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gadget(port,motorFS){
 
   def writeCommand(command: MotorCommand):Unit = checkPort(_.writeCommand(command))

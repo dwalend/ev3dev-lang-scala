@@ -17,6 +17,7 @@ import ev3dev4s.measure.Conversions._
 //todo options in https://stackoverflow.com/questions/3780406/how-to-play-a-sound-alert-in-a-java-application
 //todo maybe just Toolkit.getDefaultToolkit().beep()
 
+//todo rename Ev3Sound
 object Sound {
   private var volume = 50.percent
 
@@ -44,7 +45,7 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-  def playSample(file: File, volume: Percent = this.volume):Unit = {
+    def playSample(file: File, volume: Percent = this.volume):Unit = {
     this.setVolume(volume)
     this.playSampleUntilDone(file)
   }
