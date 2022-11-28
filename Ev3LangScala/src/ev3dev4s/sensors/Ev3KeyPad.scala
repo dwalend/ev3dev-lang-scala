@@ -53,7 +53,7 @@ object Ev3KeyPad extends AutoCloseable {
 
     //debounce the keypad
     keyPadInputStream.readFully(bytes32)
-    if(Time.now() - startTime <= 50) {//not long enough to clear the old pushes
+    if(Time.now() - startTime <= 10) {//not long enough to clear the old pushes
       blockUntilAnyKey(startTime)
     } else {
       val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))

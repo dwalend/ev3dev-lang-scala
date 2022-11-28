@@ -9,7 +9,7 @@ import scala.Unit
  // Robot.movestraight(40.mm, 400.degreesPerSecond) 740
 
 
-object FeedLaveBath extends Runnable{
+object FeedLavaBath extends Runnable{
   override def run(): Unit = {
     Gyroscope.reset(SensorPort.One)
     Robot.movestraight(500.mm, 300.degreesPerSecond)

@@ -1,13 +1,16 @@
 package superpowered
 
 import ev3dev4s.Log
-import ev3dev4s.lego.{Display, Sound}
+import ev3dev4s.actuators.Sound
+import ev3dev4s.lego.Display
+import ev3dev4s.measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
 import scala.Predef._
 import scala.{Array, Boolean, Int, List, Seq, Unit, volatile}
 import scala.StringContext
+import scala.annotation.tailrec
 
 /**
  *
@@ -19,24 +22,36 @@ object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
     WindmillTrip,
-    dino,
-    LastWorld
+    DinoRun,
+    FeedLavaBath,
+    LastWorld,
+    Reload
   )
 
-  var currentTrip = trips.head
+  var currentTrip: Runnable = trips.head
 
+@tailrec
   override def run(): Unit = {
     showTrip()
+    Log.log(s"waiting for key $currentTrip")
     waitForKey() match {
 
       case Ev3KeyPad.Key.Enter => currentTrip.run()
       case Ev3KeyPad.Key.Down => nextTrip()
       case Ev3KeyPad.Key.Up => previousTrip()
       case _ => Log.log(s"No key??")
-
     }
 
+    if (!Reload.done) run()
+  }
+  object Reload extends Runnable{
 
+    var done = false
+
+    override def run(): Unit = {
+      done = true
+      Log.log(s"done is $done")
+    }
   }
   def nextTrip():Unit = {
     currentTrip = trips.span(_ != currentTrip)
@@ -53,6 +68,7 @@ object Menu extends Runnable {
   def showTrip() = {
     Display.clearLcd()
     Display.write(currentTrip.getClass.getSimpleName, row=2)
+    Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
   }
 
   def waitForKey():Ev3KeyPad.Key = {

@@ -19,8 +19,8 @@ object HelloWorld extends Runnable {
   override def run(): Unit = {
     Display.clearLcd()
     Sound.playBeep(220.Hz, 200.ms)
-
-    MarshmallowDragons.run()
+    Menu.run()
+    //MarshmallowDragons.run()
     //dino.run()
     //WindmillTrip.run()
    // LastWorld.run()
@@ -39,13 +39,14 @@ object HelloWorld extends Runnable {
     //    Display.setLedsTo(Display.LedColor.Off)
 
 
-
+*/
+    /*
     Display.write("Push Button", 2)
 
     while (Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released) {
       //don't do anything
     }
 
-     */
+*/
   }
 }

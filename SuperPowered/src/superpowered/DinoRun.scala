@@ -5,7 +5,7 @@ import ev3dev4s.measure.Conversions.IntConversions
 import java.lang.Runnable
 import scala.Unit
 
-object dino extends Runnable{
+object DinoRun extends Runnable{
 
   def run(): Unit = {
 

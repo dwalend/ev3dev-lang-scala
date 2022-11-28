@@ -17,7 +17,7 @@ object MarshmallowDragons extends Runnable {
 
   val trips: Seq[Runnable] = List(
     WindmillTrip,
-    dino,
+    DinoRun,
     LastWorld
   )
 
