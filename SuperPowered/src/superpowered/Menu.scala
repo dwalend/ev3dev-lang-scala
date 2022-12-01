@@ -56,19 +56,20 @@ object Menu extends Runnable {
   def nextTrip():Unit = {
     currentTrip = trips.span(_ != currentTrip)
       ._2 .tail.headOption.getOrElse(trips.head)
+    Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
     showTrip()
   }
 
    def previousTrip():Unit = {
      currentTrip = trips.span(_ != currentTrip)
        ._1 .lastOption.getOrElse(trips.last)
+     Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
      showTrip()
    }
 
   def showTrip() = {
     Display.clearLcd()
     Display.write(currentTrip.getClass.getSimpleName, row=2)
-    Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
   }
 
   def waitForKey():Ev3KeyPad.Key = {
@@ -78,7 +79,7 @@ object Menu extends Runnable {
       val keyPressed: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
       key = keyPressed._1
 
-      Ev3KeyPad.blockUntilAnyKey()._2 != Ev3KeyPad.State.Released}){
+      keyPressed._2 != Ev3KeyPad.State.Released}){
       //don't do anything
     }
     Log.log(s"key is $key")
