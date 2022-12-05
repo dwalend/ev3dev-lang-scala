@@ -17,19 +17,19 @@ object WindmillTrip extends Runnable{
     foodForDinoAtHome()
   }
 
-  def startToTv() = {
+  def startToTv(): Unit = {
     Gyroscope.reset(SensorPort.One)
     Robot.movestraight(440.mm, 245.degreesPerSecond)
-    Robot.movestraight(-50.mm, speed = -200.degreesPerSecond)
+    Robot.movestraight(-30.mm, speed = -200.degreesPerSecond)
   }
 
-  def tvToWindmill() = {
+  def tvToWindmill(): Unit = {
     Robot.leftRotation(-50.degrees)
     Robot.movestraight(330.mm+135.mm, speed = 200.degreesPerSecond)
     Robot.rightRotation(48.degrees)
   }
 
-  def eatWindmill() = {
+  def eatWindmill(): Unit = {
     Robot.movestraight(300.mm, speed = 400.degreesPerSecond)
     Time.pause(2000.milliseconds)
 
@@ -49,40 +49,13 @@ object WindmillTrip extends Runnable{
     Robot.movestraight(100.mm, speed = 400.degreesPerSecond)
     Time.pause(2000.milliseconds)
 
-    Robot.movestraight(-80.mm, speed = -400.degreesPerSecond)
+    Robot.movestraight(-210.mm, speed = -400.degreesPerSecond)
   }
 
 
-  def foodForDinoAtHome() = {
-    Robot.leftRotation(-90.degrees)
-    Robot.movestraight(-40.mm, speed = -200.degreesPerSecond)
-    Robot.leftRotation(-200.degrees)
-    Robot.movestraight(800.mm, speed = 700.degreesPerSecond)
+  def foodForDinoAtHome(): Unit = {
+
+    Robot.leftRotation(-30.degrees)
+    Robot.movestraight(-690.mm, -200.degreesPerSecond)
   }
-
-  def startToWindmill(): Unit = {
-    //start with back of robot on very back wall - zero there.
-    Gyroscope.reset(SensorPort.One)
-
-    //forward 73 cm = 730 mm
-    Robot.movestraight(730.mm, 200.degreesPerSecond)
-
-    //rotate right 45
-    Robot.rightRotation(45.degrees)
-
-    //each push 4 cm = 40 mm
-    Robot.movestraight(40.mm, 400.degreesPerSecond)
-    Robot.movestraight(-40.mm, -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, 400.degreesPerSecond)
-    Robot.movestraight(-40.mm, -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, 400.degreesPerSecond)
-    Robot.movestraight(-40.mm, -400.degreesPerSecond)
-
-    Robot.movestraight(40.mm, 400.degreesPerSecond)
-    Robot.movestraight(-40.mm, -400.degreesPerSecond)
-
-  }
-
 }
