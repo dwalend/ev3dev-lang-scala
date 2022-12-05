@@ -36,7 +36,9 @@ object Menu extends Runnable {
     Log.log(s"waiting for key $currentTrip")
     waitForKey() match {
 
-      case Ev3KeyPad.Key.Enter => currentTrip.run()
+      case Ev3KeyPad.Key.Enter =>
+        currentTrip.run()
+        nextTrip()
       case Ev3KeyPad.Key.Down => nextTrip()
       case Ev3KeyPad.Key.Up => previousTrip()
       case _ => Log.log(s"No key??")
