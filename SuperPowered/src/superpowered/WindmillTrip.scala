@@ -52,9 +52,7 @@ object WindmillTrip extends Runnable{
     Robot.movestraight(-210.mm, speed = -400.degreesPerSecond)
   }
 
-
   def foodForDinoAtHome(): Unit = {
-
     Robot.leftRotation(-30.degrees)
     Robot.movestraight(-690.mm, -200.degreesPerSecond)
   }

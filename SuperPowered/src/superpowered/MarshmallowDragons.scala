@@ -10,7 +10,7 @@ import scala.{List, Seq, Unit}
 /**
  *
  *
- * @author David Walend
+ * uthor David Walend
  * @since v0.0.0
  */
 object MarshmallowDragons extends Runnable {

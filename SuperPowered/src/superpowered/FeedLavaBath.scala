@@ -6,8 +6,6 @@ import ev3dev4s.sensors.SensorPort
 
 import java.lang.Runnable
 import scala.Unit
- // Robot.movestraight(40.mm, 400.degreesPerSecond) 740
-
 
 object FeedLavaBath extends Runnable{
   override def run(): Unit = {

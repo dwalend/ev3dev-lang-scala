@@ -13,4 +13,3 @@ object DinoRun extends Runnable{
 
   }
 }
-//1340

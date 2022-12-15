@@ -3,20 +3,18 @@ package superpowered
 import ev3dev4s.Log
 import ev3dev4s.actuators.Sound
 import ev3dev4s.lego.Display
-import ev3dev4s.measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
 import scala.Predef._
-import scala.{Array, Boolean, Int, List, Seq, Unit, volatile}
+import scala.{List, Unit}
 import scala.StringContext
 import scala.annotation.tailrec
 
 /**
  *
  *
- * @author David Walend
- * @since v0.0.0
+ *  * @since v0.0.0
  */
 object Menu extends Runnable {
 
