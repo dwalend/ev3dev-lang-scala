@@ -3,7 +3,7 @@ package ev3dev4s.measure
 //todo when either something like coulomb is available for scala3 or you have to shift back to Scala 2, use someone else's library for unit operations 
 /**
  * A universal trait of things that are measured with units.
- * 
+ *
  * This provides general-purpose operations for those things.
  */
 trait Measured[M <: Measured[M]] extends Any {
@@ -32,6 +32,8 @@ trait Measured[M <: Measured[M]] extends Any {
 
   def *(m: Measured[_]): Float = this.v * m.v
 
+  def *(f:Float):M = create(this.v * f)
+
   def /(m: Measured[_]): Float = this.v / m.v
 
   def %(m: Measured[_]): M = create(this.v % m.v)
@@ -47,9 +49,9 @@ trait Measured[M <: Measured[M]] extends Any {
 
 object Measured{
   def min[M <: Measured[M]](m1:M,m2:M):M = if(m1.v < m2.v) m1
-                                            else m2
+  else m2
   def max[M <: Measured[M]](m1:M,m2:M):M = if(m1.v > m2.v) m1
-                                            else m2
+  else m2
 }
 
 
@@ -121,4 +123,3 @@ class Hertz(val v:Float) extends AnyVal with Measured[Hertz] {
 
   override def toString(): String = s"${v}Hz"
 }
-
