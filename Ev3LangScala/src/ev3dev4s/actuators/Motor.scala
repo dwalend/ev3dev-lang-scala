@@ -31,11 +31,19 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeSpeed(speed:DegreesPerSecond):Unit = {
     val safeSpeed = if(speed.abs < maxSpeed ) speed
-                    else {
-                      Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
-                      (speed.sign * maxSpeed).degreesPerSecond
-                    }
+    else {
+      Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
+      (speed.sign * maxSpeed).degreesPerSecond
+    }
     checkPort(_.writeSpeed(safeSpeed))
+  }
+
+  def writeRampUpTime(fromZeroToMax: MilliSeconds): Unit = {
+    checkPort(_.writeRampUpSpeed(fromZeroToMax))
+  }
+
+  def writeRampDownTime(fromMaxToZero: MilliSeconds): Unit = {
+    checkPort(_.writeRampDownSpeed(fromMaxToZero))
   }
 
   def writePosition(degrees:Degrees):Unit = checkPort(_.writePosition(degrees))
@@ -81,13 +89,13 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeSpeed(speed)
     writeCommand(MotorCommand.RUN)
   }
-    
+
   def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
   }
-    
+
   def runToRelativePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
@@ -140,12 +148,12 @@ object MotorCommand {
    */
   val RUN_TO_ABSOLUTE_POSITION: MotorCommand = MotorCommand("run-to-abs-pos")
 
-  /** 
-run-to-rel-pos: Runs the motor to a position relative to the current position v. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
-  val RUN_TO_RELATIVE_POSITION: MotorCommand = MotorCommand("run-to-rel-pos")
-  
   /**
-run-timed: Run the motor for the amount of time specified in time_sp and then stops the motor using the command specified by stop_action.
+  run-to-rel-pos: Runs the motor to a position relative to the current position v. The new position will be current position + position_sp. When the new position is reached, the motor will stop using the command specified by stop_action. */
+  val RUN_TO_RELATIVE_POSITION: MotorCommand = MotorCommand("run-to-rel-pos")
+
+  /**
+  run-timed: Run the motor for the amount of time specified in time_sp and then stops the motor using the command specified by stop_action.
    */
   val RUN_TIME: MotorCommand = MotorCommand("run-timed")
 
@@ -189,23 +197,23 @@ sealed case class MotorState(name:String)
 object MotorState{
   /**
   running: Power is being sent to the motor.
-  */
+   */
   val RUNNING: MotorState = MotorState("running")
   /**
   ramping: The motor is ramping up or down and has not yet reached a constant output level.
-  */
+   */
   val RAMPING: MotorState = MotorState("ramping")
   /**
   holding: The motor is not turning, but rather attempting to hold a fixed position.
-  */
+   */
   val HOLDING: MotorState = MotorState("holding")
   /**
   overloaded: The motor is turning as fast as possible, but cannot reach its speed_sp.
-  */
+   */
   val OVERLOADED: MotorState = MotorState("overloaded")
   /**
-    stalled: The motor is trying to run but is not turning at all.
-  */
+  stalled: The motor is trying to run but is not turning at all.
+   */
   val STALLED: MotorState = MotorState("stalled")
 
   val values: Array[MotorState] = Array(RUNNING,RAMPING,HOLDING,OVERLOADED,STALLED)
