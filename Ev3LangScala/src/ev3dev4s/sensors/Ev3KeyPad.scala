@@ -1,6 +1,5 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.Log
 import ev3dev4s.os.Time
 
 import java.io.{DataInputStream, FileInputStream}
@@ -37,8 +36,8 @@ object Ev3KeyPad extends AutoCloseable {
   }
 
   val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] = {
-    val keyStates = for {key <- Key.values
-                         state <- State.values} yield (key, state)
+    val keyStates: Array[(Key, State)] = for {key <- Key.values
+                                              state <- State.values} yield (key, state)
     keyStates.map(keyState => (keyState._1.byte, keyState._2.byte) -> keyState).toMap
   }
   private val keyPadEventPath = "/dev/input/by-path/platform-gpio_keys-event"
@@ -51,13 +50,13 @@ object Ev3KeyPad extends AutoCloseable {
     val KEY_INDEX = 10 // should be a key.byte
     val STATE_INDEX = 12 // should be a state.byte
 
-    //debounce the keypad
     keyPadInputStream.readFully(bytes32)
-    if(Time.now() - startTime <= 10) {//not long enough to clear the old pushes
-      blockUntilAnyKey(startTime)
-    } else {
+    //debounce the keypad
+    if(Time.now() - startTime > 5) {// long enough to clear the old pushes
       val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
       bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
+    } else {
+      blockUntilAnyKey(startTime)
     }
   }
 
@@ -66,4 +65,3 @@ object Ev3KeyPad extends AutoCloseable {
     keyPadInputStream.close()
   }
 }
-
