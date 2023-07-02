@@ -28,8 +28,12 @@ object Menu extends Runnable {
 
   var currentTrip: Runnable = trips.head
 
-@tailrec
   override def run(): Unit = {
+    recursiveRun()
+  }
+
+  @tailrec
+  private final def recursiveRun():Unit = {
     showTrip()
     Log.log(s"waiting for key $currentTrip")
     waitForKey() match {
@@ -42,8 +46,9 @@ object Menu extends Runnable {
       case _ => Log.log(s"No key??")
     }
 
-    if (!Reload.done) run()
+    if (!Reload.done) recursiveRun()
   }
+
   object Reload extends Runnable{
 
     var done = false

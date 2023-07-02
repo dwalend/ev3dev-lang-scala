@@ -45,8 +45,12 @@ object Ev3KeyPad extends AutoCloseable {
   private val keyPadInputStream = new DataInputStream(new FileInputStream(keyPadEventPath))
   private val bytes32: Array[Byte] = Array.fill[Byte](32)(0x0)
 
+  def blockUntilAnyKey(startTime:Long = Time.now()): (Key, State) = this.synchronized{
+    recursiveBlockUntilAnyKey(startTime)
+  }
+  
   @tailrec
-  def blockUntilAnyKey(startTime:Long = Time.now()): (Key, State) = this.synchronized {
+  private final def recursiveBlockUntilAnyKey(startTime:Long): (Key, State) = {
     val KEY_INDEX = 10 // should be a key.byte
     val STATE_INDEX = 12 // should be a state.byte
 
@@ -56,7 +60,7 @@ object Ev3KeyPad extends AutoCloseable {
       val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
       bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
     } else {
-      blockUntilAnyKey(startTime)
+      recursiveBlockUntilAnyKey(startTime)
     }
   }
 
