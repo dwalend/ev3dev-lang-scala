@@ -28,6 +28,7 @@ object Shared {
     scp.setRemoteTofile(s"$ev3UserName@$ev3Hostname:$toRemoteFile")
     scp.setTrust(true)
     scp.execute()
+    println("\u0007")
   }
 
   /**
@@ -35,18 +36,6 @@ object Shared {
    * jar file is complete.)
    */
   def scpJar(artifactName:String,jarPath: Path): CommandResult = {
-/*
-    val fileSize: Long = Files.size(jarPath.toNIO)
-
-    val ssh = new SSHExec()
-    ssh.init()
-    ssh.setPassword(ev3Password)
-    ssh.setUsername(ev3UserName)
-    ssh.setHost(ev3Hostname)
-    ssh.setTrust(true)
-    ssh.setCommand(s"echo $fileSize > expectedJarFileSize.txt")
-    ssh.execute()
-*/
     scpFile(jarPath,s"$artifactName.jar")
 
     //todo progress or error messages?
@@ -153,8 +142,8 @@ object SuperPowered extends ScalaModule {
   }
 
   def scpBash() = T.command {
-    val bashFile = millSourcePath / "SuperPowered.bash"
-    Shared.scpBash(bashFile,"SuperPowered.bash")
+    val bashFile = millSourcePath / "DoIt.bash"
+    Shared.scpBash(bashFile,"DoIt.bash")
   }
 
   def scpAssembly(): Command[CommandResult] = T.command {
