@@ -30,6 +30,9 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
 
   private val positionWriter = ChannelRewriter(motorDir.resolve("position"))
 
+  private val rampUpWriter = ChannelRewriter(motorDir.resolve("ramp_up_sp"))
+  private val rampDownWriter = ChannelRewriter(motorDir.resolve("ramp_down_sp"))
+
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
   private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
 
@@ -59,6 +62,15 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
 
   def writeDuration(milliseconds:MilliSeconds):Unit =
     timeWriter.writeAsciiInt(milliseconds.round)
+
+  def writeRampUpSpeed(fromZeroToMax:MilliSeconds):Unit = {
+    rampUpWriter.writeAsciiInt(fromZeroToMax.v.round)
+  }
+
+  def writeRampDownSpeed(fromMaxToZero: MilliSeconds): Unit = {
+    rampDownWriter.writeAsciiInt(fromMaxToZero.v.round)
+  }
+
 
   /**
    * @return position in degrees 
