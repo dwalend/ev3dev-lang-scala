@@ -12,7 +12,6 @@ import java.io.File
  * @since v0.0.0
  */
 object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sensor"),SensorPort.values){
-  
   def scanSensors:Map[SensorPort,Sensor[_]] = {
     scanGadgetDirs.map{portAndDir =>
       val driverName = ChannelRereader.readString(portAndDir._2.resolve("driver_name"))
@@ -21,7 +20,8 @@ object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sen
         case Ev3Gyroscope.driverName => Ev3Gyroscope(portAndDir._1, Option(portAndDir._2))
         case Ev3ColorSensor.driverName => Ev3ColorSensor(portAndDir._1, Option(portAndDir._2))
         case Ev3TouchSensor.driverName => Ev3TouchSensor(portAndDir._1, Option(portAndDir._2))
-        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName in $portAndDir._2")
+        case Ev3InfraredSensor.driverName => Ev3InfraredSensor(portAndDir._1, Option(portAndDir._2))
+        case _ => throw new IllegalArgumentException(s"Unknown driver $driverName in $portAndDir._2")
       }
       portAndDir._1 -> sensor
     }
