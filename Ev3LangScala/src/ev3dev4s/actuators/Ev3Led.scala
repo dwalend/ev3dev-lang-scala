@@ -13,6 +13,8 @@ import ev3dev4s.measure.Conversions._
  */
 
 sealed case class Ev3Led(side:Int) extends AutoCloseable {
+  import ev3dev4s.actuators.Ev3Led.{Color,brightest, darkest,Off,Red,Green,Yellow}
+
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
   val redName = s"leds/led$side:red:brick-status/brightness"
@@ -36,40 +38,60 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
     greenWriter.close ()
   }
 
-  import Ev3Led.{brightest, darkest}
+  def writeColor(color:Color) = {
+    writeBrightness(color.red,color.green)
+  }
 
-  def writeOff (): Unit = writeBrightness (darkest, darkest)
-  def writeRed (): Unit = writeBrightness (brightest, darkest)
-  def writeGreen (): Unit = writeBrightness (darkest, brightest)
-  def writeYellow (): Unit = writeBrightness (brightest, brightest)
-
+  def writeOff (): Unit = writeColor(Off)
+  def writeRed (): Unit = writeColor(Red)
+  def writeGreen (): Unit = writeColor(Green)
+  def writeYellow (): Unit = writeColor(Yellow)
 }
 
 object Ev3Led {
-
   val Left: Ev3Led = Ev3Led(0)
   val Right: Ev3Led = Ev3Led(1)
 
   val darkest: LedIntensity = 0.ledIntensity
   val brightest: LedIntensity = 255.ledIntensity
 
-  def writeBothGreen(): Unit = {
-    Left.writeGreen()
-    Right.writeGreen()
+  case class Color(red: LedIntensity, green: LedIntensity)
+
+  val Red: Color = Color(brightest,darkest)
+  val Yellow: Color = Color(brightest,brightest)
+  val Green: Color = Color(darkest,brightest)
+  val Off: Color = Color(darkest,darkest)
+
+  def writeBothGreen(): Unit = writeBothColor(Green)
+
+  def writeBothRed(): Unit = writeBothColor(Red)
+
+  def writeBothYellow(): Unit = writeBothColor(Yellow)
+
+  def writeBothOff(): Unit = writeBothColor(Off)
+
+  /**
+   * Possible distinguishable values
+   *
+   * Green Green
+   * Green Yellow
+   * Green Red
+   * Green Off
+   * Yellow Yellow
+   * Yellow Red
+   * Yellow Off
+   * */
+  def writeBothColor(leftColor:Color,rightColor:Color):Unit = {
+    Left.writeColor(leftColor)
+    Right.writeColor(rightColor)
   }
 
-  def writeBothRed(): Unit = {
-    Left.writeRed()
-    Right.writeRed()
+  def writeBothColor(colors:(Color,Color)): Unit = {
+    Left.writeColor(colors._1)
+    Right.writeColor(colors._2)
   }
 
-  def writeBothYellow(): Unit = {
-    Left.writeYellow()
-    Right.writeYellow()
-  }
-
-  def writeBothOff(): Unit = {
-    Left.writeOff()
-    Right.writeOff()
+  def writeBothColor(color:Color):Unit = {
+    writeBothColor(color,color)
   }
 }
