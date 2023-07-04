@@ -3,8 +3,8 @@ package superpowered
 import ev3dev4s.Log
 import ev3dev4s.actuators.MotorPort
 import ev3dev4s.lego.{Gyroscope,  Movement}
-import ev3dev4s.measure.Conversions.{FloatConversions, IntConversions}
-import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliMeters}
+import ev3dev4s.scala2measure.Conversions.{FloatConversions, IntConversions}
+import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, MilliMeters}
 import ev3dev4s.sensors.SensorPort
 
 import scala.annotation.tailrec

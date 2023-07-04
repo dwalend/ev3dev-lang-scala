@@ -1,7 +1,7 @@
 package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Sound => Ev3Sound}
-import ev3dev4s.measure.{Hertz, MilliSeconds}
+import ev3dev4s.scala2measure.{Hertz, MilliSeconds}
 
 import java.io.File
 

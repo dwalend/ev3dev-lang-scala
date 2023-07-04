@@ -3,7 +3,7 @@ package superpowered
 import ev3dev4s.Log
 import ev3dev4s.actuators.{MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.lego.{ColorSensor, Display, Gyroscope, Motors, Movement}
-import ev3dev4s.measure.Conversions.IntConversions
+import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.os.Time
 import ev3dev4s.sensors.{Ev3KeyPad, SensorPort}
 

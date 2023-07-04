@@ -3,7 +3,7 @@ package ev3dev4s.lcd.tty.examples
 import ev3dev4s.actuators.Sound
 import ev3dev4s.{Ev3System, Log}
 import ev3dev4s.lcd.tty.Lcd
-import ev3dev4s.measure.Conversions.IntConversions
+import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3Gyroscope
 import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException}
 

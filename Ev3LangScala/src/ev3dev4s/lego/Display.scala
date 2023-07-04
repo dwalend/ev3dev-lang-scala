@@ -2,7 +2,7 @@ package ev3dev4s.lego
 
 import ev3dev4s.actuators.Ev3Led
 import ev3dev4s.lcd.tty.Lcd
-import ev3dev4s.measure.LedIntensity
+import ev3dev4s.scala2measure.LedIntensity
 
 /**
  *

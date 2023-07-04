@@ -1,4 +1,4 @@
-package ev3dev4s.measure
+package ev3dev4s.scala2measure
 
 //todo when either something like coulomb is available for scala3 or you have to shift back to Scala 2, use someone else's library for unit operations 
 /**

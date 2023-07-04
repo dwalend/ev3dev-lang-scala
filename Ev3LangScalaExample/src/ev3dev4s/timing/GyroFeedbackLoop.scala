@@ -4,11 +4,11 @@ import ev3dev4s.sensors.gyroscope.examples.{Robot,GyroDriveStraight}
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 
-import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.Conversions._
 
 import ev3dev4s.sensors.Ev3KeyPad
-import ev3dev4s.measure.DutyCycle
+import ev3dev4s.scala2measure.DutyCycle
 
 /**
  * A test of time to run a reasonable control loop for various comparisons

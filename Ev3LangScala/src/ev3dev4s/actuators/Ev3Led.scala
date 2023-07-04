@@ -3,8 +3,8 @@ package ev3dev4s.actuators
 import ev3dev4s.sysfs.ChannelRewriter
 
 import java.nio.file.Path
-import ev3dev4s.measure.LedIntensity
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.LedIntensity
+import ev3dev4s.scala2measure.Conversions._
 
 /**
  *

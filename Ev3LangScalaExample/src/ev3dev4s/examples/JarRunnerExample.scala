@@ -3,7 +3,7 @@ package ev3dev4s.examples
 import ev3dev4s.Ev3System
 import ev3dev4s.actuators.Ev3Led
 
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.Conversions._
 
 /**
  * Run via

@@ -1,8 +1,8 @@
 package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorState, MotorStopCommand}
-import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliSeconds}
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, MilliSeconds}
+import ev3dev4s.scala2measure.Conversions._
 import ev3dev4s.os.Time
 
 /**

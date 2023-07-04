@@ -4,11 +4,11 @@ import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 
 import java.nio.file.Path
 
-import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions._
-import ev3dev4s.measure.DegreesPerSecond
-import ev3dev4s.measure.MilliSeconds
-import ev3dev4s.measure.DutyCycle
+import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.scala2measure.DegreesPerSecond
+import ev3dev4s.scala2measure.MilliSeconds
+import ev3dev4s.scala2measure.DutyCycle
 
 import ev3dev4s.Log
 

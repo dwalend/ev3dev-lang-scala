@@ -6,8 +6,8 @@ import ev3dev4s.sysfs.Shell
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import java.io.File
-import ev3dev4s.measure.{Hertz, MilliSeconds, Percent}
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.{Hertz, MilliSeconds, Percent}
+import ev3dev4s.scala2measure.Conversions._
 
 /**
  * drives sound via shelling out

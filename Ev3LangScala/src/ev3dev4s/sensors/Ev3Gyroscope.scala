@@ -3,8 +3,8 @@ package ev3dev4s.sensors
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
-import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.Conversions._
 
 import java.io.File
 import java.nio.file.Path

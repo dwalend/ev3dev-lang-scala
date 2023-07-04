@@ -1,4 +1,4 @@
-package ev3dev4s.measure
+package ev3dev4s.scala2measure
 
 object Conversions {
 

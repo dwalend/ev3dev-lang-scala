@@ -1,7 +1,7 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.measure.Conversions._
-import ev3dev4s.measure.Percent
+import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.scala2measure.Percent
 
 import java.nio.file.Path
 

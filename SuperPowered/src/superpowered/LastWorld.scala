@@ -1,7 +1,7 @@
 package superpowered
 
 import ev3dev4s.lego.{Display, Sound}
-import ev3dev4s.measure.Conversions.IntConversions
+import ev3dev4s.scala2measure.Conversions.IntConversions
 
 import java.lang.Runnable
 import scala.{StringContext, Unit}

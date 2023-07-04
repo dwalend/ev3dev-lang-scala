@@ -2,7 +2,7 @@ package superpowered
 
 import ev3dev4s.Log
 import ev3dev4s.lego.{Display, Sound}
-import ev3dev4s.measure.Conversions.IntConversions
+import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable

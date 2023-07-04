@@ -2,8 +2,8 @@ package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.lego.Motors.handleUnpluggedMotor
-import ev3dev4s.measure.{Degrees, DegreesPerSecond, MilliSeconds, Percent, Unitless}
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, MilliSeconds, Percent, Unitless}
+import ev3dev4s.scala2measure.Conversions._
 
 /**
  *

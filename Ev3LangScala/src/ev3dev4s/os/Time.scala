@@ -1,6 +1,6 @@
 package ev3dev4s.os
 
-import ev3dev4s.measure.MilliSeconds
+import ev3dev4s.scala2measure.MilliSeconds
 
 /**
  *

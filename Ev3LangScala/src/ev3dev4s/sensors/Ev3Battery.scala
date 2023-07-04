@@ -1,8 +1,8 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.sysfs.ChannelRereader
-import ev3dev4s.measure.Microvolts
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.Microvolts
+import ev3dev4s.scala2measure.Conversions._
 
 import java.io.File
 import java.nio.file.Path

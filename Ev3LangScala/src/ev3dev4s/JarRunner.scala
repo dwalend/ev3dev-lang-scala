@@ -1,7 +1,7 @@
 package ev3dev4s
 
 import ev3dev4s.actuators.{Ev3Led, MotorPortScanner, Sound}
-import ev3dev4s.measure.Conversions._
+import ev3dev4s.scala2measure.Conversions._
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.net.URLClassLoader

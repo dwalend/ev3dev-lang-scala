@@ -3,10 +3,10 @@ package ev3dev4s.sensors.gyroscope.examples
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.measure.Degrees
-import ev3dev4s.measure.Conversions._
-import ev3dev4s.measure.DegreesPerSecond
-import ev3dev4s.measure.DutyCycle
+import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.scala2measure.DegreesPerSecond
+import ev3dev4s.scala2measure.DutyCycle
 
 /**
  *
