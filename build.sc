@@ -5,8 +5,8 @@ import mill.define.Command
 import os.{CommandResult, Path}
 
 import java.nio.file.Files
-import $ivy.`com.github.mwiede:jsch:0.1.61`
-import $ivy.`org.apache.ant:ant-jsch:1.10.12`
+import $ivy.`com.github.mwiede:jsch:0.2.9`
+import $ivy.`org.apache.ant:ant-jsch:1.10.13`
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
 import org.apache.tools.ant.Project
 
