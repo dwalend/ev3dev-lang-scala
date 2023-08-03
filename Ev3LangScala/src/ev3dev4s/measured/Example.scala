@@ -20,14 +20,14 @@ object Example:
     val squashed: Length = lightYear.in(giga(kilo(meter)))
 
     println(squashed.pretty)
-
+/*
     val someVolts:ElectricPotential = 6 * volt
     println(someVolts.pretty)
 
     val lotsOfVolts:ElectricPotential = 16 * giga(volt)
 
     println(lotsOfVolts.pretty)
-
+*/
     val someAngle = 445 * degree
 
     println(someAngle.pretty)
