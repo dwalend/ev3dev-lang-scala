@@ -47,15 +47,15 @@ Test that you can navigate in the source code. Open up SuperPowered/src/superpow
 
 ## Build and upload the Ev3LangScala library (Do this if you change the code library - first and rarely)
 
-```./millw -D ev3Password=maker Ev3LangScala.scpAssembly```
+```./millw -D ev3Password=maker Ev3LangScala.AppToRobot```
 
 ## Build and upload the SuperPowered library (Do this every time you want to see your addtions to the team's code run in the Ev3)
 
-```./millw -D ev3Password=maker SuperPowered.scpJar```
+```./millw -D ev3Password=maker SuperPowered.ToRobot```
 
 ## Upload the SuperPowered bash file (Probably once)
 
-```./millw -D ev3Password=maker SuperPowered.scpBash```
+```./millw -D ev3Password=maker SuperPowered.DoItToRobot```
 
 ---
 

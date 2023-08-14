@@ -89,7 +89,7 @@ object Ev3LangScala extends ScalaModule {
 
   override def scalacOptions = Shared.scalacOptions
 
-  def scpAssembly():Command[CommandResult] = T.command {
+  def AppToRobot():Command[CommandResult] = T.command {
     Shared.scpAssembly(artifactName(),assembly().path)
   }
 
@@ -117,11 +117,11 @@ object Ev3LangScalaExample extends ScalaModule {
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 
-  def scpJar():Command[CommandResult] = T.command {
+  def ToRobot():Command[CommandResult] = T.command {
     Shared.scpJar(artifactName(),jar().path)
   }
 
-  def scpAssembly(): Command[CommandResult] = T.command {
+  def AppToRobot(): Command[CommandResult] = T.command {
     Shared.scpAssembly(artifactName(), assembly().path)
   }
 }
@@ -137,16 +137,16 @@ object SuperPowered extends ScalaModule {
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 
-  def scpJar(): Command[CommandResult] = T.command {
+  def ToRobot(): Command[CommandResult] = T.command {
     Shared.scpJar(artifactName(), jar().path)
   }
 
-  def scpBash() = T.command {
+  def DoItToRobot() = T.command {
     val bashFile = millSourcePath / "DoIt.bash"
     Shared.scpBash(bashFile,"DoIt.bash")
   }
 
-  def scpAssembly(): Command[CommandResult] = T.command {
+  def AppToRobot(): Command[CommandResult] = T.command {
     Shared.scpAssembly(artifactName(), assembly().path)
   }
 }
