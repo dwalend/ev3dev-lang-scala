@@ -27,7 +27,7 @@ object Motors {
 
   private[lego] def watchForStop(motor:Motor):Unit =
     while({
-      motor.readState().contains(MotorState.RUNNING)  //todo use isRunning after recompile
+      motor.readIsRunning()
     }) {
       //Hand over control to the OS to let it update motor state
       Time.pause(1.milliseconds)
