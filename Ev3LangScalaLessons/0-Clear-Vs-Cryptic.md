@@ -12,9 +12,17 @@ Set up a wifi dongle as well. That'll have to be unplugged for FLL competitions,
 
 Updating the OS
 
-TODO add the command to update the operating system.
+```shell
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get full-upgrade
+```
 
-TODO check JVM version
+Check JVM version
+
+```shell
+java --version
+```
 
 Create a Copy Of The Starter Project
 
