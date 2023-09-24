@@ -38,8 +38,7 @@ object Shared {
     scpFile(jarPath,s"$artifactName.jar")
 
     //todo progress or error messages?
-
-    val result = CommandResult(0, Seq.empty)
+    val result = CommandResult(Seq("scpJar",artifactName,jarPath.toString()),0, Seq.empty)
 
     result
   }
@@ -52,8 +51,7 @@ object Shared {
     scpFile(assemblyPath,s"$artifactName.jar")
 
     //todo progress or error messages?
-
-    val result = CommandResult(0, Seq.empty)
+    val result = CommandResult(Seq("scpJar",artifactName,assemblyPath.toString()),0, Seq.empty)
 
     result
   }
@@ -72,7 +70,7 @@ object Shared {
 
     //todo progress or error messages?
 
-    val result = CommandResult(0, Seq.empty)
+    val result = CommandResult(Seq("scpBash",fromBashFile.toString(),toBashFile),0, Seq.empty)
 
     result
 
@@ -96,7 +94,7 @@ object Ev3LangScala extends ScalaModule {
    * Update the millw script.
    */
   def millw(): Command[PathRef] = T.command {
-    val target = mill.modules.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
+    val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
     val millw = millSourcePath / "millw"
     os.copy.over(target.path, millw)
     os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
