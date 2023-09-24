@@ -1,4 +1,4 @@
-package masterpiece
+package masterpiece.superpowered
 
 import ev3dev4s.Log
 import ev3dev4s.actuators.Sound

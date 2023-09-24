@@ -1,4 +1,4 @@
-package masterpiece.superpowered
+package masterpiece
 
 import ev3dev4s.lego.{Display, Sound}
 import ev3dev4s.scala2measure.Conversions.IntConversions

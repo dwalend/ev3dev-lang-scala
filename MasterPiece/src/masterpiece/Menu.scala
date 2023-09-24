@@ -20,6 +20,7 @@ import scala.annotation.tailrec
 object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
+    FiveXHelloWorld,
     WindmillTrip,
     DinoRun,
     FeedLavaBath,
