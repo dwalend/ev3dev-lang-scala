@@ -1,4 +1,4 @@
-package superpowered
+package masterpiece
 
 import ev3dev4s.lego.Gyroscope
 import ev3dev4s.scala2measure.Conversions.IntConversions

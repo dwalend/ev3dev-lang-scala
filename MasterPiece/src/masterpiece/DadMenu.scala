@@ -1,4 +1,4 @@
-package superpowered
+package masterpiece
 
 import ev3dev4s.actuators.Ev3Led
 import ev3dev4s.Log

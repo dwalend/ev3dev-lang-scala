@@ -125,9 +125,9 @@ object Ev3LangScalaExample extends ScalaModule {
   }
 }
 
-object SuperPowered extends ScalaModule {
-  override def artifactName: T[String] = "SuperPowered"
-  override def mainClass: T[Option[String]] = Some("superpowered.Menu")
+object MasterPiece extends ScalaModule {
+  override def artifactName: T[String] = "MasterPiece"
+  override def mainClass: T[Option[String]] = Some("masterpiece.Menu")
 
   def scalaVersion = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
