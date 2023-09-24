@@ -1,10 +1,11 @@
-package masterpiece
+package masterpiece.superpowered
 
 import ev3dev4s.lego.{Display, Sound}
 import ev3dev4s.scala2measure.Conversions.IntConversions
+import masterpiece.Robot
 
 import java.lang.Runnable
-import scala.{StringContext, Unit}
+import scala.Unit
 
 /**
  * A HelloWorld for the Ev3 that demonstrates five ways to communicate with the technicians.

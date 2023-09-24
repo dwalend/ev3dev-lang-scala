@@ -1,6 +1,7 @@
-package masterpiece
+package masterpiece.superpowered
 
 import ev3dev4s.scala2measure.Conversions.IntConversions
+import masterpiece.Robot
 
 import java.lang.Runnable
 import scala.Unit

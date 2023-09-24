@@ -4,6 +4,7 @@ import ev3dev4s.Log
 import ev3dev4s.actuators.Sound
 import ev3dev4s.lego.Display
 import ev3dev4s.sensors.Ev3KeyPad
+import masterpiece.superpowered.{DinoRun, FeedLavaBath, LastWorld, WindmillTrip}
 
 import java.lang.Runnable
 import scala.Predef._

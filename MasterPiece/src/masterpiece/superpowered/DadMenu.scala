@@ -1,7 +1,7 @@
-package masterpiece
+package masterpiece.superpowered
 
-import ev3dev4s.actuators.Ev3Led
 import ev3dev4s.Log
+import ev3dev4s.actuators.Ev3Led
 import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.sensors.Ev3KeyPad
 

@@ -1,9 +1,10 @@
-package masterpiece
+package masterpiece.superpowered
 
 import ev3dev4s.lego.Gyroscope
-import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.os.Time
+import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.sensors.SensorPort
+import masterpiece.Robot
 
 import java.lang.Runnable
 import scala.Unit
