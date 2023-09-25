@@ -20,6 +20,7 @@ object WindmillTrip extends Runnable{
 
   def startToTv(): Unit = {
     Gyroscope.reset(SensorPort.One)
+    Gyroscope.setHeading(SensorPort.One,0.degrees)
     Robot.movestraight(440.mm, 245.degreesPerSecond)
     Robot.movestraight(-30.mm, speed = -200.degreesPerSecond)
   }
