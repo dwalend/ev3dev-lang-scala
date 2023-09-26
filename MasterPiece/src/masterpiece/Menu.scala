@@ -20,11 +20,10 @@ import scala.annotation.tailrec
 object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
+    SceneChangeTrip,
+
     FiveXHelloWorld,
-    WindmillTrip,
-    DinoRun,
-    FeedLavaBath,
-    LastWorld,
+
     Reload
   )
 
@@ -63,7 +62,10 @@ object Menu extends Runnable {
   def nextTrip():Unit = {
     currentTrip = trips.span(_ != currentTrip)
       ._2 .tail.headOption.getOrElse(trips.head)
-    Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
+    val tripName={
+      currentTrip.getClass.getSimpleName.take(currentTrip.getClass.getSimpleName.length-1)
+    }
+    Sound.speak(tripName,"mb-en1+f1")
     showTrip()
   }
 

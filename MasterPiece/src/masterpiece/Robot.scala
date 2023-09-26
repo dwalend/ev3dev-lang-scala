@@ -15,9 +15,9 @@ import scala.{StringContext, Unit}
 object Robot {
   Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
-  val cir: MilliMeters = 275.mm
+  val circumfrence: MilliMeters = 180.mm
   def dtd(distance :MilliMeters): Degrees = {
-    (360 * distance.v / cir.v).degrees
+    (360 * distance.v / circumfrence.v).degrees
   }
 
   def movestraight(distance :MilliMeters, speed:DegreesPerSecond): Unit ={
