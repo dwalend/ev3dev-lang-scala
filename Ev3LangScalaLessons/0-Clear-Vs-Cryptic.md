@@ -24,6 +24,14 @@ Check JVM version
 java --version
 ```
 
+Maybe rename the brick
+
+```shell
+sudo hostnamectl set-hostname firefly
+```
+
+Reboot the brick and the robot's name will have changed. (How did I figure all that out? I looked it up on the internet using Google. There are four different common abbreviations for "control." The cryptic history of shell commands is full of anecdotes from the early 1970s. I was there and it's completely inexplicable.)
+
 Create a Copy Of The Starter Project
 
 Use git to Fork the ev3-dev-lang Scala Repository. Change to a directory where you'd like to have this project and type the following commands to create your own copy of the project.
