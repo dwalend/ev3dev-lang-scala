@@ -20,9 +20,8 @@ import scala.annotation.tailrec
 object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
+    PinkOrange,
     SceneChangeTrip,
-
-    FiveXHelloWorld,
 
     Reload
   )
@@ -78,6 +77,7 @@ object Menu extends Runnable {
 
   def showTrip() = {
     Display.clearLcd()
+    Display.write(PinkOrange.color,3)
     Display.write(currentTrip.getClass.getSimpleName, row=2)
   }
 

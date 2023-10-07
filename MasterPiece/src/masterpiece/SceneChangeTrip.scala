@@ -16,7 +16,7 @@ object SceneChangeTrip extends Runnable{
     pushLeverOnSceneChanger()
     fromScenchangertoStart()
   }
-// # ylva the shorty
+
 //WOPPER RULES
   private def setGyro(): Unit = {
     //Set the gyroscope
@@ -36,8 +36,12 @@ object SceneChangeTrip extends Runnable{
 
     Robot.movestraight(70.mm, 245.degreesPerSecond)
     Robot.movestraight(-50.mm, -245.degreesPerSecond)
-    Robot.movestraight(70.mm, 245.degreesPerSecond)
-    Robot.movestraight(-50.mm, -245.degreesPerSecond)
+    if(PinkOrange.color =="Orange"){
+      Robot.movestraight(70.mm, 245.degreesPerSecond)
+      Robot.movestraight(-50.mm, -245.degreesPerSecond)
+
+    }
+
   }
    private def fromScenchangertoStart():Unit = {
      //come back from Scenechanger
