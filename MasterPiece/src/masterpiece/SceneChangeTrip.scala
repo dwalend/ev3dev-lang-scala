@@ -14,6 +14,7 @@ object SceneChangeTrip extends Runnable{
 
     fromStartToSceneChanger()
     pushLeverOnSceneChanger()
+    fromScenchangertoStart()
   }
 // # ylva the shorty
 //WOPPER RULES
@@ -22,7 +23,7 @@ object SceneChangeTrip extends Runnable{
     Gyroscope.reset(SensorPort.One)
     Gyroscope.setHeading(SensorPort.One, 0.degrees)
   }
-
+//Avril is the best in the entire world and she is much better than Aanya
   private def fromStartToSceneChanger(): Unit ={
     //move from start to the scene changer
     Robot.movestraight(675.mm, 245.degreesPerSecond)
@@ -33,18 +34,23 @@ object SceneChangeTrip extends Runnable{
     //Push lever on scene changer
     //todo figure out one push or two
 
-    Robot.movestraight(50.mm, 245.degreesPerSecond)
-    Robot.movestraight(-40.mm, -245.degreesPerSecond)
-    Robot.movestraight(50.mm, 245.degreesPerSecond)
-    Robot.movestraight(-40.mm, -245.degreesPerSecond)
+    Robot.movestraight(70.mm, 245.degreesPerSecond)
+    Robot.movestraight(-50.mm, -245.degreesPerSecond)
+    Robot.movestraight(70.mm, 245.degreesPerSecond)
+    Robot.movestraight(-50.mm, -245.degreesPerSecond)
   }
+   private def fromScenchangertoStart():Unit = {
+     //come back from Scenechanger
+     Robot.leftRotation(-180.degrees)
+     Robot.movestraight(675.mm, 245.degreesPerSecond)
+   }
 
   //WOPPER RULES
 
-
   //WO0PER RULES
+}
 
-}//Whopper, Whopper, Whopper, Whopper
+//Whopper, Whopper, Whopper, Whopper
   //Junior, Double, Triple Whopper
     //Flame-grilled taste with perfect toppers
     //I rule this day
