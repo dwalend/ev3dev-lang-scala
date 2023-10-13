@@ -27,7 +27,14 @@ object Robot {
     )
   }
 
-  @tailrec
+  def moveStraightBackward(distance :MilliMeters, speed:DegreesPerSecond): Unit = {
+    Movement.move(
+      motorDegrees = dtd(-distance),
+      speed = -speed
+    )
+  }
+
+    @tailrec
   def rightRotation(goalHeading:Degrees):Unit={
     val heading: Degrees = Gyroscope.readHeading(SensorPort.One)
     val toGo: Degrees = goalHeading - heading
