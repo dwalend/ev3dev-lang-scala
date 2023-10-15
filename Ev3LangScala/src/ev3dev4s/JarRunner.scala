@@ -1,6 +1,7 @@
 package ev3dev4s
 
 import ev3dev4s.actuators.{Ev3Led, MotorPortScanner, Sound}
+import ev3dev4s.lcd.tty.Lcd
 import ev3dev4s.scala2measure.Conversions._
 import ev3dev4s.sensors.Ev3KeyPad
 
@@ -51,6 +52,12 @@ object JarRunner {
         Log.log("Caught in top-level",x)
         MotorPortScanner.stopAllMotors()
         Ev3Led.writeBothRed()
+        Lcd.clear()
+        x.getMessage.grouped(11).take(3).zipWithIndex.foreach { chunk =>
+          Lcd.set(chunk._2, chunk._1)
+        }
+        Lcd.set(3,"Push Button")
+        Lcd.flush()
         Sound.playTone(55.Hz, 200.milliseconds)
         Ev3KeyPad.blockUntilAnyKey()
         Ev3Led.writeBothOff()
