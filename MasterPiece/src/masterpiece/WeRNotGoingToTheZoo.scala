@@ -11,12 +11,12 @@ object WeRNotGoingToTheZoo extends Runnable {
   //start with back of robot on very back wall - zero there.
   override def run(): Unit = {
     setGyro()
-    Robot.moveStraightBackward(600.mm, 245.degreesPerSecond)
+    Robot.moveStraightBackward(600.mm)
     Robot.rightRotation(225.degrees)
-    Robot.moveStraightBackward(180.mm, 245.degreesPerSecond)
-    Robot.movestraight(180.mm, 245.degreesPerSecond)
+    Robot.moveStraightBackward(180.mm)
+    Robot.movestraight(180.mm)
     Robot.rightRotation(300.degrees)
-    Robot.movestraight(540.mm, 245.degreesPerSecond)
+    Robot.movestraight(540.mm)
 
   }
 

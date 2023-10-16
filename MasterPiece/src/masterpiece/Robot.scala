@@ -16,18 +16,19 @@ object Robot {
   Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
   val circumfrence: MilliMeters = 180.mm
+  val speed =400.degreesPerSecond
   def dtd(distance :MilliMeters): Degrees = {
     (360 * distance.v / circumfrence.v).degrees
   }
 
-  def movestraight(distance :MilliMeters, speed:DegreesPerSecond): Unit ={
+  def movestraight(distance :MilliMeters, speed:DegreesPerSecond = speed): Unit ={
     Movement.move(
       motorDegrees = dtd(distance),
       speed = speed
     )
   }
 
-  def moveStraightBackward(distance :MilliMeters, speed:DegreesPerSecond): Unit = {
+  def moveStraightBackward(distance :MilliMeters, speed:DegreesPerSecond = speed): Unit = {
     Movement.move(
       motorDegrees = dtd(-distance),
       speed = -speed
@@ -38,7 +39,7 @@ object Robot {
   def rightRotation(goalHeading:Degrees):Unit={
     val heading: Degrees = Gyroscope.readHeading(SensorPort.One)
     val toGo: Degrees = goalHeading - heading
-    val speed: DegreesPerSecond = (200 * (toGo.v/90)).degreesPerSecond
+    val speed: DegreesPerSecond = (400 * (toGo.v/90)).degreesPerSecond
 
     Log.log(s"heading is $heading speed is $speed")
     if(goalHeading>heading) {
@@ -53,7 +54,7 @@ object Robot {
   def leftRotation(goalHeading: Degrees): Unit = {
     val heading = Gyroscope.readHeading(SensorPort.One)
     val toGo = -goalHeading + heading
-    val speed = (200 * (toGo.v / 90)).degreesPerSecond
+    val speed = (400 * (toGo.v / 90)).degreesPerSecond
 
     Log.log(s"heading is $heading speed is $speed")
     if (goalHeading < heading) {
