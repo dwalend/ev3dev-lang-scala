@@ -86,4 +86,9 @@ object Motors {
     val motor: Motor = motors(port)
     motor.readPosition()
   }
+
+  def setStopCommand(port:MotorPort,stopCommand: MotorStopCommand): Unit = handleUnpluggedMotor{
+    val motor = motors(port)
+    motor.writeStopAction(stopCommand)
+  }
 }
