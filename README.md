@@ -13,7 +13,7 @@ Trust the project.
 
 ## Install the Scala plugin. 
 
-Open up the MasterPiece/src/masterpiece/HelloWorld.scala file. (It will look monochrome.)
+Open up the Ev3ScalaExample/src/ev3dev4s/HelloWorld.scala file. (It will look monochrome.)
 You'll be invited to install the Scala plugin (upper right corner). 
 
 Install Scala Plugin -> OK
@@ -37,7 +37,7 @@ Close intellij. Reopen it.
 File -> New -> Project from Existing Sources -> ev3dev-lang-scala
 Import project from external model -> BSP -> Create
 
-Test that you can navigate in the source code. Open up MasterPiece/src/masterpiece/HelloWorld.scala , then select Ev3KeyPad and touch Command-b . It should open the Ev3KeyPad.scala file.
+Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3dev4s/HelloWorld.scala , then select Ev3KeyPad and touch Command-b . It should open the Ev3KeyPad.scala file.
 
 ---
 
@@ -51,11 +51,11 @@ Test that you can navigate in the source code. Open up MasterPiece/src/masterpie
 
 ## Build and upload the MasterPiece library (Do this every time you want to see your addtions to the team's code run in the Ev3)
 
-```./millw -D ev3Password=maker MasterPiece.ToRobot```
+```./millw -D ev3Password=maker Ev3LangScalaExample.ToRobot```
 
 ## Upload the MasterPiece bash file (Probably once)
 
-```./millw -D ev3Password=maker MasterPiece.DoItToRobot```
+```./millw -D ev3Password=maker Ev3LangScalaExample.DoItToRobot```
 
 ---
 
@@ -69,7 +69,7 @@ Intellij Idea will let you open up a second terminal with the big +, so you can 
 And enter your password when prompted. (You are sure you want to continue connecting.)
 
 Run in the shell
-```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner MasterPiece.jar masterpiece.HelloWorld```
+```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar examples.HelloWorld```
 
 (It will blink green for about 45 seconds before honking and starting)
 

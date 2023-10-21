@@ -118,29 +118,9 @@ object Ev3LangScalaExample extends ScalaModule {
     Shared.scpJar(artifactName(),jar().path)
   }
 
-  def AppToRobot(): Command[CommandResult] = T.command {
-    Shared.scpAssembly(artifactName(), assembly().path)
-  }
-}
-
-object MasterPiece extends ScalaModule {
-  override def artifactName: T[String] = "MasterPiece"
-  override def mainClass: T[Option[String]] = Some("masterpiece.Menu")
-
-  def scalaVersion = Shared.scalaVersion
-  def javaVersion = Shared.javaVersion
-
-  override def scalacOptions = Shared.scalacOptions.appended("-Yno-imports")
-
-  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
-
-  def ToRobot(): Command[CommandResult] = T.command {
-    Shared.scpJar(artifactName(), jar().path)
-  }
-
   def DoItToRobot() = T.command {
     val bashFile = millSourcePath / "DoIt.bash"
-    Shared.scpBash(bashFile,"DoIt.bash")
+    Shared.scpBash(bashFile, "DoIt.bash")
   }
 
   def AppToRobot(): Command[CommandResult] = T.command {
