@@ -13,31 +13,49 @@ Trust the project.
 
 ## Install the Scala plugin. 
 
-Open up the Ev3ScalaExample/src/ev3dev4s/HelloWorld.scala file. (It will look monochrome.)
+Open up the `Ev3ScalaExample/src/ev3dev4s/examples/FiveXHelloWorld.scala` file. (It will look monochrome.)
 You'll be invited to install the Scala plugin (upper right corner). 
 
 Install Scala Plugin -> OK
-Restart Intellij to get the Scala plugin going
+From the popup in the lower right, restart Intellij to get the Scala plugin going. (It will keep offering the plugin until you do).
 
-In the upper right Set Up JDK -> Version 11 , Eclipse Temurin 11.0.16 -> OK
+In the upper right
+* Set Up JDK ->
+* Version 11, Eclipse Temurin 11.0.16 ->
+* OK
 
-In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> OK
+In the upper right:
+* Set Up Scala SDK ->
+* Use Library ->
+* Create ->
+* Download 2.13.x (i.e. the latest in the version 2 branch -- NOT VERSION 3) ->
+* OK (installs files) ->
+* OK (activates plugin)
        
 ## Have Intellij understand the project structure
 
-Set up for mill in intellij (So that intellij will know how everything hangs togeter)
-```./millw mill.bsp.BSP/install```
+Start a terminal window (by launching the Terminal app or clicking the terminal button `[>_]` in the lower left sidebar).
+Run this command to set up for mill in intellij (So that intellij will know how everything hangs together):
 
-In intellij's terminal, 
+``` ./millw mill.bsp.BSP/install ```
 
-```rm -rf .idea```
+In intellij's terminal, remove the .idea directory (`rm -rf .idea`)
+
+``` mv .idea /tmp/dot-idea-away ```
 
 Close intellij. Reopen it. 
 
-File -> New -> Project from Existing Sources -> ev3dev-lang-scala
-Import project from external model -> BSP -> Create
+* Click File -> New -> Project from Existing Sources
+* navigate to the ev3dev-lang-scala directory (possibly in your home directory under `IdeaProjects`)
+* Select "Import project from external model" -> BSP -> Create
 
-Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3dev4s/HelloWorld.scala , then select Ev3KeyPad and touch Command-b . It should open the Ev3KeyPad.scala file.
+Test that you can navigate in the source code. 
+
+* Open up `Ev3ScalaExample/src/ev3dev4s/examples/FiveXHelloWorld.scala`
+* place the cursor into the word "Sound" inside the `run` method
+* touch Command-b
+
+It should open the Ev3KeyPad.scala file.
 
 ---
 
@@ -65,10 +83,14 @@ Intellij Idea will let you open up a second terminal with the big +, so you can 
 
 ## Shell into the Ev3
 
+The default network name for the EV3 is `ev3dev.local` (used in these examples); if you have renamed it, say, "firefly" it will be `firefly.local`. Use ssh to connect
+
 ```ssh robot@ev3dev.local```
-And enter your password when prompted. (You are sure you want to continue connecting.)
+
+Enter your password when prompted and confirm you are sure you want to continue connecting.
 
 Run in the shell
+
 ```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar examples.HelloWorld```
 
 (It will blink green for about 45 seconds before honking and starting)
@@ -78,6 +100,7 @@ When you're done,
 ```exit```
 
 ---
+
 # Run without the shell (for competitions)
 
 In the ev3dev OS menu on the Ev3
