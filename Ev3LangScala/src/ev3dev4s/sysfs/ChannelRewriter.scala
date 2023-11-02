@@ -3,8 +3,7 @@ package ev3dev4s.sysfs
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.charset.StandardCharsets
-import java.nio.file.{AccessDeniedException, Path, StandardOpenOption}
-import scala.annotation.tailrec
+import java.nio.file.{Path, StandardOpenOption}
 
 /**
  *

@@ -16,7 +16,7 @@ trait Measured[M <: Measured[M]] extends Any {
   //noinspection
   def toString(): String // todo figure out def toString(): String
 
-  def unary_-(): M = create(-this.v) // todo add type annotation when allowed
+  def unary_- : M = create(-this.v)
 
   def +(m: M): M = create(this.v + m.v)
 

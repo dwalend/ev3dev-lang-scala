@@ -10,6 +10,7 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnnecessaryParentheses
 abstract class GadgetPortScanner[P <: Port](gadgetDir: File, ports: Array[P]) {
 
   val namesToPorts: Map[Char, P] = ports.map { p => p.name -> p }.toMap

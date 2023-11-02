@@ -16,6 +16,7 @@ import scala.collection.immutable.ArraySeq
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnnecessaryParentheses
 case class Ev3Gyroscope(override val port: SensorPort, initialSensorDir: Option[Path])
   extends MultiModeSensor(port, initialSensorDir.map(MultiModeSensorFS.Value0SensorFS)) { //todo change to Value01SensorFS to support GYRO-G&A
 
@@ -46,7 +47,7 @@ case class Ev3Gyroscope(override val port: SensorPort, initialSensorDir: Option[
   sealed case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
-    @volatile var offset: Degrees = 0.degrees
+    @volatile private var offset: Degrees = 0.degrees
     zero()
 
     /**
@@ -75,6 +76,7 @@ case class Ev3Gyroscope(override val port: SensorPort, initialSensorDir: Option[
   /**
    * Angle change rate in degrees per second
    */
+  //noinspection ScalaUnusedSymbol
   sealed case class RateMode() extends Mode {
     val name = "GYRO-RATE"
 
@@ -179,13 +181,14 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
 
     while ( {
       try {
+        //noinspection ZeroIndexToHead
         reportProgress(0)()
         val legoPortDir: Path = scanForPortDir()
         Log.log(s"legoPortDir is $legoPortDir")
         reportProgress(1)()
         restartSensorSoftBoot(legoPortDir)
         reportProgress(2)()
-        !scanForSensor(port) //keep looking if no sensor found
+        !scanForSensor(port) // keep looking if no sensor found
       } catch {
         case GadgetUnplugged(_) => true
       }
@@ -197,7 +200,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
 
     reportProgress(3)()
 
-    Log.log(s"Successfully despun")
+    Log.log(s"Successfully de-spun")
   }
 }
 

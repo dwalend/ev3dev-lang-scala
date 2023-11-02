@@ -1,10 +1,10 @@
 package ev3dev4s.actuators
 
+import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.scala2measure.LedIntensity
 import ev3dev4s.sysfs.ChannelRewriter
 
 import java.nio.file.Path
-import ev3dev4s.scala2measure.LedIntensity
-import ev3dev4s.scala2measure.Conversions._
 
 /**
  *
@@ -14,7 +14,7 @@ import ev3dev4s.scala2measure.Conversions._
 
 sealed case class Ev3Led(side: Int) extends AutoCloseable {
 
-  import ev3dev4s.actuators.Ev3Led.{Color, brightest, darkest, Off, Red, Green, Yellow}
+  import ev3dev4s.actuators.Ev3Led.{Color, Off, Red, Green, Yellow} // brightest, darkest
 
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
