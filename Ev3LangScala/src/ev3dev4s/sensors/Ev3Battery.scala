@@ -18,7 +18,7 @@ object Ev3Battery extends AutoCloseable {
   private lazy val currentRereader: ChannelRereader = ChannelRereader(Path.of(batteryDir.getAbsolutePath, "current_now"))
 
   def readMicrovolts(): Microvolts = voltageRereader.readAsciiInt().microvolts
-
+ 
   def readMicoramps(): Int = currentRereader.readString().toInt
 
   override def close(): Unit = {
@@ -26,5 +26,3 @@ object Ev3Battery extends AutoCloseable {
     voltageRereader.close()
   }
 }
-
-

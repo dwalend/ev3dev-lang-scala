@@ -41,7 +41,7 @@ object JarRunner {
   }
 
   @tailrec
-  def runIt(jarFile:Path,className:String):Unit = {
+  def runIt(jarFile: Path, className: String): Unit = {
     try {
       Log.log(s"Start run() of $className from $jarFile")
       val classLoader = new URLClassLoader(Array(jarFile.toUri.toURL))
@@ -49,14 +49,14 @@ object JarRunner {
     }
     catch {
       case x: Throwable =>
-        Log.log("Caught in top-level",x)
+        Log.log("Caught in top-level", x)
         MotorPortScanner.stopAllMotors()
         Ev3Led.writeBothRed()
         Lcd.clear()
         x.getMessage.grouped(11).take(3).zipWithIndex.foreach { chunk =>
           Lcd.set(chunk._2, chunk._1)
         }
-        Lcd.set(3,"Push Button")
+        Lcd.set(3, "Push Button")
         Lcd.flush()
         Sound.playTone(55.Hz, 200.milliseconds)
         Ev3KeyPad.blockUntilAnyKey()

@@ -13,19 +13,19 @@ import ev3dev4s.sysfs.UnpluggedException
 object Gyroscope {
 
   private var sensors: Map[SensorPort, Ev3Gyroscope] = _
-  private def scanSensors():Unit = {
+
+  private def scanSensors(): Unit = {
     sensors = SensorPortScanner.scanSensors.collect {
       case (port: SensorPort, sensor: Ev3Gyroscope) => port -> sensor
     }
   }
+
   scanSensors()
 
-  def readHeading(port: SensorPort): Degrees = handleUnplugged[Degrees](sensors(port).headingMode().readHeading(),scanSensors)
+  def readHeading(port: SensorPort): Degrees = handleUnplugged[Degrees](sensors(port).headingMode().readHeading(), scanSensors)
 
-  def reset(port: SensorPort): Unit = handleUnplugged[Unit](sensors(port).headingMode().zero(),scanSensors)
+  def reset(port: SensorPort): Unit = handleUnplugged[Unit](sensors(port).headingMode().zero(), scanSensors)
 
-  def setHeading(port: SensorPort,heading:Degrees): Unit = handleUnplugged[Unit](sensors(port).headingMode().setHeading(heading),scanSensors)
+  def setHeading(port: SensorPort, heading: Degrees): Unit = handleUnplugged[Unit](sensors(port).headingMode().setHeading(heading), scanSensors)
 
 }
-
-  

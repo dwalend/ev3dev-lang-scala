@@ -35,6 +35,7 @@ object Ev3LedExample {
         Thread.sleep(10)
       }
     }
+
     Ev3System.leftLed.writeYellow()
     Ev3System.rightLed.writeYellow()
   }

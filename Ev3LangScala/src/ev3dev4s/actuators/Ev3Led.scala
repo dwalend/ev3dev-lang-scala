@@ -12,8 +12,9 @@ import ev3dev4s.scala2measure.Conversions._
  * @author David Walend
  */
 
-sealed case class Ev3Led(side:Int) extends AutoCloseable {
-  import ev3dev4s.actuators.Ev3Led.{Color,brightest, darkest,Off,Red,Green,Yellow}
+sealed case class Ev3Led(side: Int) extends AutoCloseable {
+
+  import ev3dev4s.actuators.Ev3Led.{Color, brightest, darkest, Off, Red, Green, Yellow}
 
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
@@ -21,31 +22,34 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
   //noinspection SpellCheckingInspection
   val greenName = s"leds/led$side:green:brick-status/brightness"
 
-  private val redPath = Path.of (rootName, redName)
-  private val greenPath = Path.of (rootName, greenName)
+  private val redPath = Path.of(rootName, redName)
+  private val greenPath = Path.of(rootName, greenName)
 
-  private val redWriter: ChannelRewriter = ChannelRewriter (redPath)
-  private val greenWriter: ChannelRewriter = ChannelRewriter (greenPath)
+  private val redWriter: ChannelRewriter = ChannelRewriter(redPath)
+  private val greenWriter: ChannelRewriter = ChannelRewriter(greenPath)
   //todo add readers to read brightness from the same paths maybe someday - it will work, not sure if it has any value
 
-  def writeBrightness (red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
-    redWriter.writeAsciiInt (red.round)
-    greenWriter.writeAsciiInt (green.round)
+  def writeBrightness(red: LedIntensity, green: LedIntensity): Unit = this.synchronized {
+    redWriter.writeAsciiInt(red.round)
+    greenWriter.writeAsciiInt(green.round)
   }
 
-  override def close (): Unit = this.synchronized {
-    redWriter.close ()
-    greenWriter.close ()
+  override def close(): Unit = this.synchronized {
+    redWriter.close()
+    greenWriter.close()
   }
 
-  def writeColor(color:Color) = {
-    writeBrightness(color.red,color.green)
+  def writeColor(color: Color): Unit = {
+    writeBrightness(color.red, color.green)
   }
 
-  def writeOff (): Unit = writeColor(Off)
-  def writeRed (): Unit = writeColor(Red)
-  def writeGreen (): Unit = writeColor(Green)
-  def writeYellow (): Unit = writeColor(Yellow)
+  def writeOff(): Unit = writeColor(Off)
+
+  def writeRed(): Unit = writeColor(Red)
+
+  def writeGreen(): Unit = writeColor(Green)
+
+  def writeYellow(): Unit = writeColor(Yellow)
 }
 
 object Ev3Led {
@@ -57,10 +61,10 @@ object Ev3Led {
 
   case class Color(red: LedIntensity, green: LedIntensity)
 
-  val Red: Color = Color(brightest,darkest)
-  val Yellow: Color = Color(brightest,brightest)
-  val Green: Color = Color(darkest,brightest)
-  val Off: Color = Color(darkest,darkest)
+  val Red: Color = Color(brightest, darkest)
+  val Yellow: Color = Color(brightest, brightest)
+  val Green: Color = Color(darkest, brightest)
+  val Off: Color = Color(darkest, darkest)
 
   def writeBothGreen(): Unit = writeBothColor(Green)
 
@@ -81,17 +85,17 @@ object Ev3Led {
    * Yellow Red
    * Yellow Off
    * */
-  def writeBothColor(leftColor:Color,rightColor:Color):Unit = {
+  def writeBothColor(leftColor: Color, rightColor: Color): Unit = {
     Left.writeColor(leftColor)
     Right.writeColor(rightColor)
   }
 
-  def writeBothColor(colors:(Color,Color)): Unit = {
+  def writeBothColor(colors: (Color, Color)): Unit = {
     Left.writeColor(colors._1)
     Right.writeColor(colors._2)
   }
 
-  def writeBothColor(color:Color):Unit = {
-    writeBothColor(color,color)
+  def writeBothColor(color: Color): Unit = {
+    writeBothColor(color, color)
   }
 }

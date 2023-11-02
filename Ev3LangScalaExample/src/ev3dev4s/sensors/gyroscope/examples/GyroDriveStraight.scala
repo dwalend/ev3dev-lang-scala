@@ -14,6 +14,7 @@ import ev3dev4s.scala2measure.DutyCycle
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnusedSymbol
 
 object GyroDriveStraight extends Runnable {
 
@@ -84,14 +85,15 @@ object GyroDriveStraight extends Runnable {
     while (keepGoing()) {
       val heading: Degrees = Robot.headingMode.readHeading()
       val steerAdjust: DutyCycle =
-        if (heading == goalHeading) 0.dutyCyclePercent
-        else {
+        if (heading == goalHeading) {
+          0.dutyCyclePercent
+        } else {
           //about 1% per degree off seems good - but it should really care about wheel base width
           val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).dutyCyclePercent
-          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) proportionalSteerAdjust
-          else if (proportionalSteerAdjust == 0.dutyCyclePercent) 0.dutyCyclePercent
-          else if (proportionalSteerAdjust > 0.dutyCyclePercent) 1.dutyCyclePercent
-          else -1.dutyCyclePercent
+          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) { proportionalSteerAdjust }
+          else if (proportionalSteerAdjust == 0.dutyCyclePercent) { 0.dutyCyclePercent }
+          else if (proportionalSteerAdjust > 0.dutyCyclePercent) { 1.dutyCyclePercent }
+          else { -1.dutyCyclePercent }
         }
 
       def dutyCyclesFromAdjust(): (DutyCycle, DutyCycle) = {
@@ -268,6 +270,7 @@ object GyroDriveStraight extends Runnable {
   */
 }
 
+//noinspection ScalaUnusedSymbol
 object Robot {
 
   val driveWheelDiameter = 11.studs
@@ -307,7 +310,3 @@ object Robot {
     rightMotor.writeCommand(MotorCommand.STOP)
   }
 }
-
-
-
-

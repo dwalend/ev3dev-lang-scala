@@ -42,19 +42,23 @@ object AllGadgetsExample extends Runnable {
         (sensor: Sensor[_]) =>
           try {
             sensor match {
-              case gyroscope: Ev3Gyroscope =>
+              case gyroscope: Ev3Gyroscope => {
                 val number = gyroscope.currentMode.collect {
                   case m: gyroscope.HeadingMode => m.readHeading()
                 }
                 println(s"sensor $sensor $number")
-              case colorSensor: Ev3ColorSensor =>
+              }
+              case colorSensor: Ev3ColorSensor => {
                 val number = colorSensor.currentMode.collect {
                   case m: colorSensor.ReflectMode => m.readReflect()
                 }
                 println(s"sensor $sensor $number")
-              case touchSensor: Ev3TouchSensor => println(s"sensor $sensor ${
-                touchSensor.readTouch()
-              }")
+              }
+              case touchSensor: Ev3TouchSensor => {
+                println(s"sensor $sensor ${
+                  touchSensor.readTouch()
+                }")
+              }
             }
           }
           catch {

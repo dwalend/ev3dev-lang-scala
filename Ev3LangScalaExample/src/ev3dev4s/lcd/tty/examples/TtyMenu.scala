@@ -10,7 +10,7 @@ import ev3dev4s.sensors.Ev3KeyPad
  * @author David Walend
  * @since v0.0.0
  */
-case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:TtyMenu => Unit) extends Runnable {
+case class TtyMenu(actions: Array[_ <: TtyMenuAction], setLcd: TtyMenu => Unit) extends Runnable {
 
   @volatile var index = 0
   @volatile var keepGoing = true
@@ -51,14 +51,20 @@ case class TtyMenu(actions:Array[_ <: TtyMenuAction],setLcd:TtyMenu => Unit) ext
     keepGoing = false
 
   def decrementMenu(): Unit = {
-    index = if (index == 0) actions.length - 1
-    else index - 1
+    index = if (index == 0) {
+      actions.length - 1
+    } else {
+      index - 1
+    }
     drawScreen()
   }
 
   def incrementMenu(): Unit = {
-    index = if (index == actions.length - 1) 0
-    else index + 1
+    index = if (index == actions.length - 1) {
+      0
+    } else {
+      index + 1
+    }
     drawScreen()
   }
 
@@ -120,7 +126,7 @@ object TtyMenu extends Runnable {
   }
 }
 
-case class LedAction(aLabel:String,action:() => Unit) extends TtyMenuAction {
+case class LedAction(aLabel: String, action: () => Unit) extends TtyMenuAction {
   override def label: String = aLabel
 
   override def run(menu: TtyMenu): Unit =

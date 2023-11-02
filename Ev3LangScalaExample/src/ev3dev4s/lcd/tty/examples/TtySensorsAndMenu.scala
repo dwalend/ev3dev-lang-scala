@@ -62,8 +62,8 @@ object TtySensorsAndMenu extends Runnable {
   val gyroscope: Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst { case g: Ev3Gyroscope => g }.get
 
   def setSensorRows(): Unit = {
-    Lcd.set(0, s"${elapsedTime}s", Lcd.RIGHT)
-    val heading: String = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading().round}d")
+    Lcd.set(0, s"${ elapsedTime }s", Lcd.RIGHT)
+    val heading: String = UnpluggedException.safeString(() => s"${ gyroscope.headingMode().readHeading().round }d")
     Lcd.set(0, heading, Lcd.LEFT)
   }
 

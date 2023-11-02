@@ -16,7 +16,9 @@ object Time {
     val deadline: Float = now() + milliseconds.v
     System.gc()
     val sleepTime: Float = deadline - now()
-    if (sleepTime > 0) Thread.sleep(sleepTime.round)
+    if (sleepTime > 0) {
+      Thread.sleep(sleepTime.round)
+    }
   }
 
   def pause(): Unit =

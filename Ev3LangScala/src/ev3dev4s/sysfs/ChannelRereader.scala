@@ -17,9 +17,9 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
 
   private def readBytes(): Int = this.synchronized {
     byteBuffer.clear
-    try
+    try {
       channel.read(byteBuffer, 0)
-    catch {
+    } catch {
       case _: ClosedChannelException =>
         channel = FileChannel.open(path)
         channel.read(byteBuffer, 0)
@@ -28,12 +28,12 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
 
   def readString(): String = this.synchronized {
     val n = readBytes()
-    if ((n == -1) || (n == 0)) ""
-    else if (n < -1) throw new IOException("Unexpected read byte count of " + n + " while reading " + path)
+    if ((n == -1) || (n == 0)) { "" }
+    else if (n < -1) { throw new IOException("Unexpected read byte count of " + n + " while reading " + path) }
     else {
       val bytes: Array[Byte] = byteBuffer.array
-      if (bytes(n - 1) == '\n') new String(bytes, 0, n - 1, StandardCharsets.UTF_8)
-      else new String(bytes, 0, n, StandardCharsets.UTF_8)
+      if (bytes(n - 1) == '\n') { new String(bytes, 0, n - 1, StandardCharsets.UTF_8) }
+      else { new String(bytes, 0, n, StandardCharsets.UTF_8) }
     }
   }
 
@@ -46,35 +46,36 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
 object ChannelRereader {
   def readString(path: Path, bufferLength: Int = 32): String = {
     val reader = ChannelRereader(path, bufferLength)
-    try
+    try {
       reader.readString()
-    finally
+    } finally {
       reader.close()
+    }
   }
 
   def readAsciiInt(path: Path, bufferLength: Int = 32): Int = {
     val reader = ChannelRereader(path, bufferLength)
-    try
+    try {
       reader.readAsciiInt()
-    finally
+    } finally {
       reader.close()
+    }
   }
 }
-
 
 /*
 ev3.replay.CalibrateGyro$@1353651 finished in 266 milliseconds
 java.nio.channels.ClosedChannelException
-	at java.base/sun.nio.ch.FileChannelImpl.ensureOpen(FileChannelImpl.java:150)
-	at java.base/sun.nio.ch.FileChannelImpl.read(FileChannelImpl.java:790)
-	at ev3dev4s.sysfs.ChannelRereader.readString(ChannelRereader.scala:21)
-	at ev3dev4s.sysfs.ChannelRereader.readAsciiInt(ChannelRereader.scala:31)
-	at ev3dev4s.sensors.Ev3Gyroscope$HeadingMode.readRawHeading(Ev3Gyroscope.scala:41)
-	at ev3dev4s.sensors.Ev3Gyroscope$HeadingMode.readHeading(Ev3Gyroscope.scala:45)
-	at ev3.replay.Robot$.readHeading(Robot.scala:94)
-	at ev3.replay.WileyMenu.drawScreen(WileyMenu.scala:78)
-	at ev3.replay.WileyMenu.run(WileyMenu.scala:31)
-	at ev3.replay.Sorties$.run(Sorties.scala:43)
-	at ev3dev4s.JarRunner$.main(JarRunner.scala:27)
-	at ev3dev4s.JarRunner.main(JarRunner.scala)
+at java.base/sun.nio.ch.FileChannelImpl.ensureOpen(FileChannelImpl.java:150)
+at java.base/sun.nio.ch.FileChannelImpl.read(FileChannelImpl.java:790)
+at ev3dev4s.sysfs.ChannelRereader.readString(ChannelRereader.scala:21)
+at ev3dev4s.sysfs.ChannelRereader.readAsciiInt(ChannelRereader.scala:31)
+at ev3dev4s.sensors.Ev3Gyroscope$HeadingMode.readRawHeading(Ev3Gyroscope.scala:41)
+at ev3dev4s.sensors.Ev3Gyroscope$HeadingMode.readHeading(Ev3Gyroscope.scala:45)
+at ev3.replay.Robot$.readHeading(Robot.scala:94)
+at ev3.replay.WileyMenu.drawScreen(WileyMenu.scala:78)
+at ev3.replay.WileyMenu.run(WileyMenu.scala:31)
+at ev3.replay.Sorties$.run(Sorties.scala:43)
+at ev3dev4s.JarRunner$.main(JarRunner.scala:27)
+at ev3dev4s.JarRunner.main(JarRunner.scala)
 */

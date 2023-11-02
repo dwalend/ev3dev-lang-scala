@@ -12,8 +12,8 @@ import scala.util.control.NonFatal
  */
 package object lego {
 
-  private[lego] def handleUnplugged[A](block: => A, scan:() => Unit): A = {
-    def scanAndTryAgain(t:Throwable):A = {
+  private[lego] def handleUnplugged[A](block: => A, scan: () => Unit): A = {
+    def scanAndTryAgain(t: Throwable): A = {
       scan()
       try {
         block
