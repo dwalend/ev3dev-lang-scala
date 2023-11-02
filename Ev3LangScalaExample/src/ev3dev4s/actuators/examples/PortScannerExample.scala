@@ -1,7 +1,8 @@
 package ev3dev4s.actuators.examples
 
 import ev3dev4s.Ev3System
-
+import ev3dev4s.sensors.Sensor
+import ev3dev4s.sysfs.{ChannelRereader, GadgetPortScanner, Port}
 
 /**
  *
@@ -10,11 +11,9 @@ import ev3dev4s.Ev3System
  * @since v0.0.0
  */
 object PortScannerExample {
-  def main(args: Array[String]): Unit = {
-    val sensors = Ev3System.portsToSensors
-    println(sensors.mkString("\n"))
 
-    val motors = Ev3System.portsToMotors
-    println(motors.mkString("\n"))
+  def main(args: Array[String]): Unit = {
+    println(Ev3System.describeSensors())
+    println(Ev3System.describeMotors())
   }
 }

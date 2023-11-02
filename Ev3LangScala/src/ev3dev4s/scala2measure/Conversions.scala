@@ -2,6 +2,7 @@ package ev3dev4s.scala2measure
 
 object Conversions {
 
+  //noinspection ScalaUnusedSymbol
   implicit class IntConversions(i: Int) {
     def degrees = new Degrees(i.toFloat)
 
@@ -30,6 +31,7 @@ object Conversions {
     def Hz = new Hertz(i.toFloat)
   }
 
+  //noinspection ScalaUnusedSymbol
   implicit class FloatConversions(f: Float) {
     def degrees = new Degrees(f)
 

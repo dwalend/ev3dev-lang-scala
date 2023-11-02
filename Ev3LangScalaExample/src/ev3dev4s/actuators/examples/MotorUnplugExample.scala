@@ -14,16 +14,17 @@ object MotorUnplugExample {
 
   def main(args: Array[String]): Unit = {
 
-    val firstMotor: Motor = Ev3System.portsToMotors.values.head
-    println(firstMotor)
+    // val firstMotor: Motor = Ev3System.portsToMotors.values.head
+    val motorA: Motor = Ev3System.motorA()
+    println(motorA)
 
     //unplug the motor, plug it back in, to see the behavior
     while (true) {
       Thread.sleep(1000)
       try {
-        //println(firstMotor.readPosition())
-        firstMotor.brake()
-        println("firstMotor.brake()")
+        // println(firstMotor.readPosition())
+        motorA.brake()
+        println("just ran firstMotor.brake()")
       }
       catch {
         case x: UnpluggedException => x.printStackTrace()

@@ -15,7 +15,7 @@ object MotorExample {
 
   def main(args: Array[String]): Unit = {
 
-    val firstMotor: Motor = Ev3System.portsToMotors.values.head
+    val firstMotor: Motor = Ev3System.motorA()
     println(firstMotor)
     println(firstMotor.readPosition())
 
