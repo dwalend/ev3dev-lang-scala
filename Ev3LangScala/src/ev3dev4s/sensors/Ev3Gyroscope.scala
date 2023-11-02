@@ -1,14 +1,15 @@
 package ev3dev4s.sensors
 
+import java.io.File
+import java.nio.file.Path
+import scala.collection.immutable.ArraySeq
+
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
 import ev3dev4s.scala2measure.Degrees
 import ev3dev4s.scala2measure.Conversions._
-
-import java.io.File
-import java.nio.file.Path
-import scala.collection.immutable.ArraySeq
+import ev3dev4s.Ev3System
 
 /**
  *
@@ -88,19 +89,17 @@ case class Ev3Gyroscope(override val port: SensorPort, initialSensorDir: Option[
   /* todo
 GYRO-CAL - does not work. Not sure what it does do, but it doesn't recalibrate the gyro
 
-GYRO-RATE	Rotational Speed	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [22]
-GYRO-FAS	Rotational Speed	none	0	1	value0: Rotational Speed (-1464 to 1535) [22]
-GYRO-G&A [23]	Angle and Rotational Speed	none	0	2
+GYRO-RATE || Rotational Speed || d/s (degrees per second) || 0 || 1 || value0: Rotational Speed (-440 to 440) [22]
+GYRO-FAS || Rotational Speed || none || 0 || 1 || value0: Rotational Speed (-1464 to 1535) [22]
+GYRO-G&A [23] || Angle and Rotational Speed || none || 0 || 2
 value0: Angle (-32768 to 32767) [21] [22]
 
 value1: Rotational Speed (-440 to 440) [22]
 
 
-TILT-RATE [24]	Rotational Speed (2nd axis)	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [25]
-TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767) [25]
+TILT-RATE [24] || Rotational Speed (2nd axis) || d/s (degrees per second) || 0 || 1 || value0: Rotational Speed (-440 to 440) [25]
+TILT-ANG [24] || Angle (2nd axis) || deg (degrees) || 0 || 1 || value0: Angle (-32768 to 32767) [25]
  */
-
-  import ev3dev4s.Ev3System
 
   val ledProgress: Seq[() => Any] = Seq(
     () => {

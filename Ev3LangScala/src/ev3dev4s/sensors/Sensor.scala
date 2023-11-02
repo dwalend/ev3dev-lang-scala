@@ -62,7 +62,6 @@ object MultiModeSensorFS {
     }
   }
 
-
   case class Value012SensorFS(sensorDir: Path) extends MultiModeSensorFS {
     private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
     private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))

@@ -14,7 +14,6 @@ import ev3dev4s.Log
 
 /**
  *
- *
  * @author David Walend
  * @since v0.0.0
  */
@@ -44,7 +43,9 @@ private[actuators] case class MotorFS(motorDir: Path) extends GadgetFS {
     stopActionWriter.writeString(command.command)
 
   def writeDutyCycle(dutyCycle: DutyCycle): Unit = {
-    if (dutyCycle.abs > 100.dutyCyclePercent) Log.log(s"abs duty cycle $dutyCycle is greater than ${100.dutyCyclePercent}")
+    if (dutyCycle.abs > 100.dutyCyclePercent) {
+      Log.log(s"abs duty cycle $dutyCycle is greater than ${ 100.dutyCyclePercent }")
+    }
     dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
   }
 
@@ -73,7 +74,7 @@ private[actuators] case class MotorFS(motorDir: Path) extends GadgetFS {
 
 
   /**
-   * @return position in degrees 
+   * @return position in degrees
    */
   def readPosition(): Degrees =
     positionReader.readAsciiInt().degrees

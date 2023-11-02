@@ -29,8 +29,8 @@ abstract class GadgetPortScanner[P <: Port](gadgetDir: File, ports: Array[P]) {
       scanGadgetDirs.get(port)
         .map { dir =>
           val foundDriverName = ChannelRereader.readString(dir.resolve("driver_name"))
-          if (foundDriverName == expectedDriverName) dir
-          else throw WrongGadgetInPortException(port, expectedDriverName, foundDriverName)
+          if (foundDriverName == expectedDriverName) { dir }
+          else { throw WrongGadgetInPortException(port, expectedDriverName, foundDriverName) }
         }
     }
     catch {

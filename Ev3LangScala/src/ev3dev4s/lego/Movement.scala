@@ -24,7 +24,7 @@ object Movement {
   def leftMotor: Option[Motor] = leftMotorPort.flatMap(Motors.motors.get(_))
 
   def rightMotor: Option[Motor] = rightMotorPort.flatMap(Motors.motors.get(_))
-  
+
   /**
    * Turn the pair of motors the number of degrees at the same speed.
    *
@@ -62,8 +62,11 @@ object Movement {
    * @param rightSpeed   Right motor speed. Negative is backwards.
    */
   def move(motorDegrees: Degrees, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = handleUnpluggedMotor {
-    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
-    else (rightMotor, leftMotor)
+    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) {
+      (leftMotor, rightMotor)
+    } else {
+      (rightMotor, leftMotor)
+    }
     leftMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, leftSpeed)))
     rightMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, rightSpeed)))
     leftMotor.foreach(_.writeSpeed(leftSpeed))
@@ -83,8 +86,11 @@ object Movement {
    * @param rightSpeed Right motor speed. Negative is backwards.
    */
   def moveDuration(duration: MilliSeconds, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = handleUnpluggedMotor {
-    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
-    else (rightMotor, leftMotor)
+    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) {
+      (leftMotor, rightMotor)
+    } else {
+      (rightMotor, leftMotor)
+    }
     leftMotor.foreach(_.writeDuration(duration))
     rightMotor.foreach(_.writeDuration(duration))
     leftMotor.foreach(_.writeSpeed(leftSpeed))
@@ -96,8 +102,11 @@ object Movement {
     notWatched.foreach(_.writeCommand(MotorCommand.STOP))
   }
 
-  private def steerMotors(steer: Percent): (Option[Motor], Option[Motor]) = if (steer < 0.percent) (leftMotor, rightMotor)
-  else (rightMotor, leftMotor)
+  private def steerMotors(steer: Percent): (Option[Motor], Option[Motor]) = if (steer < 0.percent) {
+    (leftMotor, rightMotor)
+  } else {
+    (rightMotor, leftMotor)
+  }
 
   private def innerMotorProportion(steer: Percent): Unitless =
     ((100f - 2f * steer.abs.v) / 100f).unitless
@@ -140,4 +149,3 @@ object Movement {
     rightMotor.foreach(_.writeStopAction(stopCommand))
   }
 }
-  

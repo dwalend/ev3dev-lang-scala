@@ -16,6 +16,7 @@ import ev3dev4s.scala2measure.MilliSeconds
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnusedSymbol
 sealed abstract class Motor(port: MotorPort, motorFS: Option[MotorFS]) extends Gadget(port, motorFS) {
 
   def writeCommand(command: MotorCommand): Unit = checkPort(_.writeCommand(command))
@@ -29,7 +30,7 @@ sealed abstract class Motor(port: MotorPort, motorFS: Option[MotorFS]) extends G
   def observedMaxSpeed: DegreesPerSecond
 
   def writeSpeed(speed: DegreesPerSecond): Unit = {
-    val safeSpeed = if (speed.abs < maxSpeed) speed
+    val safeSpeed = if (speed.abs < maxSpeed) { speed }
     else {
       Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
       (speed.sign * maxSpeed).degreesPerSecond

@@ -6,6 +6,7 @@ import java.nio.file.Path
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnusedSymbol
 case class Ev3InfraredSensor(override val port: SensorPort, initialSensorDir: Option[Path])
   extends MultiModeSensor(port, initialSensorDir.map(MultiModeSensorFS.Value012SensorFS)) { //todo all eight channels
 

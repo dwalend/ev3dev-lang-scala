@@ -1,5 +1,6 @@
 package ev3dev4s.sysfs
 
+import java.io.ByteArrayOutputStream
 import ev3dev4s.Log
 
 object Shell {
@@ -15,7 +16,6 @@ object Shell {
     val p: Process = Runtime.getRuntime.exec(command)
     p.waitFor
 
-    import java.io.ByteArrayOutputStream
     val output = new ByteArrayOutputStream
     val buffer = new Array[Byte](1024)
     var length = 0

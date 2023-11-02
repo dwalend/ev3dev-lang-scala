@@ -1,16 +1,17 @@
 package ev3dev4s.examples
 
-import ev3dev4s.{Ev3System, sensors}
-import ev3dev4s.actuators.{Ev3Led, Motor}
-import ev3dev4s.sensors.{Ev3ColorSensor, Ev3Gyroscope, Ev3TouchSensor, Mode, Sensor}
+import ev3dev4s.Ev3System
+import ev3dev4s.actuators.Motor
+import ev3dev4s.sensors.{Ev3ColorSensor, Ev3Gyroscope, Ev3TouchSensor, Sensor}
 import ev3dev4s.sysfs.UnpluggedException
 
 /**
- * Excercise all the gadgets on the robot - in a loop
+ * Exercise all the gadgets on the robot - in a loop
  *
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection RedundantBlock
 object AllGadgetsExample extends Runnable {
   override def run(): Unit = {
     Ev3System.leftLed.writeOff()
@@ -29,17 +30,15 @@ object AllGadgetsExample extends Runnable {
     while (true) {
       motors.foreach {
         (motor: Motor) =>
+          //noinspection ScalaUnusedSymbol
           try {
-            println(s"motor $motor ${
-              motor.readPosition()
-            }")
+            println(s"motor $motor ${ motor.readPosition() }")
           }
-          catch {
-            case ux: UnpluggedException => println(s"motor $motor unplugged")
-          }
+          catch { case _ux: UnpluggedException => println(s"motor $motor unplugged") }
       }
       sensors.foreach {
         (sensor: Sensor[_]) =>
+          //noinspection ScalaUnusedSymbol
           try {
             sensor match {
               case gyroscope: Ev3Gyroscope => {
@@ -55,15 +54,11 @@ object AllGadgetsExample extends Runnable {
                 println(s"sensor $sensor $number")
               }
               case touchSensor: Ev3TouchSensor => {
-                println(s"sensor $sensor ${
-                  touchSensor.readTouch()
-                }")
+                println(s"sensor $sensor ${ touchSensor.readTouch() }")
               }
             }
           }
-          catch {
-            case ux: UnpluggedException => println(s"sensor $sensor unplugged")
-          }
+          catch { case ux: UnpluggedException => println(s"sensor $sensor unplugged") }
 
       }
       System.gc()
