@@ -13,54 +13,41 @@ import ev3dev4s.sysfs.UnpluggedException
  */
 //noinspection RedundantBlock
 object AllGadgetsExample extends Runnable {
+  def describeMotors(): Unit = {
+    val motors: Iterable[Motor] = Ev3System.portsToMotors.values
+    motors.foreach { (motor: Motor) => motor.howru() }
+  }
+
+  def initializeSensors(): Unit = {
+    val sensors: Iterable[Sensor[_]] = Ev3System.portsToSensors.values
+    sensors.collect { case gyroscope: Ev3Gyroscope => gyroscope.headingMode() }
+    sensors.collect { case colorSensor: Ev3ColorSensor => colorSensor.reflectMode() }
+  }
+
+  def describeSensors(): Unit = {
+    val sensors: Iterable[Sensor[_]] = Ev3System.portsToSensors.values
+    sensors.foreach {
+      (sensor: Sensor[_]) => {
+        try {
+          sensor match {
+            case gyroscope: Ev3Gyroscope => { gyroscope.howru() }
+            case colorSensor: Ev3ColorSensor => { colorSensor.howru() }
+            case touchSensor: Ev3TouchSensor => { touchSensor.howru() }
+          }
+        }
+        catch { case ux: UnpluggedException => println(s"sensor $sensor unplugged") }
+      }
+    }
+  }
+
   override def run(): Unit = {
     Ev3System.leftLed.writeOff()
     Ev3System.rightLed.writeOff()
-
-    val motors: Iterable[Motor] = Ev3System.portsToMotors.values
-    val sensors: Iterable[Sensor[_]] = Ev3System.portsToSensors.values
-
-    sensors.collect {
-      case gyroscope: Ev3Gyroscope => gyroscope.headingMode()
-    }
-    sensors.collect {
-      case colorSensor: Ev3ColorSensor => colorSensor.reflectMode()
-    }
+    initializeSensors()
 
     while (true) {
-      motors.foreach {
-        (motor: Motor) =>
-          //noinspection ScalaUnusedSymbol
-          try {
-            println(s"motor $motor ${ motor.readPosition() }")
-          }
-          catch { case _ux: UnpluggedException => println(s"motor $motor unplugged") }
-      }
-      sensors.foreach {
-        (sensor: Sensor[_]) =>
-          //noinspection ScalaUnusedSymbol
-          try {
-            sensor match {
-              case gyroscope: Ev3Gyroscope => {
-                val number = gyroscope.currentMode.collect {
-                  case m: gyroscope.HeadingMode => m.readHeading()
-                }
-                println(s"sensor $sensor $number")
-              }
-              case colorSensor: Ev3ColorSensor => {
-                val number = colorSensor.currentMode.collect {
-                  case m: colorSensor.ReflectMode => m.readReflect()
-                }
-                println(s"sensor $sensor $number")
-              }
-              case touchSensor: Ev3TouchSensor => {
-                println(s"sensor $sensor ${ touchSensor.readTouch() }")
-              }
-            }
-          }
-          catch { case ux: UnpluggedException => println(s"sensor $sensor unplugged") }
-
-      }
+      describeSensors()
+      describeMotors()
       System.gc()
       Thread.sleep(1000)
       println()

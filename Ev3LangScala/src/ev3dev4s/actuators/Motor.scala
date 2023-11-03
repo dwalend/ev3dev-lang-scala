@@ -1,9 +1,7 @@
 package ev3dev4s.actuators
 
-import ev3dev4s.sysfs.Gadget
-
+import ev3dev4s.sysfs.{Gadget, UnpluggedException}
 import ev3dev4s.Log
-
 import ev3dev4s.scala2measure.DutyCycle
 import ev3dev4s.scala2measure.DegreesPerSecond
 import ev3dev4s.scala2measure.Conversions._
@@ -18,6 +16,13 @@ import ev3dev4s.scala2measure.MilliSeconds
  */
 //noinspection ScalaUnusedSymbol
 sealed abstract class Motor(port: MotorPort, motorFS: Option[MotorFS]) extends Gadget(port, motorFS) {
+
+  def howru(): Unit = {
+    try {
+      println(s"motor $port position ${ readPosition() } state ${ readState().mkString(", ") }")
+    }
+    catch { case _ux: UnpluggedException => println(s"motor $port unplugged") }
+  }
 
   def writeCommand(command: MotorCommand): Unit = checkPort(_.writeCommand(command))
 

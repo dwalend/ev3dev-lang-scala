@@ -6,19 +6,21 @@ import os.{CommandResult, Path}
 
 import $ivy.`com.github.mwiede:jsch:0.2.9`
 import $ivy.`org.apache.ant:ant-jsch:1.10.13`
-import org.apache.tools.ant.taskdefs.optional.ssh.{Scp,SSHExec}
+import org.apache.tools.ant.taskdefs.optional.ssh.{Scp, SSHExec}
 import org.apache.tools.ant.Project
 
 object Shared {
   val scalacOptions: Seq[String] = Seq("-deprecation")
-  val scalaVersion = "2.13.12"//"3.3.0"
+  val scalaVersion = "2.13.12" //"3.3.0"
   val javaVersion = "11.0.10"
 
   val ev3UserName = "robot"
-  def ev3Password:String = System.getProperty("ev3Password") //todo do something clever to allow key files
-  def ev3Hostname = s"${Option(System.getProperty("ev3Hostname")).getOrElse("ev3dev.local")}"
 
-  def scpFile(fromLocalFile:Path, toRemoteFile:String):Unit = {
+  def ev3Password: String = System.getProperty("ev3Password") // TODO: use env vars
+
+  def ev3Hostname = s"${ Option(System.getProperty("ev3Hostname")).getOrElse("ev3dev.local") }"
+
+  def scpFile(fromLocalFile: Path, toRemoteFile: String): Unit = {
     val scp = new Scp()
     scp.init()
     scp.setProject(new Project())
@@ -34,11 +36,11 @@ object Shared {
    * Copy a jar file to the ev3 via scp - and write the expected size in another file (in hopes of detecting that the
    * jar file is complete.)
    */
-  def scpJar(artifactName:String,jarPath: Path): CommandResult = {
-    scpFile(jarPath,s"$artifactName.jar")
+  def scpJar(artifactName: String, jarPath: Path): CommandResult = {
+    scpFile(jarPath, s"$artifactName.jar")
 
     //todo progress or error messages?
-    val result = CommandResult(Seq("scpJar",artifactName,jarPath.toString()),0, Seq.empty)
+    val result = CommandResult(Seq("scpJar", artifactName, jarPath.toString()), 0, Seq.empty)
 
     result
   }
@@ -46,17 +48,17 @@ object Shared {
   /**
    * Copy an assembly file - a jar file that includes all needed dependencies - to the Ev3
    */
-  def scpAssembly(artifactName:String,assemblyPath: Path): CommandResult = {
+  def scpAssembly(artifactName: String, assemblyPath: Path): CommandResult = {
 
-    scpFile(assemblyPath,s"$artifactName.jar")
+    scpFile(assemblyPath, s"$artifactName.jar")
 
     //todo progress or error messages?
-    val result = CommandResult(Seq("scpJar",artifactName,assemblyPath.toString()),0, Seq.empty)
+    val result = CommandResult(Seq("scpJar", artifactName, assemblyPath.toString()), 0, Seq.empty)
 
     result
   }
 
-  def scpBash(fromBashFile:Path,toBashFile:String):CommandResult = {
+  def scpBash(fromBashFile: Path, toBashFile: String): CommandResult = {
     scpFile(fromBashFile, toBashFile)
 
     val ssh = new SSHExec()
@@ -70,7 +72,7 @@ object Shared {
 
     //todo progress or error messages?
 
-    val result = CommandResult(Seq("scpBash",fromBashFile.toString(),toBashFile),0, Seq.empty)
+    val result = CommandResult(Seq("scpBash", fromBashFile.toString(), toBashFile), 0, Seq.empty)
 
     result
 
@@ -82,12 +84,13 @@ object Ev3LangScala extends ScalaModule {
   override def artifactName: T[String] = "Ev3LangScala"
 
   def scalaVersion = Shared.scalaVersion
+
   def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
 
-  def AppToRobot():Command[CommandResult] = T.command {
-    Shared.scpAssembly(artifactName(),assembly().path)
+  def AppToRobot(): Command[CommandResult] = T.command {
+    Shared.scpAssembly(artifactName(), assembly().path)
   }
 
   /**
@@ -103,19 +106,23 @@ object Ev3LangScala extends ScalaModule {
 }
 
 object Ev3LangScalaExample extends ScalaModule {
-  override def mainClass: T[Option[String]] = Some("ev3dev4s.sensors.examples.Ev3KeyPadExample")
+  override def mainClass: T[Option[String]] = Some(
+    // "ev3dev4s.sensors.examples.Ev3KeyPadExample"
+    "ev3dev4s.examples.FiveXHelloWorld"
+  )
 
   override def artifactName: T[String] = "Ev3LangScalaExample"
 
   def scalaVersion = Shared.scalaVersion
+
   def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Ev3LangScala)
 
-  def ToRobot():Command[CommandResult] = T.command {
-    Shared.scpJar(artifactName(),jar().path)
+  def ToRobot(): Command[CommandResult] = T.command {
+    Shared.scpJar(artifactName(), jar().path)
   }
 
   def DoItToRobot() = T.command {
@@ -123,7 +130,7 @@ object Ev3LangScalaExample extends ScalaModule {
     Shared.scpBash(bashFile, "DoIt.bash")
   }
 
-  def AppToRobot(): Command[CommandResult] = T.command {
-    Shared.scpAssembly(artifactName(), assembly().path)
-  }
+  //  def AppToRobot(): Command[CommandResult] = T.command {
+  //    Shared.scpAssembly(artifactName(), assembly().path)
+  //  }
 }

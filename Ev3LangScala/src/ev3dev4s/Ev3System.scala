@@ -26,19 +26,19 @@ object Ev3System {
     Thread.sleep(duration.round.toLong)
   }
 
-  def motorC(): Motor = portsToMotors.apply(MotorPort.A)
-
   def motorA(): Motor = portsToMotors.apply(MotorPort.A)
 
   def motorB(): Motor = portsToMotors.apply(MotorPort.B)
 
+  def motorC(): Motor = portsToMotors.apply(MotorPort.C)
+
   def motorD(): Motor = portsToMotors.apply(MotorPort.D)
 
-  def leftWheel(): Motor = motorA()
+  def liftMotor(): Motor = motorA()
 
-  def rightWheel(): Motor = motorB()
+  def leftWheel(): Motor = motorB()
 
-  def liftMotor(): Motor = motorC()
+  def rightWheel(): Motor = motorC()
 
   def describeSensors(): String = {
     val sensors = Ev3System.portsToSensors

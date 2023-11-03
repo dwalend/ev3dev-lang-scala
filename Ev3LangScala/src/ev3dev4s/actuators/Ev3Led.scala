@@ -1,5 +1,6 @@
 package ev3dev4s.actuators
 
+import ev3dev4s.Log
 import ev3dev4s.scala2measure.Conversions._
 import ev3dev4s.scala2measure.LedIntensity
 import ev3dev4s.sysfs.ChannelRewriter
@@ -86,13 +87,13 @@ object Ev3Led {
    * Yellow Off
    * */
   def writeBothColor(leftColor: Color, rightColor: Color): Unit = {
+    Log.log(s"Setting LEDs to leftColor $leftColor / rightColor $rightColor")
     Left.writeColor(leftColor)
     Right.writeColor(rightColor)
   }
 
   def writeBothColor(colors: (Color, Color)): Unit = {
-    Left.writeColor(colors._1)
-    Right.writeColor(colors._2)
+    writeBothColor(colors._1, colors._2)
   }
 
   def writeBothColor(color: Color): Unit = {

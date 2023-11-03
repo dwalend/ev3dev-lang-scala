@@ -12,6 +12,11 @@ import java.nio.file.Path
 case class Ev3ColorSensor(override val port: SensorPort, initialSensorDir: Option[Path])
   extends MultiModeSensor(port, initialSensorDir.map(MultiModeSensorFS.Value012SensorFS)) {
 
+  override def howru(): Unit = {
+    val number = currentMode.collect { case m: ReflectMode => m.readReflect() }
+    println(s"color sensor $port $number")
+  }
+
   override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3ColorSensor.driverName)
       .map(MultiModeSensorFS.Value012SensorFS)

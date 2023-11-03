@@ -15,36 +15,36 @@ object MotorExample {
 
   def main(args: Array[String]): Unit = {
 
-    val firstMotor: Motor = Ev3System.motorA()
-    println(firstMotor)
-    println(firstMotor.readPosition())
+    val motorA: Motor = Ev3System.motorA()
+    println(motorA)
+    motorA.howru()
 
-    firstMotor.writeStopAction(MotorStopCommand.BRAKE)
-    firstMotor.writeDutyCycle(50.dutyCyclePercent)
-    firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
+    motorA.writeStopAction(MotorStopCommand.BRAKE)
+    motorA.writeDutyCycle(50.dutyCyclePercent)
+    motorA.writeCommand(MotorCommand.RUN_DIRECT)
     Thread.sleep(1000)
-    firstMotor.writeCommand(MotorCommand.STOP)
+    motorA.writeCommand(MotorCommand.STOP)
     Thread.sleep(1000)
 
-    firstMotor.writeDutyCycle(10.dutyCyclePercent)
-    firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
+    motorA.writeDutyCycle(10.dutyCyclePercent)
+    motorA.writeCommand(MotorCommand.RUN_DIRECT)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(100.dutyCyclePercent)
+    motorA.writeDutyCycle(100.dutyCyclePercent)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(-50.dutyCyclePercent)
+    motorA.writeDutyCycle(-50.dutyCyclePercent)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(10.dutyCyclePercent)
+    motorA.writeDutyCycle(10.dutyCyclePercent)
     Thread.sleep(1000)
-    firstMotor.brake()
+    motorA.brake()
     Thread.sleep(1000)
+
+    motorA.howru()
 
     /*
-        firstMotor.run(500)
+        motorA.run(500)
         Thread.sleep(1000)
-        firstMotor.brake()
+        motorA.brake()
     */
-    println(firstMotor.readPosition())
+    println(motorA.readPosition())
   }
 }
-
-

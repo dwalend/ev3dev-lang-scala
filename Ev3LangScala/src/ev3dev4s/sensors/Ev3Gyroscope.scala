@@ -21,6 +21,13 @@ import ev3dev4s.Ev3System
 case class Ev3Gyroscope(override val port: SensorPort, initialSensorDir: Option[Path])
   extends MultiModeSensor(port, initialSensorDir.map(MultiModeSensorFS.Value0SensorFS)) { //todo change to Value01SensorFS to support GYRO-G&A
 
+  override def howru(): Unit = {
+    val number = currentMode.collect {
+      case m: HeadingMode => m.readHeading()
+    }
+    println(s"gyroscope $port heading $number $this")
+  }
+
   override def findGadgetFS(): Option[MultiModeSensorFS.Value0SensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3Gyroscope.driverName)
       .map(MultiModeSensorFS.Value0SensorFS)

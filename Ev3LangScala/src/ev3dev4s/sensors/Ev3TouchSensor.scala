@@ -11,6 +11,10 @@ import java.nio.file.Path
 case class Ev3TouchSensor(override val port: SensorPort, initialSensorDir: Option[Path])
   extends Sensor(port, initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS)) {
 
+  override def howru(): Unit = {
+    println(s"touch sensor $port ${ readTouch() }")
+  }
+
   override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3TouchSensor.driverName)
       .map(Ev3TouchSensor.Ev3TouchSensorFS)

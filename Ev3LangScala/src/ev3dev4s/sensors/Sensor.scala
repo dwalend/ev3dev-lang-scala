@@ -1,5 +1,6 @@
 package ev3dev4s.sensors
 
+import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, Gadget, GadgetFS}
 
 import java.nio.file.Path
@@ -9,7 +10,9 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-abstract class Sensor[SFS <: SensorFS](port: SensorPort, initialSensorFS: Option[SFS]) extends Gadget(port, initialSensorFS)
+abstract class Sensor[SFS <: SensorFS](port: SensorPort, initialSensorFS: Option[SFS]) extends Gadget(port, initialSensorFS) {
+  def howru(): Unit = Log.log(s"Unknown Sensor $this")
+}
 
 trait SensorFS extends GadgetFS
 
