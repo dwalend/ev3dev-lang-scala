@@ -1,6 +1,6 @@
 package ev3dev4s.actuators
 
-
+import ev3dev4s.Log
 import ev3dev4s.sysfs.Shell
 
 import javax.sound.sampled.AudioInputStream
@@ -20,9 +20,13 @@ import ev3dev4s.scala2measure.Conversions._
 //todo rename Ev3Sound
 object Sound {
   private var volume = 50.percent
+  private var beepPath = sys.env.getOrElse("BEEPPATH", "/usr/bin/beep")
+  private var amixerPath = sys.env.getOrElse("AMIXERPATH", "/usr/bin/amixer")
 
-  def beep(): Unit =
-    Shell.execute("beep")
+  def beep(): Unit = {
+    Log.log(s"Beep using $beepPath")
+    Shell.execute(beepPath)
+  }
 
   def playTone(frequency: Hertz, duration: MilliSeconds, volume: Percent): Unit = {
     this.setVolume(volume)
@@ -36,7 +40,8 @@ object Sound {
    * @param duration  The duration of the tone4, in milliseconds.
    */
   def playTone(frequency: Hertz, duration: MilliSeconds): Unit = {
-    val cmdTone = s"/usr/bin/beep -f ${frequency.round} -l ${duration.round}"
+    val cmdTone = s"$beepPath -f ${ frequency.round } -l ${ duration.round }"
+    Log.log(s"Beep using $cmdTone")
     Shell.execute(cmdTone)
   }
 
@@ -75,7 +80,7 @@ object Sound {
    */
   def setVolume(volume: Percent): Unit = {
     this.volume = volume
-    val cmdVolume = s"/usr/bin/amixer set PCM,0 $volume%"
+    val cmdVolume = s"$amixerPath set PCM,0 $volume%"
     Shell.execute(cmdVolume)
   }
 

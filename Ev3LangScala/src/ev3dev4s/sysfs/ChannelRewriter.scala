@@ -1,9 +1,11 @@
 package ev3dev4s.sysfs
 
+import ev3dev4s.Log
+
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Path, StandardOpenOption}
+import java.nio.file.{NoSuchFileException, Path, StandardOpenOption}
 
 /**
  *
@@ -13,7 +15,7 @@ import java.nio.file.{Path, StandardOpenOption}
  */
 case class ChannelRewriter(path: Path, bufferLength: Int = 32) extends AutoCloseable {
 
-  private val channel = FileChannel.open(path, StandardOpenOption.WRITE)
+  private val channel = try { FileChannel.open(path, StandardOpenOption.WRITE) } catch { case err: NoSuchFileException => { Log.log(s"No channel to $path on this machine: $err") }; throw err }
   private val byteBuffer = ByteBuffer.allocate(bufferLength)
 
   def writeString(string: String): Unit = this.synchronized {
