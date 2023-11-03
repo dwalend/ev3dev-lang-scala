@@ -28,15 +28,17 @@ object JarRunner {
 
     val jarFile: Path = Path.of(args(0))
     val className: String = args(1)
+    Log.log(s"Playing a tone")
     Sound.playTone(55.Hz, 200.milliseconds)
     Ev3Led.writeBothOff()
     try {
       Sound.playTone(110.Hz, 200.milliseconds)
+      Log.log(s"Running the $className")
       runIt(jarFile, className)
     }
     finally {
       Log.log(s"End JarRunner ")
-      Sound.playTone(55.Hz, 200.milliseconds)
+      Sound.playTone(200.Hz, 200.milliseconds)
     }
   }
 
