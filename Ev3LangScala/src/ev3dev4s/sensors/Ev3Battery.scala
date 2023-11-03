@@ -26,5 +26,3 @@ object Ev3Battery extends AutoCloseable {
     voltageRereader.close()
   }
 }
-
-

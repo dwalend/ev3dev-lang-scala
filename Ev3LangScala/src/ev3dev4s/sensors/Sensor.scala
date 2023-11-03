@@ -9,12 +9,12 @@ import scala.reflect.ClassTag
  * @author David Walend
  * @since v0.0.0
  */
-abstract class Sensor[SFS <: SensorFS](port:SensorPort,initialSensorFS: Option[SFS]) extends Gadget(port,initialSensorFS)
+abstract class Sensor[SFS <: SensorFS](port: SensorPort, initialSensorFS: Option[SFS]) extends Gadget(port, initialSensorFS)
 
 trait SensorFS extends GadgetFS
 
-abstract class MultiModeSensor[SFS <: MultiModeSensorFS](port:SensorPort,initialSensorFS: Option[SFS])
-  extends Sensor(port,initialSensorFS) {
+abstract class MultiModeSensor[SFS <: MultiModeSensorFS](port: SensorPort, initialSensorFS: Option[SFS])
+  extends Sensor(port, initialSensorFS) {
 
   private var mode: Option[Mode] = None
 
@@ -61,7 +61,6 @@ object MultiModeSensorFS {
       modeWriter.close()
     }
   }
-
 
   case class Value012SensorFS(sensorDir: Path) extends MultiModeSensorFS {
     private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))

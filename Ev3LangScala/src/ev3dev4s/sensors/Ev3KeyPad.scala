@@ -13,29 +13,29 @@ import scala.annotation.tailrec
  */
 object Ev3KeyPad extends AutoCloseable {
 
-  sealed case class Key(byte: Byte, name:String)
+  sealed case class Key(byte: Byte, name: String)
 
-  object Key{
-    val Up: Key = Key(0x67,"Up")
-    val Down: Key = Key(0x6c,"Down")
-    val Left: Key = Key(0x69,"Left")
-    val Right: Key = Key(0x6a,"Right")
-    val Enter: Key = Key(0x1c,"Enter")
-    val Escape: Key = Key(0x0e,"Escape")
+  object Key {
+    val Up: Key = Key(0x67, "Up")
+    val Down: Key = Key(0x6c, "Down")
+    val Left: Key = Key(0x69, "Left")
+    val Right: Key = Key(0x6a, "Right")
+    val Enter: Key = Key(0x1c, "Enter")
+    val Escape: Key = Key(0x0e, "Escape")
 
-    val values: Array[Key] = Array(Up,Down,Left,Right,Enter,Escape)
+    val values: Array[Key] = Array(Up, Down, Left, Right, Enter, Escape)
   }
 
-  sealed case class State(byte: Byte, name:String)
+  sealed case class State(byte: Byte, name: String)
 
   object State {
-    val Pressed: State = State(0x01,"Pressed")
-    val Released: State = State(0x00,"Released")
+    val Pressed: State = State(0x01, "Pressed")
+    val Released: State = State(0x00, "Released")
 
-    val values: Array[State] = Array(Pressed,Released)
+    val values: Array[State] = Array(Pressed, Released)
   }
 
-  val bytesToKeyStates: Map[(Byte, Byte), (Key,State)] = {
+  val bytesToKeyStates: Map[(Byte, Byte), (Key, State)] = {
     val keyStates: Array[(Key, State)] = for {key <- Key.values
                                               state <- State.values} yield (key, state)
     keyStates.map(keyState => (keyState._1.byte, keyState._2.byte) -> keyState).toMap
@@ -45,18 +45,18 @@ object Ev3KeyPad extends AutoCloseable {
   private val keyPadInputStream = new DataInputStream(new FileInputStream(keyPadEventPath))
   private val bytes32: Array[Byte] = Array.fill[Byte](32)(0x0)
 
-  def blockUntilAnyKey(startTime:Long = Time.now()): (Key, State) = this.synchronized{
+  def blockUntilAnyKey(startTime: Long = Time.now()): (Key, State) = this.synchronized {
     recursiveBlockUntilAnyKey(startTime)
   }
-  
+
   @tailrec
-  private final def recursiveBlockUntilAnyKey(startTime:Long): (Key, State) = {
+  private final def recursiveBlockUntilAnyKey(startTime: Long): (Key, State) = {
     val KEY_INDEX = 10 // should be a key.byte
     val STATE_INDEX = 12 // should be a state.byte
 
     keyPadInputStream.readFully(bytes32)
     //debounce the keypad
-    if(Time.now() - startTime > 5) {// long enough to clear the old pushes
+    if (Time.now() - startTime > 5) { // long enough to clear the old pushes
       val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
       bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
     } else {

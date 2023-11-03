@@ -11,9 +11,9 @@ import java.io.File
  * @author David Walend
  * @since v0.0.0
  */
-object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sensor"),SensorPort.values){
-  def scanSensors:Map[SensorPort,Sensor[_]] = {
-    scanGadgetDirs.map{portAndDir =>
+object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sensor"), SensorPort.values) {
+  def scanSensors: Map[SensorPort, Sensor[_]] = {
+    scanGadgetDirs.map { portAndDir =>
       val driverName = ChannelRereader.readString(portAndDir._2.resolve("driver_name"))
       Log.log(s"$portAndDir $driverName")
       val sensor = driverName match {
@@ -28,13 +28,13 @@ object SensorPortScanner extends GadgetPortScanner(new File("/sys/class/lego-sen
   }
 }
 
-sealed case class SensorPort(name:Char) extends Port
+sealed case class SensorPort(name: Char) extends Port
 
 object SensorPort {
-  val One: SensorPort = SensorPort ('1')
-  val Two: SensorPort = SensorPort ('2')
-  val Three: SensorPort = SensorPort ('3')
-  val Four: SensorPort = SensorPort ('4')
+  val One: SensorPort = SensorPort('1')
+  val Two: SensorPort = SensorPort('2')
+  val Three: SensorPort = SensorPort('3')
+  val Four: SensorPort = SensorPort('4')
 
-  val values: Array[SensorPort] = Array(One,Two,Three,Four)
+  val values: Array[SensorPort] = Array(One, Two, Three, Four)
 }

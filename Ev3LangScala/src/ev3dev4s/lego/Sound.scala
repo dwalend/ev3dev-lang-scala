@@ -16,11 +16,11 @@ object Sound {
   /**
    * @param file .wav file to play
    */
-  def startSound(file:File): Unit = {
+  def startSound(file: File): Unit = {
     Ev3Sound.playSample(file)
   }
 
-  def playSound(file:File): Unit = {
+  def playSound(file: File): Unit = {
     Ev3Sound.playSampleUntilDone(file)
   }
 
@@ -28,7 +28,7 @@ object Sound {
     Ev3Sound.playTone(frequency, duration)
   }
 
-  def speak(say:String):Unit = {
+  def speak(say: String): Unit = {
     Ev3Sound.speak(say)
   }
 }

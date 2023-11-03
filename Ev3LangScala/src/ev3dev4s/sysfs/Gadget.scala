@@ -1,7 +1,7 @@
 package ev3dev4s.sysfs
 
 import java.io.IOException
-import java.nio.file.{AccessDeniedException,NoSuchFileException}
+import java.nio.file.{AccessDeniedException, NoSuchFileException}
 
 import ev3dev4s.Log
 
@@ -11,17 +11,17 @@ import ev3dev4s.Log
  * @author David Walend
  * @since v0.0.0
  */
-abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadgetFS: Option[GFS]) extends AutoCloseable{
+abstract class Gadget[GFS <: GadgetFS, GPort <: Port](val port: GPort, initialGadgetFS: Option[GFS]) extends AutoCloseable {
 
-  private var gadgetFS:Option[GFS] = initialGadgetFS
+  private var gadgetFS: Option[GFS] = initialGadgetFS
 
-  def findGadgetFS():Option[GFS]
+  def findGadgetFS(): Option[GFS]
 
-  protected def unsetGadgetFS():Unit = synchronized{
+  protected def unsetGadgetFS(): Unit = synchronized {
     gadgetFS = None
   }
 
-  def checkPort[A](action:GFS => A):A = synchronized {
+  def checkPort[A](action: GFS => A): A = synchronized {
     def handleUnpluggedGadget(t: Throwable): Nothing = {
       try {
         gadgetFS.foreach(_.close)
@@ -46,7 +46,7 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
     catch {
       case GadgetUnplugged(x) => handleUnpluggedGadget(x)
       case x: Throwable =>
-        Log.log(s"caught $x with '${x.getMessage}'",x)
+        Log.log(s"caught $x with '${x.getMessage}'", x)
         throw x
     }
   }
@@ -60,10 +60,10 @@ abstract class Gadget[GFS <: GadgetFS,GPort <: Port](val port:GPort,initialGadge
 trait GadgetFS extends AutoCloseable
 
 trait Port {
-  def name:Char
+  def name: Char
 }
 
-case class UnpluggedException(port: Port,cause:Throwable) extends Exception(s"$port gadget unplugged",cause)
+case class UnpluggedException(port: Port, cause: Throwable) extends Exception(s"$port gadget unplugged", cause)
 
 object UnpluggedException {
   def apply(port: Port): UnpluggedException = UnpluggedException(port, null)
@@ -77,13 +77,13 @@ object UnpluggedException {
     }
 }
 
-object GadgetUnplugged{
+object GadgetUnplugged {
   /**
    * Returns true if the provided `Throwable` is to be considered non-fatal, or false if it is to be considered fatal
    */
   def apply(t: Throwable): Boolean = t match {
     // VirtualMachineError includes OutOfMemoryError and other fatal errors
-    case _: NoSuchFileException | _: AccessDeniedException  => true
+    case _: NoSuchFileException | _: AccessDeniedException => true
     case iox: IOException if iox.getMessage == "No such device" => true
     case iox: IOException if iox.getMessage == "No such device or address" => true
     case iox: IOException if iox.getMessage == "Device or resource busy" => true

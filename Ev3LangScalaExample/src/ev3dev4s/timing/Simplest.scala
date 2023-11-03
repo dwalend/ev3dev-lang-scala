@@ -1,8 +1,5 @@
 package ev3dev4s.timing
 
-import ev3dev4s.Ev3System
-import ev3dev4s.actuators.Ev3Led
-
 /**
  * Run via
  *

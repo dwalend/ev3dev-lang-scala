@@ -14,11 +14,10 @@ import ev3dev4s.Log
 
 /**
  *
- *
  * @author David Walend
  * @since v0.0.0
  */
-private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
+private[actuators] case class MotorFS(motorDir: Path) extends GadgetFS {
 
   private val commandWriter = ChannelRewriter(motorDir.resolve("command"))
   private val stopActionWriter = ChannelRewriter(motorDir.resolve("stop_action"))
@@ -34,36 +33,38 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
   private val rampDownWriter = ChannelRewriter(motorDir.resolve("ramp_down_sp"))
 
   private val positionReader = ChannelRereader(motorDir.resolve("position"))
-  private val stateReader = ChannelRereader(motorDir.resolve("state"),bufferLength = 52)
+  private val stateReader = ChannelRereader(motorDir.resolve("state"), bufferLength = 52)
 
   //todo maybe writeCommand should be on the write side of a ReadWriteLock - and all others can be on the Read side?
-  def writeCommand(command: MotorCommand):Unit =
+  def writeCommand(command: MotorCommand): Unit =
     commandWriter.writeString(command.command)
 
-  def writeStopAction(command:MotorStopCommand):Unit =
+  def writeStopAction(command: MotorStopCommand): Unit =
     stopActionWriter.writeString(command.command)
 
-  def writeDutyCycle(dutyCycle:DutyCycle):Unit = {
-    if(dutyCycle.abs > 100.dutyCyclePercent) Log.log(s"abs duty cycle $dutyCycle is greater than ${100.dutyCyclePercent}")
+  def writeDutyCycle(dutyCycle: DutyCycle): Unit = {
+    if (dutyCycle.abs > 100.dutyCyclePercent) {
+      Log.log(s"abs duty cycle $dutyCycle is greater than ${ 100.dutyCyclePercent }")
+    }
     dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
   }
 
-  def writeSpeed(speed:DegreesPerSecond):Unit =
+  def writeSpeed(speed: DegreesPerSecond): Unit =
     speedSpWriter.writeAsciiInt(speed.round)
 
-  def writePosition(degrees:Degrees):Unit =
+  def writePosition(degrees: Degrees): Unit =
     positionWriter.writeAsciiInt(degrees.round)
 
-  def resetPosition():Unit =
+  def resetPosition(): Unit =
     writePosition(0.degrees)
 
-  def writeGoalPosition(degrees:Degrees):Unit =
+  def writeGoalPosition(degrees: Degrees): Unit =
     goalPositionWriter.writeAsciiInt(degrees.round)
 
-  def writeDuration(milliseconds:MilliSeconds):Unit =
+  def writeDuration(milliseconds: MilliSeconds): Unit =
     timeWriter.writeAsciiInt(milliseconds.round)
 
-  def writeRampUpSpeed(fromZeroToMax:MilliSeconds):Unit = {
+  def writeRampUpSpeed(fromZeroToMax: MilliSeconds): Unit = {
     rampUpWriter.writeAsciiInt(fromZeroToMax.v.round)
   }
 
@@ -73,14 +74,17 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
 
 
   /**
-   * @return position in degrees 
+   * @return position in degrees
    */
-  def readPosition():Degrees =
+  def readPosition(): Degrees =
     positionReader.readAsciiInt().degrees
 
-  val stateNamesToStates: Map[String, MotorState] = MotorState.values.map{ s => s.name -> s}.toMap
+  val stateNamesToStates: Map[String, MotorState] = MotorState.values.map { s => s.name -> s }.toMap
+
   def readState(): Array[MotorState] =
-    stateReader.readString().split(' ').filterNot(_ == "").map{stateNamesToStates(_)}
+    stateReader.readString().split(' ').filterNot(_ == "").map {
+      stateNamesToStates(_)
+    }
 
   override def close(): Unit = {
     stateReader.close()

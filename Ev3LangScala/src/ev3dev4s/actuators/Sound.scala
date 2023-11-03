@@ -21,31 +21,33 @@ import ev3dev4s.scala2measure.Conversions._
 object Sound {
   private var volume = 50.percent
 
-  def beep():Unit =
+  def beep(): Unit =
     Shell.execute("beep")
 
-  def playTone(frequency: Hertz, duration: MilliSeconds, volume: Percent):Unit = {
+  def playTone(frequency: Hertz, duration: MilliSeconds, volume: Percent): Unit = {
     this.setVolume(volume)
     this.playTone(frequency, duration)
   }
+
   /**
    * Plays a tone, given its frequency and duration.
    *
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Hertz, duration: MilliSeconds):Unit = {
+  def playTone(frequency: Hertz, duration: MilliSeconds): Unit = {
     val cmdTone = s"/usr/bin/beep -f ${frequency.round} -l ${duration.round}"
     Shell.execute(cmdTone)
   }
+
   /**
    * Play a wav file. Must be mono, from 8kHz to 48kHz, and 8-bit or 16-bit.
    *
    * @param file   the 8-bit or 16-bit PWM (WAV) sample file
    * @param volume the volume percentage 0 - 100
    */
-    //todo draw from .jar resources
-    def playSample(file: File, volume: Percent = this.volume):Unit = {
+  //todo draw from .jar resources
+  def playSample(file: File, volume: Percent = this.volume): Unit = {
     this.setVolume(volume)
     this.playSampleUntilDone(file)
   }
@@ -56,7 +58,7 @@ object Sound {
    * @param file the 8-bit or 16-bit PWM (WAV) sample file
    */
   //todo draw from .jar resources
-  def playSampleUntilDone(file: File):Unit = {
+  def playSampleUntilDone(file: File): Unit = {
     val audioIn: AudioInputStream = AudioSystem.getAudioInputStream(file.toURI.toURL)
     val clip = AudioSystem.getClip
     clip.open(audioIn)
@@ -65,12 +67,13 @@ object Sound {
     clip.close()
     audioIn.close()
   }
+
   /**
    * Set the master volume level
    *
    * @param volume 0-100
    */
-  def setVolume(volume: Percent):Unit = {
+  def setVolume(volume: Percent): Unit = {
     this.volume = volume
     val cmdVolume = s"/usr/bin/amixer set PCM,0 $volume%"
     Shell.execute(cmdVolume)
@@ -78,8 +81,8 @@ object Sound {
 
   /**
    * Get the current master volume level
-   */ 
-  def getVolume:Percent = volume
+   */
+  def getVolume: Percent = volume
 
 
   /**

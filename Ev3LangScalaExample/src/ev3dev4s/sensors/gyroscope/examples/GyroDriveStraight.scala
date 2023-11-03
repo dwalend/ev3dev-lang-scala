@@ -1,12 +1,10 @@
 package ev3dev4s.sensors.gyroscope.examples
 
-import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
+import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, DutyCycle, MilliMeters}
 import ev3dev4s.scala2measure.Conversions._
-import ev3dev4s.scala2measure.DegreesPerSecond
-import ev3dev4s.scala2measure.DutyCycle
 
 /**
  *
@@ -14,6 +12,7 @@ import ev3dev4s.scala2measure.DutyCycle
  * @author David Walend
  * @since v0.0.0
  */
+//noinspection ScalaUnusedSymbol
 
 object GyroDriveStraight extends Runnable {
 
@@ -84,29 +83,30 @@ object GyroDriveStraight extends Runnable {
     while (keepGoing()) {
       val heading: Degrees = Robot.headingMode.readHeading()
       val steerAdjust: DutyCycle =
-        if (heading == goalHeading) 0.dutyCyclePercent
-        else {
+        if (heading == goalHeading) {
+          0.dutyCyclePercent
+        } else {
           //about 1% per degree off seems good - but it should really care about wheel base width
           val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).dutyCyclePercent
-          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) proportionalSteerAdjust
-          else if (proportionalSteerAdjust == 0.dutyCyclePercent) 0.dutyCyclePercent
-          else if (proportionalSteerAdjust > 0.dutyCyclePercent) 1.dutyCyclePercent
-          else -1.dutyCyclePercent
+          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) { proportionalSteerAdjust }
+          else if (proportionalSteerAdjust == 0.dutyCyclePercent) { 0.dutyCyclePercent }
+          else if (proportionalSteerAdjust > 0.dutyCyclePercent) { 1.dutyCyclePercent }
+          else { -1.dutyCyclePercent }
         }
 
       def dutyCyclesFromAdjust(): (DutyCycle, DutyCycle) = {
         val leftIdeal = ((dutyCycle + steerAdjust) / 10.unitless).dutyCyclePercent
         val rightIdeal = ((dutyCycle - steerAdjust) / 10.unitless).dutyCyclePercent
         (leftIdeal, rightIdeal)
-        //todo for fractions
-        //val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)
-        //todo for fractions
-        //if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
-        //else if(steerAdjust.v > 0) (leftIdeal+1,rightIdeal)
-        //else if(steerAdjust.v < 0) (leftIdeal,rightIdeal+1)
-        //else (leftIdeal,rightIdeal)
-        //todo speed up very slow movement by 10. Not sure this is usefulif(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
-        //todo speed up very slow movement by 10. Not sure this is useful else (leftSteering+10,rightSteering+10)
+        // todo for fractions
+        // val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)
+        // todo for fractions
+        // if(leftIdeal != rightIdeal) (leftIdeal,rightIdeal)
+        // else if(steerAdjust.v > 0) (leftIdeal+1,rightIdeal)
+        // else if(steerAdjust.v < 0) (leftIdeal,rightIdeal+1)
+        // else (leftIdeal,rightIdeal)
+        // todo speed up very slow movement by 10. Not sure this is useful: if(leftSteering >= 10 && rightSteering >= 10) (leftSteering,rightSteering)
+        // todo speed up very slow movement by 10. Not sure this is useful else (leftSteering+10,rightSteering+10)
       }
 
       val (leftDutyCycle, rightDutyCycle) = dutyCyclesFromAdjust()
@@ -209,7 +209,7 @@ object GyroDriveStraight extends Runnable {
 
     /**
      * Adjust the speed based on the current gyro heading to drive in an arc.
-     * This method assumes the goal absolute postions have already been written
+     * This method assumes the goal absolute positions have already been written
      *
      * @param goalHeading that the gyroscope should read during this traverse
      * @param averageSpeed degrees/second for moving the robot quickly
@@ -268,14 +268,15 @@ object GyroDriveStraight extends Runnable {
   */
 }
 
+//noinspection ScalaUnusedSymbol
 object Robot {
 
-  val driveWheelDiameter = 11.studs
-  val driveWheelCircumference = (driveWheelDiameter.v * Math.PI.toFloat).mm
+  val driveWheelDiameter: MilliMeters = 11.studs
+  val driveWheelCircumference: MilliMeters = (driveWheelDiameter.v * Math.PI.toFloat).mm
 
-  val robotWheelbase = 18.studs
+  val robotWheelbase: MilliMeters = 18.studs
 
-  val keypad = Ev3System.keyPad
+  val keypad: Ev3KeyPad.type = Ev3System.keyPad
 
   val gyroscope: Ev3Gyroscope = Ev3System.portsToSensors.values.collectFirst { case gyro: Ev3Gyroscope => gyro }.get
   val headingMode: gyroscope.HeadingMode = gyroscope.headingMode()
@@ -307,7 +308,3 @@ object Robot {
     rightMotor.writeCommand(MotorCommand.STOP)
   }
 }
-
-
-
-
