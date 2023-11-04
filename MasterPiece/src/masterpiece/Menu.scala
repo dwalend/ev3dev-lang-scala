@@ -1,8 +1,8 @@
 package masterpiece
 
 import ev3dev4s.Log
-import ev3dev4s.actuators.Sound
-import ev3dev4s.lego.Display
+import ev3dev4s.actuators.{MotorPort, MotorStopCommand, Sound}
+import ev3dev4s.lego.{Display, Motors}
 import ev3dev4s.sensors.Ev3KeyPad
 
 import java.lang.Runnable
@@ -16,7 +16,11 @@ import scala.annotation.tailrec
  *
  *  * @since v0.0.0
  */
-//noinspection ScalaUnusedSymbol - this is the entrypoint from Ev3LangScala's JarRunner
+
+/**
+ * The entrypoint from Ev3LangScala's JarRunner
+ */
+//noinspection ScalaUnusedSymbol
 object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
@@ -53,7 +57,8 @@ object Menu extends Runnable {
 
   object Reload extends Runnable{
     var done = false
-
+    Motors.setStopCommand(MotorPort.B,MotorStopCommand.COAST)
+    Motors.stop(MotorPort.B)
     override def run(): Unit = {
       done = true
       Log.log(s"done is $done")
@@ -78,7 +83,7 @@ object Menu extends Runnable {
 
   def showTrip(): Unit = {
     Display.clearLcd()
-    Display.write(PinkOrange.color,3)
+    Display.write(PinkOrange.color, row = 3)
     Display.write(currentTrip.getClass.getSimpleName, row=2)
   }
 
