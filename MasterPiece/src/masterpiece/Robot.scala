@@ -16,7 +16,7 @@ object Robot {
   Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
   val circumfrence: MilliMeters = 180.mm
-  val speed =400.degreesPerSecond
+  val speed: DegreesPerSecond =400.degreesPerSecond
   def dtd(distance :MilliMeters): Degrees = {
     (360 * distance.v / circumfrence.v).degrees
   }
