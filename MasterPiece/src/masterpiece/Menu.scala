@@ -25,6 +25,7 @@ object Menu extends Runnable {
 
   val trips: List[Runnable] = List(
     PinkOrange,
+    IzzyTrip,
     ShrmShrmArt,
     WeRNotGoingToTheZoo,
     SceneChangeTrip,
