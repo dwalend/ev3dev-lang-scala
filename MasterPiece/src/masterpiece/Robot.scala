@@ -35,14 +35,14 @@ object Robot {
     )
   }
 
-    @tailrec
+  @tailrec
   def rightRotation(goalHeading:Degrees):Unit={
     val heading: Degrees = Gyroscope.readHeading(SensorPort.One)
     val toGo: Degrees = goalHeading - heading
-    val speed: DegreesPerSecond = (400 * (toGo.v/90)).degreesPerSecond
+    val speed: DegreesPerSecond = (Robot.speed.v * (toGo.v/90)).degreesPerSecond
 
-    Log.log(s"heading is $heading speed is $speed")
-    if(goalHeading>heading) {
+    Log.log(s"heading is $heading, speed is $speed")
+    if(goalHeading > heading) {
       Movement.startMoving(speed,-speed)
       rightRotation(goalHeading)
     } else {
@@ -54,9 +54,9 @@ object Robot {
   def leftRotation(goalHeading: Degrees): Unit = {
     val heading = Gyroscope.readHeading(SensorPort.One)
     val toGo = -goalHeading + heading
-    val speed = (400 * (toGo.v / 90)).degreesPerSecond
+    val speed = (Robot.speed.v * (toGo.v / 90)).degreesPerSecond
 
-    Log.log(s"heading is $heading speed is $speed")
+    Log.log(s"heading is $heading, speed is $speed")
     if (goalHeading < heading) {
       Movement.startMoving(-speed, speed)
       //Time.pause(10.milliseconds)
