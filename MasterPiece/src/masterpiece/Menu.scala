@@ -26,7 +26,7 @@ object Menu extends Runnable {
   val trips: List[Runnable] = List(
     PinkOrange,
     IzzyTrip,
-    ShrmShrmArt,
+    StuffToMuseum,
     WeRNotGoingToTheZoo,
     SceneChangeTrip,
 
@@ -53,13 +53,15 @@ object Menu extends Runnable {
       case _ => Log.log(s"No key??")
     }
 
+    //todo hacked in - figure out something better
+    Motors.setStopCommand(MotorPort.B, MotorStopCommand.COAST)
+    Motors.stop(MotorPort.B)
+
     if (!Reload.done) recursiveRun()
   }
 
   object Reload extends Runnable{
     var done = false
-    Motors.setStopCommand(MotorPort.B,MotorStopCommand.COAST)
-    Motors.stop(MotorPort.B)
     override def run(): Unit = {
       done = true
       Log.log(s"done is $done")
