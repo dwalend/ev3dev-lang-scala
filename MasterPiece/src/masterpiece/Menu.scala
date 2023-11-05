@@ -12,8 +12,6 @@ import scala.StringContext
 import scala.annotation.tailrec
 
 /**
- *
- *
  *  * @since v0.0.0
  */
 
@@ -23,6 +21,7 @@ import scala.annotation.tailrec
 //noinspection ScalaUnusedSymbol
 object Menu extends Runnable {
 
+  //todo maybe trips aren't just Runnable but have a name
   val trips: List[Runnable] = List(
     PinkOrange,
     IzzyTrip,
@@ -67,29 +66,31 @@ object Menu extends Runnable {
       Log.log(s"done is $done")
     }
   }
+
   def nextTrip():Unit = {
     currentTrip = trips.span(_ != currentTrip)
       ._2 .tail.headOption.getOrElse(trips.head)
-    val tripName={
-      currentTrip.getClass.getSimpleName.take(currentTrip.getClass.getSimpleName.length-1)
-    }
-    Sound.speak(tripName,"mb-en1+f1")
+
     showTrip()
   }
 
    def previousTrip():Unit = {
      currentTrip = trips.span(_ != currentTrip)
        ._1 .lastOption.getOrElse(trips.last)
-     Sound.speak(currentTrip.getClass.getSimpleName,"mb-en1+f1")
+
      showTrip()
    }
 
   def showTrip(): Unit = {
     Display.clearLcd()
     Display.write(PinkOrange.color, row = 3)
-    Display.write(currentTrip.getClass.getSimpleName, row=2)
+    Display.write(tripName(currentTrip), row=2)
   }
 
+  def tripName(trip:Runnable): String ={
+     trip.getClass.getSimpleName.take(currentTrip.getClass.getSimpleName.length - 1)
+    }
+  //todo with recursion?
   def waitForKey():Ev3KeyPad.Key = {
     var key: Ev3KeyPad.Key = null
 
