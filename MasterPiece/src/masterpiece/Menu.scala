@@ -46,13 +46,13 @@ object Menu extends Runnable {
 
       case Ev3KeyPad.Key.Enter =>
         currentTrip.run()
-        nextTrip()
+        nextTrip() //todo maybe comment this out until closer to the tournament
       case Ev3KeyPad.Key.Down => nextTrip()
       case Ev3KeyPad.Key.Up => previousTrip()
       case _ => Log.log(s"No key??")
     }
 
-    //todo hacked in - figure out something better
+    //todo hacked in - figure out something better for relaxing the motors
     Motors.setStopCommand(MotorPort.B, MotorStopCommand.COAST)
     Motors.stop(MotorPort.B)
 
@@ -90,18 +90,11 @@ object Menu extends Runnable {
   def tripName(trip:Runnable): String ={
      trip.getClass.getSimpleName.take(currentTrip.getClass.getSimpleName.length - 1)
     }
-  //todo with recursion?
-  def waitForKey():Ev3KeyPad.Key = {
-    var key: Ev3KeyPad.Key = null
 
-    while ({
-      val keyPressed: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
-      key = keyPressed._1
-
-      keyPressed._2 != Ev3KeyPad.State.Released}){
-      //don't do anything
-    }
-    Log.log(s"key is $key")
-    key
+  @tailrec
+  def waitForKey(): Ev3KeyPad.Key = {
+    val keyPressed: (Ev3KeyPad.Key, Ev3KeyPad.State) = Ev3KeyPad.blockUntilAnyKey()
+    if(keyPressed._2 == Ev3KeyPad.State.Released) waitForKey()
+    else keyPressed._1
   }
 }
