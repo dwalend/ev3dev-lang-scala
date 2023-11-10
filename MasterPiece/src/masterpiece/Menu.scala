@@ -30,6 +30,7 @@ object Menu extends Runnable {
     StuffToMuseum,
     WeRNotGoingToTheZoo,
     SceneChangeTrip,
+    OldLadyOnABoat,
 
     Reload
   )
