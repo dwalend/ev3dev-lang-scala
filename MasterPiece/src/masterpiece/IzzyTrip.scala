@@ -27,9 +27,8 @@ object IzzyTrip extends Runnable{
     Robot.movestraight(80.mm)
     Robot.leftRotation(-45.degrees)
     Robot.movestraight(500.mm)
+    Robot.moveStraightBackward(35.mm)
 
-    Robot.moveStraightBackward(500.mm
-    )
   }
 
 }
