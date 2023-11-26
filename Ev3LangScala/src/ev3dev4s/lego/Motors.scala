@@ -63,6 +63,17 @@ object Motors {
     watchForStop(motor)
   }
 
+  /**
+   * @return a function to poll to see if the motor has stopped
+   */
+  def startForDegrees(port:MotorPort,degrees: Degrees,speed:DegreesPerSecond):() => Boolean = handleUnpluggedMotor {
+    val motor: Motor = motors(port)
+    motor.writeSpeed(speed)
+    motor.writeGoalPosition(degrees)
+    motor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
+    motor.readIsRunning
+  }
+
   def runForDuration(port:MotorPort,duration: MilliSeconds,speed:DegreesPerSecond): Unit = handleUnpluggedMotor{
     val motor:Motor = motors(port)
     motor.writeSpeed(speed)

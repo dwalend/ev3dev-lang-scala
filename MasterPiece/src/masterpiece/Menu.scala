@@ -23,6 +23,11 @@ object Menu extends Runnable {
 
   //todo maybe trips aren't just Runnable but have a name
   val trips: List[Runnable] = List(
+    Straight,
+    RotateRight,
+    PivotRight,
+    CurveRight,
+
     RLiftToFloor,
     RLiftToSpace,
     PinkOrange,

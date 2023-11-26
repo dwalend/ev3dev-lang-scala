@@ -108,6 +108,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
   }
 }
 
+//todo optional md = None ?
 sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port, Ev3LargeMotor.driverName)
@@ -121,6 +122,7 @@ object Ev3LargeMotor {
   val driverName = "lego-ev3-l-motor"
 }
 
+//todo optional md = None ?
 sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port, Ev3MediumMotor.driverName)
