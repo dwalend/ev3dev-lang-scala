@@ -12,24 +12,28 @@ object StuffToMuseum extends Runnable {
   override def run(): Unit = {
     setGyro()
 
-    startToMuseum ()
+    startToMuseum()
   }
-// start to museum
-// WOPPER RULES
+
+  // start to museum
+  // WOPPER RULES
   private def setGyro(): Unit = {
     //Set the gyroscope
     Gyroscope.reset(SensorPort.One)
     Gyroscope.setHeading(SensorPort.One, 180.degrees)
   }
-//Avril is the best in the entire world and she is much better than Aanya
-  private def startToMuseum (): Unit ={
-    //move from start to the scene changer
-    // wheel starts at 5 and a half squares
-    Robot.moveStraightBackward(430.mm)
-    Robot.leftRotation(135.degrees)
-    Robot.moveStraightBackward(350.mm)
-    Robot.leftRotation(180.degrees)
-    // Robot.moveStraightBackward(70.mm)
-  }
 
+  //Avril is the best in the entire world and she is much better than Aanya
+  private def startToMuseum(): Unit = {
+    Robot.moveStraightBackward(635.millimeters)
+  Robot.leftRotation(135.degrees)
+    Robot.moveStraightBackward(100.millimeters)
+    Robot.leftRotation(90.degrees)
+Robot.moveStraightBackward(550.millimeters)
+    Robot.rightRotation(135.degrees)
+    Robot.moveStraightBackward(50.millimeters)
+    Robot.rightRotation(180.degrees)
+
+
+  }
 }
