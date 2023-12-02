@@ -20,16 +20,24 @@ object OldLadyOnABoat extends Runnable {
 
 def ErrandsBeforeKidnapping: Unit = {
   Robot.moveStraightBackward(100.mm)
-Robot.leftRotation(20.degrees)
-  Robot.movestraight(20.mm)
+Robot.leftRotation(30.degrees)
+  //Robot.movestraight(20.mm)
   Motors.runForDuration(MotorPort.D,(3*1000).milliseconds,100.degreesPerSecond)
-Robot.leftRotation(0.degrees)
-  Robot.movestraight(100.mm)
-Motors.runForDuration(MotorPort.D,(3*1000).milliseconds,-100.degreesPerSecond)
- Robot.movestraight(70.mm)
-  Robot.leftRotation(-135.degrees)
-
-// Listen to Ella for Starting
+//Robot.leftRotation(0.degrees)
+ // Robot.movestraight(100.mm)
+//Motors.runForDuration(MotorPort.D,(3*1000).milliseconds,-100.degreesPerSecond)
+ //Robot.movestraight(70.mm)
+ // Robot.leftRotation(-135.degrees)
+Robot.rightRotation(90.degrees)
+  Robot.moveStraightBackward(370.mm)
+  Robot.leftRotation(43.degrees)
+  Robot.movestraight(420.mm)
+  Motors.runForDuration(MotorPort.D,(3*1000).milliseconds,-100.degreesPerSecond)
+  Robot.leftRotation(-45.degrees)
+  Motors.runForDuration(MotorPort.D,(3*1000).milliseconds,100.degreesPerSecond)
+Robot.leftRotation(-130.degrees)
+  Robot.movestraight(280.mm)
+// Listen to Ella for Starting135
   // Not doing so will result in immediate explosion
   // Even, especially for adults
 
