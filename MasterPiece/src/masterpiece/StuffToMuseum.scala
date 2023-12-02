@@ -29,7 +29,7 @@ object StuffToMuseum extends Runnable {
     Robot.leftRotation(135.degrees)
     Robot.moveStraightBackward(350.mm)
     Robot.leftRotation(180.degrees)
-    // Robot.moveStraightBackward(70.mm)
+    Robot.moveStraightBackward(70.mm)
   }
 
 }
