@@ -23,16 +23,12 @@ object Menu extends Runnable {
 
   //todo maybe trips aren't just Runnable but have a name
   val trips: List[Runnable] = List(
-    RLiftToFloor,
-    RLiftToSpace,
     PinkOrange,
-    IzzyTrip,
-    StuffToMuseum,
-    WeRNotGoingToTheZoo,
     SceneChangeTrip,
     OldLadyOnABoat,
     RunToBlueHome,
-
+    IzzyTrip,
+    StuffToMuseum,
     Reload
   )
 
