@@ -2,6 +2,12 @@
 
 ## Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
 
+## Fork this repository in github
+
+This project is at the "it works on our robots and laptops" stage. You'll very likely want to work in your own fork.
+
+We would love to have pull requests, especially where the Ev3LangScala is incomplete. Please be aware that kids use this library for FLL competitions; do not propose code beyond what would be analogous to what Lego offers as a starting point to Ev3LangScala.
+
 ## Clone (copy the source code onto this computer) the Ev3LangScala project from github
 
 When you first start Intellij - "Get From VCS" . (Or - if intellij is already installed) Top Menu Bar -> Git -> Clone)
@@ -49,11 +55,11 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 ```./millw -D ev3Password=maker Ev3LangScala.AppToRobot```
 
-## Build and upload the MasterPiece library (Do this every time you want to see your addtions to the team's code run in the Ev3)
+## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your addtions to the team's code run in the Ev3)
 
 ```./millw -D ev3Password=maker Ev3LangScalaExample.ToRobot```
 
-## Upload the MasterPiece bash file (Probably once)
+## Upload the Ev3LangScalaExample bash file (Probably once)
 
 ```./millw -D ev3Password=maker Ev3LangScalaExample.DoItToRobot```
 
@@ -82,7 +88,17 @@ When you're done,
 
 In the ev3dev OS menu on the Ev3
 
-File Browser -> MasterPiece.bash*
+File Browser -> DoIt.bash*
 
 (It will blink green for about 45 seconds before honking and starting)
+
+# What is Here
+
+Ev3langScalaExample holds examples. For a particular project, start by copying this project, renaming it, and removing everything but a reasonable starting point.
+
+Ev3LangScala holds a core library. Of earliest interest is the ev3dev4s.lego package, which holds API analogous to the Blocky/Scratch library you can download from Lego. The actuators, sensors, lcd.tty, and os packages provide a lower-level programmer's API. The sysfs is where most of the inner workings and interface to the ev3dev OS reside.
+
+Ev3LangScalaExperimental holds my work-in-progress plus abandoned experiments.
+
+Ev3LangScalaLessons is a work-in-progress guide for kids to use this library.
 
