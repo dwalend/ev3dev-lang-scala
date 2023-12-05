@@ -22,16 +22,20 @@ object StuffToMuseum extends Runnable {
     Gyroscope.reset(SensorPort.One)
     Gyroscope.setHeading(SensorPort.One, 180.degrees)
   }
-  
-  //Avril is the best in the entire world and she is much better than Aanya
+
+
   private def startToMuseum(): Unit = {
     Robot.moveStraightBackward(635.millimeters)
     Robot.leftRotation(135.degrees)
     Robot.moveStraightBackward(100.millimeters)
-    Robot.leftRotation(90.degrees)
-    Robot.moveStraightBackward(550.millimeters)
+    Robot.leftRotation(100.degrees)
+    Robot.moveStraightBackward(570.millimeters)
     Robot.rightRotation(135.degrees)
-    Robot.moveStraightBackward(50.millimeters)
     Robot.rightRotation(180.degrees)
+
+
+
+
+    //SPOOPY AND MOONY RULE!
   }
 }
