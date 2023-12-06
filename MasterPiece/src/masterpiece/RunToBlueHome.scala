@@ -24,12 +24,17 @@ object RunToBlueHome extends Runnable {
     Robot.movestraight(300.mm)
     Robot.rightRotation(90.degrees)
     Robot.rightRotation(90.degrees)
-    Robot.movestraight(1600.mm)
+    Robot.movestraight(1600
+      .mm)
     //Robot.movestraight(1400.mm)
     //Robot.movestraight(1920.mm)
 
 
   }
+
+
+
+
 
 
 
