@@ -31,7 +31,10 @@ object IzzyTrip extends Runnable {
     Robot.leftRotation(-45.degrees)
     Robot.movestraight(500.mm)
     Motors.runForDuration(MotorPort.B, (1 * 2000).milliseconds, -100.degreesPerSecond)
-    Robot.moveStraightBackward(500.mm)
+    Robot.moveStraightBackward(225.mm)
+    Robot.rightRotation(0.degrees)
+    Robot.movestraight(500.mm)
+Robot.moveStraightBackward(600.mm)
 
   }
 }

@@ -21,7 +21,7 @@ object RunToBlueHome extends Runnable {
 
   private def fromRedToBlue(): Unit = {
    //Robot.movestraight(480.mm)
-    Robot.movestraight(300.mm)
+    Robot.movestraight(250.mm)
     Robot.rightRotation(90.degrees)
     Robot.rightRotation(90.degrees)
     Robot.movestraight(1600

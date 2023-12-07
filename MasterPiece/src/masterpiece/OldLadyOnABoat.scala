@@ -43,7 +43,7 @@ Robot.rightRotation(90.degrees)
 
 }
   private def fromStartToBoat(): Unit = {
-    Robot.movestraight(530.mm)
+    Robot.movestraight(480.mm)
     Motors.setStopCommand(MotorPort.D, MotorStopCommand.BRAKE)
     Motors.runForDuration(MotorPort.D,(3000).milliseconds,100.degreesPerSecond)
 
