@@ -1,7 +1,6 @@
 package masterpiece
 
-import ev3dev4s.actuators.MotorPort
-import ev3dev4s.lego.{Gyroscope, Motors}
+import ev3dev4s.lego.Gyroscope
 import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.sensors.SensorPort
 
@@ -30,12 +29,14 @@ object IzzyTrip extends Runnable {
     Robot.movestraight(80.mm)
     Robot.leftRotation(-45.degrees)
     Robot.movestraight(500.mm)
-    Motors.runForDuration(MotorPort.B, (1 * 2000).milliseconds, -100.degreesPerSecond)
-    Robot.moveStraightBackward(225.mm)
+    Robot.moveStraightBackward(200.mm)
     Robot.rightRotation(0.degrees)
     Robot.movestraight(500.mm)
-Robot.moveStraightBackward(600.mm)
-
+    Robot.rightRotation(45.degrees)
+    Robot.movestraight(50.mm)
+    Robot.moveStraightBackward(50.mm)
+    Robot.leftRotation(0.degrees)
+    Robot.moveStraightBackward(700.mm)
   }
 }
 // Mission Complete

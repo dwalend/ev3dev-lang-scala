@@ -1,7 +1,6 @@
 package masterpiece
 
-import ev3dev4s.actuators.{MotorPort, MotorStopCommand}
-import ev3dev4s.lego.{Gyroscope, Motors}
+import ev3dev4s.lego.Gyroscope
 import ev3dev4s.scala2measure.Conversions.IntConversions
 import ev3dev4s.sensors.SensorPort
 
@@ -24,19 +23,8 @@ object RunToBlueHome extends Runnable {
     Robot.movestraight(250.mm)
     Robot.rightRotation(90.degrees)
     Robot.rightRotation(90.degrees)
-    Robot.movestraight(1600
-      .mm)
-    //Robot.movestraight(1400.mm)
-    //Robot.movestraight(1920.mm)
-
-
+    Robot.movestraight(1600.mm)
   }
-
-
-
-
-
-
 
   private def setGyro (): Unit = {
   //Set the gyroscope
@@ -44,113 +32,3 @@ object RunToBlueHome extends Runnable {
   Gyroscope.setHeading (SensorPort.One, 0.degrees)
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
