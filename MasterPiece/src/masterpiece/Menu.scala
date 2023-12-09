@@ -12,16 +12,11 @@ import scala.StringContext
 import scala.annotation.tailrec
 
 /**
- *  * @since v0.0.0
- */
-
-/**
  * The entrypoint from Ev3LangScala's JarRunner
  */
 //noinspection ScalaUnusedSymbol
 object Menu extends Runnable {
 
-  //todo maybe trips aren't just Runnable but have a name
   val trips: List[Runnable] = List(
     PinkOrange,
     SceneChangeTrip,
@@ -46,19 +41,23 @@ object Menu extends Runnable {
 
       case Ev3KeyPad.Key.Enter =>
         currentTrip.run()
-        nextTrip() //todo maybe comment this out until closer to the tournament
+        nextTrip()
       case Ev3KeyPad.Key.Down => nextTrip()
       case Ev3KeyPad.Key.Up => previousTrip()
       case _ => Log.log(s"No key??")
     }
-
-    //todo hacked in - figure out something better for relaxing the motors
+    //release the lift motors
     Motors.setStopCommand(MotorPort.B, MotorStopCommand.COAST)
     Motors.stop(MotorPort.B)
+    Motors.setStopCommand(MotorPort.D, MotorStopCommand.COAST)
+    Motors.stop(MotorPort.D)
 
     if (!Reload.done) recursiveRun()
   }
 
+  /**
+   * A command to exit the recursiveRun()
+   */
   object Reload extends Runnable{
     var done = false
     override def run(): Unit = {

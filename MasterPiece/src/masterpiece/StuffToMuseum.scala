@@ -33,9 +33,6 @@ object StuffToMuseum extends Runnable {
     Robot.rightRotation(135.degrees)
     Robot.rightRotation(180.degrees)
 
-
-
-
     //SPOOPY AND MOONY RULE!
   }
 }

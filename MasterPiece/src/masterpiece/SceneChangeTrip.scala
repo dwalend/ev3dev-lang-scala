@@ -29,7 +29,6 @@ object SceneChangeTrip extends Runnable {
 //Avril is the best in the entire world and she is much better than Aanya
   private def fromStartToSceneChanger(): Unit ={
     //move from start to the scene changer
-    //Robot.movestraight(675.mm)
     Robot.movestraight(605.mm)
 
     Robot.leftRotation(-45.degrees)
@@ -39,20 +38,15 @@ object SceneChangeTrip extends Runnable {
     //Push lever on scene changer
     Robot.movestraight(70.mm)
     Robot.moveStraightBackward(55.mm)
-    //Raise the left lift - todo try runForDuration
-    if(PinkOrange.color =="Orange"){
+    if (PinkOrange.color == "Orange") {
       Robot.movestraight(70.mm)
-      Motors.runForDuration(MotorPort.B,(5*1000).milliseconds,-100.degreesPerSecond)
+      //Raise the left lift - use run for duration to deal with a jam
+      Motors.runForDuration(MotorPort.B, (5 * 1000).milliseconds, -100.degreesPerSecond)
       Robot.moveStraightBackward(55.mm)
-
-//      Motors.runForDegrees(MotorPort.B,-150.degrees,-100.degreesPerSecond)
-
-      //Motors.runForDuration(MotorPort.B,(5*1000).milliseconds,-100.degreesPerSecond)
     }
-
   }
-   private def fromScenchangertoStart():Unit = {
-     //come back from Scenechanger
+
+  private def fromScenchangertoStart():Unit = {
      Robot.leftRotation(-180.degrees)
      Robot.movestraight(695.mm)
    }

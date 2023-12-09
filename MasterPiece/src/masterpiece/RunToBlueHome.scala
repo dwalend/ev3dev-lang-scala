@@ -13,13 +13,9 @@ object RunToBlueHome extends Runnable {
     setGyro()
 
     fromRedToBlue()
-
-    //ErrandsBeforeKidnapping
   }
 
-
   private def fromRedToBlue(): Unit = {
-   //Robot.movestraight(480.mm)
     Robot.movestraight(250.mm)
     Robot.rightRotation(90.degrees)
     Robot.rightRotation(90.degrees)

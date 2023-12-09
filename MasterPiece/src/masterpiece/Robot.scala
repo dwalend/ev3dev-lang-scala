@@ -10,8 +10,6 @@ import ev3dev4s.sensors.SensorPort
 import scala.annotation.tailrec
 import scala.{StringContext, Unit}
 
-
-
 object Robot {
   Movement.setMovementMotorsTo(MotorPort.A,MotorPort.C)
 
@@ -59,7 +57,6 @@ object Robot {
     Log.log(s"heading is $heading, speed is $speed")
     if (goalHeading < heading) {
       Movement.startMoving(-speed, speed)
-      //Time.pause(10.milliseconds)
       leftRotation(goalHeading)
     } else {
       Movement.stop()
