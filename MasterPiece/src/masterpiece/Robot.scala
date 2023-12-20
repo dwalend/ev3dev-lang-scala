@@ -27,7 +27,7 @@ object Robot {
   Movement.setMovementMotorsTo(leftDrivePort,rightDrivePort)
 
   private val wheelCircumference: MilliMeters = 180.mm
-  private val robotWheelbase: MilliMeters = ???
+  private val robotWheelbase: MilliMeters = 116.mm
 
   private val cruiseSpeed: DegreesPerSecond = 400.degreesPerSecond
   private val fineSpeed: DegreesPerSecond = 40.degreesPerSecond
@@ -89,6 +89,9 @@ object Robot {
   }
 
   def straightForward(distance :MilliMeters, speed:DegreesPerSecond = cruiseSpeed,goalHeading:Degrees = expectedHeading):Unit  = {
+    leftDriveMotor.writeSpeed((speed.v/2.0f).degreesPerSecond)
+    leftDriveMotor.writeCommand(MotorCommand.RUN)
+
     rightDriveMotor.writeSpeed(speed)
     rightDriveMotor.writeGoalPosition(rollingDistanceToDegrees(distance))
     rightDriveMotor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
@@ -100,7 +103,7 @@ object Robot {
       if(rightIsRunning()) {
         val heading = gyroscope.headingMode().readHeading()
         val delta: Degrees = heading - goalHeading
-        val leftSpeed: DegreesPerSecond = speed + (delta.v * (speed.v * 0.2f)).degreesPerSecond
+        val leftSpeed: DegreesPerSecond = speed - (delta.v * (speed.v * 0.05f)).degreesPerSecond
         leftDriveMotor.writeSpeed(leftSpeed)
         leftDriveMotor.writeCommand(MotorCommand.RUN)
 
@@ -121,18 +124,18 @@ object Robot {
       if (rawSpeed > speed) speed
       else if (rawSpeed < Robot.fineSpeed) Robot.fineSpeed
       else rawSpeed
-    } * 0.5f
+    }
 
     Log.log(s"heading is $heading, speed is $feedbackSpeed")
     if (goalHeading > heading) {
       Movement.startMoving(feedbackSpeed, -feedbackSpeed)
-      rotateRight(goalHeading)
+      rotateRight(goalHeading,speed)
     } else {
       Movement.stop()
     }
   }
 
-  def pivotRightForward(goalHeading: Degrees, speed: DegreesPerSecond = cruiseSpeed): Unit = {
+  def pivotRightForwardTo(goalHeading: Degrees, speed: DegreesPerSecond = cruiseSpeed): Unit = {
     rightDriveMotor.writeCommand(MotorCommand.STOP)
 
     @tailrec
@@ -155,10 +158,11 @@ object Robot {
         leftDriveMotor.writeCommand(MotorCommand.STOP)
       }
     }
+    recur()
     expectedHeading = goalHeading
   }
 
-  def curveRightForward(goalHeading:Degrees,outerRadius:MilliMeters,speed:DegreesPerSecond = cruiseSpeed) = {
+  def curveRightForwardTo(goalHeading:Degrees, outerRadius:MilliMeters, speed:DegreesPerSecond = cruiseSpeed) = {
     val starterHeading = gyroscope.headingMode().readHeading()
     val deltaHeading = goalHeading - starterHeading
     val deltaLeftDistance: MilliMeters = ((deltaHeading.v/360) * 2 * Math.PI.toFloat * outerRadius.v).mm
@@ -180,11 +184,13 @@ object Robot {
       if(leftIsRunning()) {
         val heading = gyroscope.headingMode().readHeading()
         val leftOdometer = leftDriveMotor.readPosition()
-        val rightSpeed: DegreesPerSecond = optimalRightSpeed +
-          (optimalRightSpeed * 0.2f  * (leftOdometer - expectedLeftMotorOdometer(heading)) ).degreesPerSecond
+        val rightSpeed: DegreesPerSecond = optimalRightSpeed -
+          (optimalRightSpeed * 0.005f  * (leftOdometer - expectedLeftMotorOdometer(heading)) ).degreesPerSecond
 
         rightDriveMotor.writeSpeed(rightSpeed)
         rightDriveMotor.writeCommand(MotorCommand.RUN)
+        Log.log(s"heading is $heading, expected - leftOdometer is ${expectedLeftMotorOdometer(heading) - leftOdometer}, speed is $rightSpeed")
+
         recur()
       }
       else {
@@ -200,27 +206,27 @@ object Robot {
 object Straight extends Runnable {
   override def run(): Unit = {
     Robot.setHeading(0.degrees)
-    Robot.straightForward(500.mm)
+    Robot.straightForward(500.mm,650.degreesPerSecond)
   }
 }
 
 object RotateRight extends Runnable {
   override def run(): Unit = {
     Robot.setHeading(0.degrees)
-    Robot.rotateRight(90.degrees)
+    Robot.rotateRight(90.degrees,650.degreesPerSecond)
   }
 }
 
 object PivotRight extends Runnable {
   override def run(): Unit = {
     Robot.setHeading(0.degrees)
-    Robot.pivotRightForward(90.degrees)
+    Robot.pivotRightForwardTo(90.degrees,650.degreesPerSecond)
   }
 }
 
 object CurveRight extends Runnable {
   override def run(): Unit = {
     Robot.setHeading(0.degrees)
-    Robot.curveRightForward(90.degrees,300.mm)
+    Robot.curveRightForwardTo(90.degrees,300.mm)
   }
 }
