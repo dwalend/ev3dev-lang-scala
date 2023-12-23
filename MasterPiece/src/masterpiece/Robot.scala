@@ -1,16 +1,15 @@
 package masterpiece
 
 import ev3dev4s.Log
-import ev3dev4s.actuators.{Ev3LargeMotor, MotorCommand, MotorPort}
+import ev3dev4s.actuators.{Ev3LargeMotor, MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.lego.{Gyroscope, Movement}
 import ev3dev4s.scala2measure.Conversions.{FloatConversions, IntConversions}
 import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, MilliMeters}
 import ev3dev4s.sensors.{Ev3Gyroscope, SensorPort}
 
 import java.lang.{Math, Runnable}
-import scala.Predef.???
 import scala.annotation.tailrec
-import scala.{Boolean, None, StringContext, Unit}
+import scala.{Boolean, Float, None, StringContext, Unit}
 
 
 
@@ -18,7 +17,7 @@ object Robot {
   private val gyroscopePort = SensorPort.One
   private val gyroscope = Ev3Gyroscope(gyroscopePort,None)
 
-  private val leftDrivePort = MotorPort.A
+  private val leftDrivePort = MotorPort.B
   private val rightDrivePort = MotorPort.C
 
   private val leftDriveMotor = Ev3LargeMotor(leftDrivePort,None)
@@ -34,6 +33,10 @@ object Robot {
 
   private def rollingDistanceToDegrees(distance :MilliMeters): Degrees = {
     (360 * distance.v / wheelCircumference.v).degrees
+  }
+
+  private def degreesTorRollingDistance(degrees: Degrees): MilliMeters = {
+    (wheelCircumference.v * degrees.v / 360 ).mm
   }
 
   def movestraight(distance :MilliMeters, speed:DegreesPerSecond = cruiseSpeed): Unit ={
@@ -89,23 +92,55 @@ object Robot {
   }
 
   def straightForward(distance :MilliMeters, speed:DegreesPerSecond = cruiseSpeed,goalHeading:Degrees = expectedHeading):Unit  = {
-    leftDriveMotor.writeSpeed((speed.v/2.0f).degreesPerSecond)
-    leftDriveMotor.writeCommand(MotorCommand.RUN)
+    val rightStartPosition: Degrees = rightDriveMotor.readPosition()
 
-    rightDriveMotor.writeSpeed(speed)
-    rightDriveMotor.writeGoalPosition(rollingDistanceToDegrees(distance))
-    rightDriveMotor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
+    leftDriveMotor.writeStopAction(MotorStopCommand.BRAKE)
+    rightDriveMotor.writeStopAction(MotorStopCommand.BRAKE)
+
+//    leftDriveMotor.writeSpeed((speed.v/2.0f).degreesPerSecond)
+//    leftDriveMotor.writeCommand(MotorCommand.RUN)
+
+    val rightGoalPosition = rightStartPosition + rollingDistanceToDegrees(distance)
+    rightDriveMotor.writeGoalPosition(rightGoalPosition)
+    rightDriveMotor.writeSpeed(fineSpeed)
+    rightDriveMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
+
+//    rightDriveMotor.writeGoalPosition(rollingDistanceToDegrees(distance))
+//    rightDriveMotor.writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
 
     val rightIsRunning: () => Boolean = rightDriveMotor.readIsRunning
+
+    def gentleSpeed(leftSpeed:DegreesPerSecond,rightSpeed:DegreesPerSecond):(DegreesPerSecond,DegreesPerSecond) = {
+      val gentleDistance = 70.mm
+      val gentleDegrees = rollingDistanceToDegrees(gentleDistance)
+      val rightPosition = rightDriveMotor.readPosition()
+      val rightDelta = rightPosition - rightStartPosition
+      val rightRemaining = rightGoalPosition - rightPosition
+
+      val accelFactor = rightDelta/gentleDegrees
+      val decelFactor = rightRemaining/gentleDegrees
+
+      def modifiedSpeed(s:DegreesPerSecond,factor:Float):DegreesPerSecond = {
+        (s-Robot.fineSpeed)*factor + Robot.fineSpeed*(1.0f - factor)
+      }
+
+      if(accelFactor < 1.0f) (modifiedSpeed(leftSpeed,accelFactor),modifiedSpeed(rightSpeed,accelFactor))
+      else if (decelFactor < 1.0f) (modifiedSpeed(leftSpeed,decelFactor),modifiedSpeed(rightSpeed,decelFactor))
+      else (leftSpeed,rightSpeed)
+    }
 
     @tailrec
     def recur():Unit = {
       if(rightIsRunning()) {
         val heading = gyroscope.headingMode().readHeading()
         val delta: Degrees = heading - goalHeading
-        val leftSpeed: DegreesPerSecond = speed - (delta.v * (speed.v * 0.05f)).degreesPerSecond
+        val rawLeftSpeed: DegreesPerSecond = speed - (delta.v * (speed.v * 0.05f)).degreesPerSecond
+        val (leftSpeed,rightSpeed) = gentleSpeed(rawLeftSpeed,speed)
+
         leftDriveMotor.writeSpeed(leftSpeed)
+        rightDriveMotor.writeSpeed(rightSpeed)
         leftDriveMotor.writeCommand(MotorCommand.RUN)
+        rightDriveMotor.writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
 
         Log.log(s"heading is $heading, leftSpeed is $leftSpeed")
         recur()
@@ -116,6 +151,7 @@ object Robot {
     recur()
   }
 
+  @tailrec
   def rotateRight(goalHeading:Degrees,speed:DegreesPerSecond = cruiseSpeed):Unit = {
     val heading: Degrees = gyroscope.headingMode().readHeading()
     val toGo: Degrees = goalHeading - heading
@@ -162,7 +198,7 @@ object Robot {
     expectedHeading = goalHeading
   }
 
-  def curveRightForwardTo(goalHeading:Degrees, outerRadius:MilliMeters, speed:DegreesPerSecond = cruiseSpeed) = {
+  def curveRightForwardTo(goalHeading:Degrees, outerRadius:MilliMeters, speed:DegreesPerSecond = cruiseSpeed): Unit = {
     val starterHeading = gyroscope.headingMode().readHeading()
     val deltaHeading = goalHeading - starterHeading
     val deltaLeftDistance: MilliMeters = ((deltaHeading.v/360) * 2 * Math.PI.toFloat * outerRadius.v).mm
