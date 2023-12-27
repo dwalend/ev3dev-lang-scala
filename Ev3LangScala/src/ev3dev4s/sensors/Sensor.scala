@@ -62,6 +62,22 @@ object MultiModeSensorFS {
     }
   }
 
+  case class Value01SensorFS(sensorDir: Path) extends MultiModeSensorFS {
+    private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
+    private val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
+    private val value1Reader = ChannelRereader(sensorDir.resolve("value1"))
+
+    private[sensors] def writeMode(mode: Mode): Unit = modeWriter.writeString(mode.name)
+
+    def readValue0Int(): Int = value0Reader.readAsciiInt()
+    def readValue1Int(): Int = value1Reader.readAsciiInt()
+
+    override def close(): Unit = {
+      value1Reader.close()
+      value0Reader.close()
+      modeWriter.close()
+    }
+  }
 
   case class Value012SensorFS(sensorDir: Path) extends MultiModeSensorFS {
     private val modeWriter = ChannelRewriter(sensorDir.resolve("mode"))
