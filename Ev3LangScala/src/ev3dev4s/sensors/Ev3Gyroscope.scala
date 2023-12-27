@@ -3,7 +3,7 @@ package ev3dev4s.sensors
 import ev3dev4s.os.Time
 import ev3dev4s.Log
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
-import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond}
 import ev3dev4s.scala2measure.Conversions._
 
 import java.io.File
@@ -17,17 +17,20 @@ import scala.collection.immutable.ArraySeq
  * @since v0.0.0
  */
 case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value0SensorFS)){ //todo change to Value01SensorFS to support GYRO-G&A
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value01SensorFS)){ //todo change to Value01SensorFS to support GYRO-G&A
 
-  override def findGadgetFS(): Option[MultiModeSensorFS.Value0SensorFS] =
+  override def findGadgetFS(): Option[MultiModeSensorFS.Value01SensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName)
-      .map(MultiModeSensorFS.Value0SensorFS)
+      .map(MultiModeSensorFS.Value01SensorFS)
 
   private lazy val onlyHeadingMode: HeadingMode = HeadingMode()
   def headingMode():HeadingMode = setMaybeWriteMode(onlyHeadingMode)
 
   private lazy val onlyRateMode: RateMode = RateMode()
   def rateMode():RateMode = setMaybeWriteMode(onlyRateMode)
+
+  private lazy val onlyHeadingAndRateMode = HeadingAndRateMode()
+  def headingAndRateMode():HeadingAndRateMode = setMaybeWriteMode(onlyHeadingAndRateMode)
 
   /**
    * Simulate unplugging then plugging in the gyroscope - in software
@@ -80,7 +83,22 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
     }
   }
 
-    /* todo
+  /**
+   * Heading in degrees and angle change rate in degrees per second
+   */
+  sealed case class HeadingAndRateMode() extends Mode {
+    val name = "GYRO-G&A"
+
+    def readHeading(): Degrees = this.synchronized {
+      checkPort(_.readValue0Int()).degrees
+    }
+
+    def readRate(): DegreesPerSecond = this.synchronized {
+      checkPort(_.readValue1Int()).degreesPerSecond
+    }
+  }
+
+  /* todo
 GYRO-CAL - does not work. Not sure what it does do, but it doesn't recalibrate the gyro
 
 GYRO-RATE	Rotational Speed	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [22]
@@ -93,7 +111,7 @@ value1: Rotational Speed (-440 to 440) [22]
 
 TILT-RATE [24]	Rotational Speed (2nd axis)	d/s (degrees per second)	0	1	value0: Rotational Speed (-440 to 440) [25]
 TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767) [25]
-   */
+ */
 
   import ev3dev4s.Ev3System
   val ledProgress: Seq[() => Any] = Seq(
@@ -123,7 +141,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
         //read the address to learn which port
         val addressPath = dir.toPath.resolve("address")
         val portChar: Char = ChannelRereader.readString(addressPath).last
-        (portChar -> dir.toPath)
+        portChar -> dir.toPath
       }.toMap.get(port.name).getOrElse(throw UnpluggedException(port))
     }
 
