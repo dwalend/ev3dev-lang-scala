@@ -27,7 +27,7 @@ Restart Intellij to get the Scala plugin going
 
 In the upper right Set Up JDK -> Version 11 , Eclipse Temurin 11.0.16 -> OK
 
-In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> OK
+In the upper right Set Up Scala SDK -> Use Library -> Download 3.3.1 -> OK -> OK
        
 ## Have Intellij understand the project structure
 

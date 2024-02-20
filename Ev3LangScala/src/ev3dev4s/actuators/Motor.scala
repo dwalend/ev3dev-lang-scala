@@ -111,7 +111,7 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port, Ev3LargeMotor.driverName)
-      .map(MotorFS)
+      .map(MotorFS.apply)
 
   override val maxSpeed: DegreesPerSecond = 1050.degreesPerSecond
   override val observedMaxSpeed: DegreesPerSecond = 700.degreesPerSecond
@@ -124,7 +124,7 @@ object Ev3LargeMotor {
 sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS]) extends Motor(port,md) {
   override def findGadgetFS(): Option[MotorFS] =
     MotorPortScanner.findGadgetDir(port, Ev3MediumMotor.driverName)
-      .map(MotorFS)
+      .map(MotorFS.apply)
 
   override val maxSpeed: DegreesPerSecond = 1560.degreesPerSecond
   override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.v * 0.7f).degreesPerSecond

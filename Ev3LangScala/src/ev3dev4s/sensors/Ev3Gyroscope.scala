@@ -17,11 +17,11 @@ import scala.collection.immutable.ArraySeq
  * @since v0.0.0
  */
 case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value01SensorFS)){ //todo change to Value01SensorFS to support GYRO-G&A
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value01SensorFS.apply)){ //todo change to Value01SensorFS to support GYRO-G&A
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value01SensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3Gyroscope.driverName)
-      .map(MultiModeSensorFS.Value01SensorFS)
+      .map(MultiModeSensorFS.Value01SensorFS.apply)
 
   private lazy val onlyHeadingMode: HeadingMode = HeadingMode()
   def headingMode():HeadingMode = setMaybeWriteMode(onlyHeadingMode)

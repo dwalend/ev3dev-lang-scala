@@ -9,11 +9,11 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3TouchSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS)){
+  extends Sensor(port,initialSensorDir.map(Ev3TouchSensor.Ev3TouchSensorFS.apply)){
 
   override def findGadgetFS(): Option[Ev3TouchSensor.Ev3TouchSensorFS] =
     SensorPortScanner.findGadgetDir(port,Ev3TouchSensor.driverName)
-      .map(Ev3TouchSensor.Ev3TouchSensorFS)
+      .map(Ev3TouchSensor.Ev3TouchSensorFS.apply)
 
   def readTouch(): Boolean = checkPort(_.readValue0Int() == 1)
 }

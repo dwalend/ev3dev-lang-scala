@@ -11,7 +11,7 @@ import org.apache.tools.ant.Project
 
 object Shared {
   val scalacOptions: Seq[String] = Seq("-deprecation")
-  val scalaVersion = "2.13.12"//"3.3.0"
+  val scalaVersion = "3.3.1"
   val javaVersion = "11.0.10"
 
   val ev3UserName = "robot"

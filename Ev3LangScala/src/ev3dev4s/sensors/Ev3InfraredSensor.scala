@@ -7,11 +7,11 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3InfraredSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS)) {   //todo all eight channels
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS.apply)) {   //todo all eight channels
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3InfraredSensor.driverName)
-      .map(MultiModeSensorFS.Value012SensorFS)
+      .map(MultiModeSensorFS.Value012SensorFS.apply)
 
   private lazy val onlyRemoteMode: RemoteMode = RemoteMode()
 

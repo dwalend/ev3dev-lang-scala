@@ -10,11 +10,11 @@ import java.nio.file.Path
  * @since v0.0.0
  */
 case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[Path])
-  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS)) {
+  extends MultiModeSensor(port,initialSensorDir.map(MultiModeSensorFS.Value012SensorFS.apply)) {
 
   override def findGadgetFS(): Option[MultiModeSensorFS.Value012SensorFS] =
     SensorPortScanner.findGadgetDir(port, Ev3ColorSensor.driverName)
-      .map(MultiModeSensorFS.Value012SensorFS)
+      .map(MultiModeSensorFS.Value012SensorFS.apply)
 
 
   private lazy val onlyReflectMode: ReflectMode = ReflectMode()
