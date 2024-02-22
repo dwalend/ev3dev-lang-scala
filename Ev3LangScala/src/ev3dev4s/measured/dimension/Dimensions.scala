@@ -47,7 +47,7 @@ object Dimensions:
     Other4 <: IntT,            // o4
     SolidAngle <: IntT,        // s
     Information <: IntT,       // b
-  ] = Double
+  ] = Float
 
   // Standard units (SI units for SI dimensions)
   val ampere   : ElectricCurrent    = 1
@@ -76,56 +76,56 @@ object Dimensions:
   val watt     : Power              = 1
 
   /**
-   * Dimensionless quantities can be auto-converted to Doubles.
+   * Dimensionless quantities can be auto-converted to Floats.
    */
-  given Conversion[Double, Uno] with
-    inline def apply(d: Double): Uno = d
+  given Conversion[Float, Uno] with
+    inline def apply(d: Float): Uno = d
 
   /**
    * Int can be auto-converted to Uno.
    */
   given Conversion[Int, Uno] with
-    inline def apply(d: Int): Uno = d.toDouble
+    inline def apply(d: Int): Uno = d.toFloat
 
   /**
-   * Double can be auto-converted to Uno.
+   * Float can be auto-converted to Uno.
    */
-  given Conversion[Uno, Double] with
-    inline def apply(d: Uno): Double = d
+  given Conversion[Uno, Float] with
+    inline def apply(d: Uno): Float = d
 
   // Trigonometric functions
-  inline def sin(a: Angle): Uno = math.sin(a)
-  inline def cos(a: Angle): Uno = math.cos(a)
-  inline def tan(a: Angle): Uno = math.tan(a)
-  inline def sec(a: Angle): Uno = 1 / math.cos(a)
-  inline def csc(a: Angle): Uno = 1 / math.sin(a)
-  inline def cot(a: Angle): Uno = 1 / math.tan(a)
+  inline def sin(a: Angle): Uno = math.sin(a.toDouble).toFloat
+  inline def cos(a: Angle): Uno = math.cos(a.toDouble).toFloat
+  inline def tan(a: Angle): Uno = math.tan(a.toDouble).toFloat
+  inline def sec(a: Angle): Uno = (1 / math.cos(a.toDouble)).toFloat
+  inline def csc(a: Angle): Uno = (1 / math.sin(a.toDouble)).toFloat
+  inline def cot(a: Angle): Uno = (1 / math.tan(a.toDouble)).toFloat
 
   extension (a: Angle)
     /**
      * Normalizes this angle two be between 0 and 2 Pi.
      */
-    inline def normalized: Angle = (tau * fractionalPart((a: Double) / tau))
+    inline def normalized: Angle = (tau.toFloat * fractionalPart((a: Float) / tau.toFloat))
 
   // Inverse trigonometric functions
-  inline def asin(x: Uno): Angle = math.asin(x)
-  inline def acos(x: Uno): Angle = math.acos(x)
-  inline def atan(x: Uno): Angle = math.atan(x)
-  inline def asec(x: Uno): Angle = math.acos(1 / x)
-  inline def acsc(x: Uno): Angle = math.asin(1 / x)
-  inline def acot(x: Uno): Angle = math.atan(1 / x)
+  inline def asin(x: Uno): Angle = math.asin(x.toDouble).toFloat
+  inline def acos(x: Uno): Angle = math.acos(x.toDouble).toFloat
+  inline def atan(x: Uno): Angle = math.atan(x.toDouble).toFloat
+  inline def asec(x: Uno): Angle = math.acos(1 / x.toDouble).toFloat
+  inline def acsc(x: Uno): Angle = math.asin(1 / x.toDouble).toFloat
+  inline def acot(x: Uno): Angle = math.atan(1 / x.toDouble).toFloat
 
   /**
    * @param x the (effective) number of values in the discrete uniform distribution
    * @return the amount of entropy in a discrete uniform distribution with the given number of values
    */
-  inline def log(x: Uno): Information = math.log(x)
+  inline def log(x: Uno): Information = math.log(x.toDouble).toFloat
 
   /**
    * @param x the entropy of the discrete uniform distribution
    * @return the (effective) number of values in a discrete uniform distribution with the given entropy
    */
-  inline def exp(x: Information): Uno = math.exp(x)
+  inline def exp(x: Information): Uno = math.exp(x.toDouble).toFloat
 
   /**
    * Absolute value
@@ -145,7 +145,7 @@ object Dimensions:
     O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
   ](
     x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.floor(x)
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.floor(x.toDouble).toFloat
 
   /**
    * Ceiling
@@ -155,7 +155,7 @@ object Dimensions:
     O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
   ](
     x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.ceil(x)
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.ceil(x.toDouble).toFloat
 
   /**
    * Functions that apply to any quantity, regardless of its dimension.
@@ -195,7 +195,7 @@ object Dimensions:
     /**
      * @return the magnitude of this quantity in the given unit
      */
-    inline def in(unit: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]): Double = x / unit
+    inline def in(unit: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]): Float = x / unit
 
     /**
      * Usual smaller-than comparison; only defined if the two quantities to be compared have the same dimension
@@ -273,7 +273,7 @@ object Dimensions:
         Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By] = x * y
 
     /**
-     * Usual % operator (Behaves like the Scala % operator on Doubles.)
+     * Usual % operator (Behaves like the Scala % operator on Floats.)
      */
     @targetName("modulo") inline def %[
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ny <: IntT, Cy <: IntT, Ay <: IntT, AQy <: IntT,

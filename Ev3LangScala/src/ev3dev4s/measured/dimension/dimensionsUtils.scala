@@ -4,7 +4,7 @@ import dimensional.typelevelint.{IntT, intTAsInt}
 
 private inline val tau = 2 * math.Pi
 
-private inline def fractionalPart(x: Double): Double = x - math.floor(x)
+private inline def fractionalPart(x: Float): Float = x - math.floor(x).toFloat
 
 /**
  * @return the given dimension exponents as a string

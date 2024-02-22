@@ -68,10 +68,10 @@ def diff(i: IntT, j: IntT): IntT = intAsIntT(intTAsInt(i) - intTAsInt(j))
  *
  * @param x the base
  * @param i the exponent
- * @return the given Double raised to the given IntT
+ * @return the given Float raised to the given IntT
  */
-inline def power(inline x: Double, inline i: IntT): Double = inline i match
-  case Minus(n) => natPower(1.0 / x, n)
+inline def power(inline x: Float, inline i: IntT): Float = inline i match
+  case Minus(n) => natPower(1.0f / x, n).toFloat
   case n: NatT => natPower(x, n)
 
 /**
@@ -79,31 +79,31 @@ inline def power(inline x: Double, inline i: IntT): Double = inline i match
  *
  * @param x the base
  * @param i the exponent
- * @return the given Double raised to the given IntT
+ * @return the given Float raised to the given IntT
  *
  * Note: this definition was used previously.
  */
-inline def power2(inline x: Double, inline i: IntT): Double = intPower(x, inlineIntTAsInt(i))
+inline def power2(inline x: Float, inline i: IntT): Float = intPower(x, inlineIntTAsInt(i))
 
 /**
  * Uses repeated squaring.
  *
  * @param x the base
  * @param i the exponent
- * @return the given Double raised to the given Int
+ * @return the given Float raised to the given Int
  */
-private def intPower(x: Double, i: Int): Double =
-  if i < 0 then nonNegativeIntPower(1.0 / x, -i, 1.0) else nonNegativeIntPower(x, i, 1.0)
+private def intPower(x: Float, i: Int): Float =
+  if i < 0 then nonNegativeIntPower(1.0f / x, -i, 1.0) else nonNegativeIntPower(x, i, 1.0)
 
 /**
  * Uses repeated squaring.
  *
  * @param x the base
  * @param n the non-negative exponent
- * @return the given Double raised to the given Int
+ * @return the given Float raised to the given Int
  */
-private def nonNegativeIntPower(x: Double, n: Int, acc: Double): Double =
-  val newAcc = acc * (if n % 2 == 0 then 1.0 else x)
+private def nonNegativeIntPower(x: Float, n: Int, acc: Float): Float =
+  val newAcc = acc * (if n % 2 == 0 then 1.0f else x)
   if n <= 1 then newAcc else nonNegativeIntPower(x * x, n / 2, newAcc)
 
 /**
@@ -111,9 +111,9 @@ private def nonNegativeIntPower(x: Double, n: Int, acc: Double): Double =
  *
  * @param x the base
  * @param n the exponent
- * @return the given Double raised to the given NatT
+ * @return the given Float raised to the given NatT
  */
-inline def natPower(x: Double, inline n: NatT): Double = inline n match
+inline def natPower(x: Float, inline n: NatT): Float = inline n match
   case Zero() => 1.0
   case Succ(predN) => x * natPower(x, predN)
 
@@ -127,9 +127,9 @@ inline def natPower(x: Double, inline n: NatT): Double = inline n match
  *
  * @param x the base
  * @param n the exponent
- * @return the given Double raised to the given NatT
+ * @return the given Float raised to the given NatT
  */
-inline def natPower2(x: Double, inline n: NatT): Double = inline n match
+inline def natPower2(x: Float, inline n: NatT): Float = inline n match
   case Zero() => 1.0
   case Succ(Zero()) => x
   case Succ(Succ(_)) =>
@@ -169,9 +169,9 @@ private transparent inline def natBinaryR(inline n: NatT): NatT = inline n match
 /**
  * @param x the root argument
  * @param i the type of root to take
- * @return the ith root of the given Double
+ * @return the ith root of the given Float
  */
-inline def root(inline x: Double, inline i: NonZeroIntT): Double = math.pow(x, 1.0 / inlineIntTAsInt(i))
+inline def root(inline x: Float, inline i: NonZeroIntT): Float = math.pow(x.toDouble, 1.0 / inlineIntTAsInt(i)).toFloat
 
 // Term/value-level convenience aliases
 val _0: _0 = Zero()
