@@ -38,10 +38,10 @@ type Root[D, N <: NonZeroIntT] = DimMap[[Z <: IntT] =>> IntQuotient[Z, N], D]
  * @tparam AQ what to replace the abstract charge with
  */
 type WithChargeSetTo[D, AQ] = D match
-  case Dim[_, _, _, _, _, _, _, _, aQ1, _] => AQ match
-    case Dim[_, _, _, _, _, _, _, _, aQ2, _] => SetterHelper[D, AQ, aQ1] match
-      case Dim[l, t, p, m, q, n, c, a, _, aP] => Dim[
-        l, t, p, m, q, n, c, a, Prod[aQ1, aQ2], aP,
+  case Dim[_, _, _, _, _, _, aQ1, _] => AQ match
+    case Dim[_, _, _, _, _, _, aQ2, _] => SetterHelper[D, AQ, aQ1] match
+      case Dim[l, t, p, m, q, a, _, aP] => Dim[
+        l, t, p, m, q, a, Prod[aQ1, aQ2], aP,
       ]
 
 /**
@@ -51,10 +51,10 @@ type WithChargeSetTo[D, AQ] = D match
  * @tparam AP what to replace the abstract charge with
  */
 type WithPotentialSetTo[D, AP] = D match
-  case Dim[_, _, _, _, _, _, _, _, _, aP1] => AP match
-    case Dim[_, _, _, _, _, _, _, _, _, aP2] => SetterHelper[D, AP, aP1] match
-      case Dim[l, t, p, m, q, n, c, a, aQ, _] => Dim[
-        l, t, p, m, q, n, c, a, aQ, Prod[aP1, aP2],
+  case Dim[_, _, _, _, _, _, _, aP1] => AP match
+    case Dim[_, _, _, _, _, _, _, aP2] => SetterHelper[D, AP, aP1] match
+      case Dim[l, t, p, m, q, a, aQ, _] => Dim[
+        l, t, p, m, q, a, aQ, Prod[aP1, aP2],
       ]
 
 /**
@@ -64,8 +64,8 @@ type WithPotentialSetTo[D, AP] = D match
  * @tparam D the given dim
  */
 private[dimension] type DimMap[F[_ <: IntT] <: IntT, D] = D match
-  case Dim[l, t, p, m, q, n, c, a, aQ, aP] => Dim[
-    F[l], F[t], F[p], F[m], F[q], F[n], F[c], F[a], F[aQ], F[aP]
+  case Dim[l, t, p, m, q, a, aQ, aP] => Dim[
+    F[l], F[t], F[p], F[m], F[q], F[a], F[aQ], F[aP]
   ]
 
 /**
@@ -76,9 +76,9 @@ private[dimension] type DimMap[F[_ <: IntT] <: IntT, D] = D match
  * @tparam D2 the second given dim
  */
 private[dimension] type DimMap2[Op[_ <: IntT, _ <: IntT] <: IntT, D1, D2] = D1 match
-  case Dim[l1, t1, p1, m1, q1, n1, c1, a1, aQ1, aP1] => D2 match
-    case Dim[l2, t2, p2, m2, q2, n2, c2, a2, aQ2, aP2] => Dim[
-      Op[l1, l2], Op[t1, t2], Op[p1, p2], Op[m1, m2], Op[q1, q2], Op[n1, n2], Op[c1, c2], Op[a1, a2], Op[aQ1, aQ2],
+  case Dim[l1, t1, p1, m1, q1, a1, aQ1, aP1] => D2 match
+    case Dim[l2, t2, p2, m2, q2, a2, aQ2, aP2] => Dim[
+      Op[l1, l2], Op[t1, t2], Op[p1, p2], Op[m1, m2], Op[q1, q2], Op[a1, a2], Op[aQ1, aQ2],
       Op[aP1, aP2]
     ]
 
