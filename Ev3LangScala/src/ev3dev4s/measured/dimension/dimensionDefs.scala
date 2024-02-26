@@ -18,7 +18,7 @@ type Angle             = Dim[_0, _0, _0, _0, _0, _1]
 
 // Derived dimensions
 type Acceleration = Velocity / Time
-type Area = Length ~ _2
+type Area = Length ^ _2
 type Density = Mass / Volume
 type Diffusivity = Area / Time
 type ElectricCurrent = ElectricCharge / Time
@@ -32,4 +32,4 @@ type Power = Energy / Time
 type Pressure = Force / Area
 type Velocity = Length / Time
 type Viscosity = Pressure * Time
-type Volume = Length ~ _3
+type Volume = Length ^ _3

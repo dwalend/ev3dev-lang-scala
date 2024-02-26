@@ -21,7 +21,7 @@ import scala.annotation.targetName
  * @tparam D the given dim
  * @tparam P the given power
  */
-@targetName("toThe") type ~[D, P <: IntT] = DimMap[[Q <: IntT] =>> Prod[Q, P], D]
+@targetName("toThe") type ^[D, P <: IntT] = DimMap[[Q <: IntT] =>> Prod[Q, P], D]
 
 /**
  * Returns the Nth root of the given dim, assuming it's a valid operation.

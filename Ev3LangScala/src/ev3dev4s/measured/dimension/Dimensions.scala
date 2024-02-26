@@ -68,7 +68,7 @@ object Dimensions:
     inline def apply(d: Uno): Float = d
 
   // Trigonometric functions
-  val radiansPerDegree = (math.Pi / 180)
+  private val radiansPerDegree = math.Pi / 180
 
   inline def sin(a: Angle): Uno = math.sin(a.toDouble * radiansPerDegree).toFloat
   inline def cos(a: Angle): Uno = math.cos(a.toDouble * radiansPerDegree).toFloat
@@ -81,7 +81,7 @@ object Dimensions:
     /**
      * Normalizes this angle two be between 0 and 2 Pi.
      */
-    inline def normalized: Angle = (tau.toFloat * fractionalPart((a: Float) / tau.toFloat))
+    inline def normalized: Angle = tau.toFloat * fractionalPart((a: Float) / tau.toFloat)
 
   // Inverse trigonometric functions
   inline def asin(x: Uno): Angle = (math.asin(x.toDouble)/radiansPerDegree).toFloat
@@ -250,9 +250,9 @@ object Dimensions:
     /**
      * Usual exponentiation; dimensions are also exponentiated
      */
-    @targetName("toThe") inline def ~[E <: IntT](
+    @targetName("toThe") inline def ^[E <: IntT](
       y: E
-    ): Dim[L, T, P, M, Q, A] ~ E = power(x, y)
+    ): Dim[L, T, P, M, Q, A] ^ E = power(x, y)
     
     /**
      * @return the nth root of this quantity
