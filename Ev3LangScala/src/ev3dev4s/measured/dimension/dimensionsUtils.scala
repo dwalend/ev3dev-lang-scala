@@ -1,6 +1,7 @@
-package dimensional.dimension
+package ev3dev4s.measured.dimension
 
-import dimensional.typelevelint.{IntT, intTAsInt}
+import ev3dev4s.measured.typelevelint.{IntT, intTAsInt}
+
 
 private inline val tau = 2 * math.Pi
 

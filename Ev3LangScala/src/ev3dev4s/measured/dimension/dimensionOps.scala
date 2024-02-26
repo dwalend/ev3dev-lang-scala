@@ -1,8 +1,8 @@
-package dimensional.dimension
+package ev3dev4s.measured.dimension
 
-import dimensional.typelevelint.{Diff, IntT, IntQuotient, NonZeroIntT, Prod, Sum}
-import dimensional.dimension.Dimensions.Dim
 
+import ev3dev4s.measured.typelevelint.{Diff, IntT, IntQuotient, NonZeroIntT, Prod, Sum}
+import Dimensions.Dim
 import scala.annotation.targetName
 
 /**

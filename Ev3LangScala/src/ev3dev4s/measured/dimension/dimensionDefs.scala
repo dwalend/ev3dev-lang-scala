@@ -1,7 +1,7 @@
-package dimensional.dimension
+package ev3dev4s.measured.dimension
 
-import dimensional.typelevelint.{_0, _1, _2, _3}
-import dimensional.dimension.Dimensions.Dim
+import ev3dev4s.measured.typelevelint.{_0, _1, _2, _3}
+import Dimensions.Dim
 
 /**
  * Trivial dimension to represent dimensionless quantities

@@ -1,7 +1,7 @@
-package dimensional.dimension
+package ev3dev4s.measured.dimension
 
-import dimensional.typelevelint
-import dimensional.typelevelint.{Divides, IntT, NonZeroIntT, diff, power}
+import ev3dev4s.measured.typelevelint
+import ev3dev4s.measured.typelevelint.{Divides, IntT, NonZeroIntT, diff, power}
 
 import scala.annotation.targetName
 import scala.language.implicitConversions

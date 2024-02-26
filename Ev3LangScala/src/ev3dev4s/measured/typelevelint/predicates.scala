@@ -1,4 +1,4 @@
-package dimensional.typelevelint
+package ev3dev4s.measured.typelevelint
 
 /**
  * Type representing that one nat is less than another
