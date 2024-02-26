@@ -31,8 +31,6 @@ object Dimensions:
     Mass <: IntT,              // m
     ElectricCharge <: IntT,    // q
     Angle <: IntT,             // a
-    AbstractCharge <: IntT,    // aQ
-    AbstractPotential <: IntT, // aP
   ] = Float
 
   // Standard units (SI units for SI dimensions)
@@ -46,8 +44,6 @@ object Dimensions:
   val newton   : Force              = 1
   val ohm      : ElectricResistance = 1
   val pascal   : Pressure           = 1
-  val pUnit    : AbstractPotential  = 1
-  val rUnit    : AbstractCharge     = 1
   val degree   : Angle              = 1
   val second   : Time               = 1
   val volt     : ElectricPotential  = 1
@@ -101,8 +97,8 @@ object Dimensions:
   inline def abs[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, A, AQ, AP]
-  ): Dim[L, T, P, M, Q, A, AQ, AP] = math.abs(x)
+    x: Dim[L, T, P, M, Q, A]
+  ): Dim[L, T, P, M, Q, A] = math.abs(x)
 
   /**
    * Floor
@@ -110,8 +106,8 @@ object Dimensions:
   inline def floor[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, A, AQ, AP]
-  ): Dim[L, T, P, M, Q, A, AQ, AP] = math.floor(x.toDouble).toFloat
+    x: Dim[L, T, P, M, Q, A]
+  ): Dim[L, T, P, M, Q, A] = math.floor(x.toDouble).toFloat
 
   /**
    * Ceiling
@@ -119,50 +115,48 @@ object Dimensions:
   inline def ceil[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, A, AQ, AP]
-  ): Dim[L, T, P, M, Q, A, AQ, AP] = math.ceil(x.toDouble).toFloat
+    x: Dim[L, T, P, M, Q, A]
+  ): Dim[L, T, P, M, Q, A] = math.ceil(x.toDouble).toFloat
 
   /**
    * Functions that apply to any quantity, regardless of its dimension.
    */
   extension[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
-  ] (x: Dim[L, T, P, M, Q, A, AQ, AP])
+  ] (x: Dim[L, T, P, M, Q, A])
 
     /**
      * String representation of this quantity, using base dimensions and standard units
      */
     def asString(using L, T, P, M, Q, A, AQ, AP): String =
       x.toString + " " + dimensionsAsString(
-        summon[L], summon[T], summon[P], summon[M], summon[Q], summon[A], summon[AQ], summon[AP],
+        summon[L], summon[T], summon[P], summon[M], summon[Q], summon[A],
       )
 
     /**
      * String representation of this quantity, using the given unit, as well as base dimensions and standard units
      */
     def asStringWith[
-      L2 <: IntT, T2 <: IntT, P2 <: IntT, M2 <: IntT, Q2 <: IntT, A2 <: IntT, AQ2 <: IntT,
-      AP2 <: IntT,
-    ](unit: Dim[L2, T2, P2, M2, Q2, A2, AQ2, AP2], unitString: String)(using
-      l: L, t: T, p: P, m: M, q: Q, a: A, aQ: AQ, aP: AP,
-      l2: L2, t2: T2, p2: P2, m2: M2, q2: Q2, a2: A2, aQ2: AQ2, aP2: AP2,
+      L2 <: IntT, T2 <: IntT, P2 <: IntT, M2 <: IntT, Q2 <: IntT, A2 <: IntT
+    ](unit: Dim[L2, T2, P2, M2, Q2, A2], unitString: String)(using
+      l: L, t: T, p: P, m: M, q: Q, a: A,
+      l2: L2, t2: T2, p2: P2, m2: M2, q2: Q2, a2: A2
     ): String =
       val remainingUnits = dimensionsAsString(
         diff(l, l2), diff(t, t2), diff(p, p2), diff(m, m2), diff(q, q2), diff(a, a2),
-        diff(aQ, aQ2), diff(aP, aP2), 
       )
       (x / unit).toString + " " + Seq(unitString, remainingUnits).filter(_.nonEmpty).mkString("·")
 
     /**
      * @return the magnitude of this quantity in the given unit
      */
-    inline def in(unit: Dim[L, T, P, M, Q, A, AQ, AP]): Float = x / unit
+    inline def in(unit: Dim[L, T, P, M, Q, A]): Float = x / unit
 
     /**
      * Usual smaller-than comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("smallerThan") inline def <(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
+      y: Dim[L, T, P, M, Q, A]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x < y
@@ -171,7 +165,7 @@ object Dimensions:
      * Usual larger-than comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerThan") inline def >(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
+      y: Dim[L, T, P, M, Q, A]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x > y
@@ -180,7 +174,7 @@ object Dimensions:
      * Usual smaller-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("smallerOrEqual") inline def <=(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
+      y: Dim[L, T, P, M, Q, A]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x <= y
@@ -189,7 +183,7 @@ object Dimensions:
      * Usual larger-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerOrEqual") inline def >=(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
+      y: Dim[L, T, P, M, Q, A]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x >= y
@@ -198,7 +192,7 @@ object Dimensions:
      * Usual equality; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("equal") inline def =:=(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
+      y: Dim[L, T, P, M, Q, A]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x == y
@@ -207,20 +201,20 @@ object Dimensions:
      * Usual addition; only defined if the two quantities to be added have the same dimension
      */
     @targetName("plus") inline def +(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
-    ): Dim[L, T, P, M, Q, A, AQ, AP] = x + y
+      y: Dim[L, T, P, M, Q, A]
+    ): Dim[L, T, P, M, Q, A] = x + y
 
     /**
      * Usual subtraction; only defined if the two quantities to be subtracted have the same dimension
      */
     @targetName("minus") inline def -(
-      y: Dim[L, T, P, M, Q, A, AQ, AP]
-    ): Dim[L, T, P, M, Q, A, AQ, AP] = x - y
+      y: Dim[L, T, P, M, Q, A]
+    ): Dim[L, T, P, M, Q, A] = x - y
 
     /**
      * Negation
      */
-    inline def unary_- : Dim[L, T, P, M, Q, A, AQ, AP] = -x
+    inline def unary_- : Dim[L, T, P, M, Q, A] = -x
 
     /**
      * Usual multiplication; dimensions are also multiplied
@@ -229,19 +223,18 @@ object Dimensions:
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ay <: IntT, AQy <: IntT,
       APy <: IntT,
     ](
-      y: Dim[Ly, Ty, Py, My, Qy, Ay, AQy, APy]
-     ): Dim[L, T, P, M, Q, A, AQ, AP] *
-        Dim[Ly, Ty, Py, My, Qy, Ay, AQy, APy] = x * y
+      y: Dim[Ly, Ty, Py, My, Qy, Ay]
+     ): Dim[L, T, P, M, Q, A] *
+        Dim[Ly, Ty, Py, My, Qy, Ay] = x * y
 
     /**
      * Usual % operator (Behaves like the Scala % operator on Floats.)
      */
     @targetName("modulo") inline def %[
-      Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ay <: IntT, AQy <: IntT,
-      APy <: IntT,
+      Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ay <: IntT,
     ](
-      y: Dim[Ly, Ty, Py, My, Qy, Ay, AQy, APy]
-     ): Dim[L, T, P, M, Q, A, AQ, AP] = x % y
+      y: Dim[Ly, Ty, Py, My, Qy, Ay]
+     ): Dim[L, T, P, M, Q, A] = x % y
 
     /**
      * Usual division; dimensions are also divided
@@ -250,48 +243,22 @@ object Dimensions:
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ay <: IntT, AQy <: IntT,
       APy <: IntT,
     ](
-       y: Dim[Ly, Ty, Py, My, Qy, Ay, AQy, APy]
-     ): Dim[L, T, P, M, Q, A, AQ, AP] /
-      Dim[Ly, Ty, Py, My, Qy, Ay, AQy, APy] = x / y
+       y: Dim[Ly, Ty, Py, My, Qy, Ay]
+     ): Dim[L, T, P, M, Q, A] /
+      Dim[Ly, Ty, Py, My, Qy, Ay] = x / y
 
     /**
      * Usual exponentiation; dimensions are also exponentiated
      */
     @targetName("toThe") inline def ~[E <: IntT](
       y: E
-    ): Dim[L, T, P, M, Q, A, AQ, AP] ~ E = power(x, y)
-
-    /**
-     * @param q the value/quantity to which the abstract charge is to be set
-     * @return a quantity equivalent to this one, when the abstract charge is set to the given value
-     */
-    inline def withAbstractChargeUnitSetTo[
-      Lq <: IntT, Tq <: IntT, Pq <: IntT, Mq <: IntT, Qq <: IntT, Aq <: IntT, AQq <: IntT,
-      APq <: IntT,
-    ](q: Dim[Lq, Tq, Pq, Mq, Qq, Aq, AQq, APq])(using qPower: T): WithChargeSetTo[
-      Dim[L, T, P, M, Q, A, AQ, AP],
-      Dim[Lq, Tq, Pq, Mq, Qq, Aq, AQq, APq],
-    ] = x * power(q, qPower)
-
-    /**
-     * @param p the value/quantity to which the abstract potential is to be set
-     * @return a quantity equivalent to this one, when the abstract potential is set to the given value
-     */
-    inline def withAbstractPotentialUnitSetTo[
-      Lp <: IntT, Tp <: IntT, Pp <: IntT, Mp <: IntT, Qp <: IntT, Ap <: IntT, AQp <: IntT,
-      APp <: IntT,
-    ](
-      p: Dim[Lp, Tp, Pp, Mp, Qp, Ap, AQp, APp]
-    )(using pPower: T): WithPotentialSetTo[
-      Dim[L, T, P, M, Q,  A, AQ, AP],
-      Dim[Lp, Tp, Pp, Mp, Qp, Ap, AQp, APp],
-    ] = x * power(p, pPower)
-
+    ): Dim[L, T, P, M, Q, A] ~ E = power(x, y)
+    
     /**
      * @return the nth root of this quantity
      */
     inline def root[E <: NonZeroIntT](n: E)(using
       Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q],
       Divides[E, A], Divides[E, AQ], Divides[E, AP],
-    ): Root[Dim[L, T, P, M, Q,  A, AQ, AP], E] = typelevelint.root(x, n)
+    ): Root[Dim[L, T, P, M, Q,  A], E] = typelevelint.root(x, n)
 end Dimensions
