@@ -23,12 +23,6 @@ object Dimensions:
    * @tparam Angle exponent for the angle component of the dim
    * @tparam AbstractCharge exponent for the abstract charge component of the dim
    * @tparam AbstractPotential exponent for the abstract potential component of the dim
-   * @tparam Other1 exponent for the other1 component of the dim
-   * @tparam Other2 exponent for the other2 component of the dim
-   * @tparam Other3 exponent for the other3 component of the dim
-   * @tparam Other4 exponent for the other4 component of the dim
-   * @tparam SolidAngle exponent for the solid angle component of the dim
-   * @tparam Information exponent for the information component of the dim
    */
   opaque type Dim[
     Length <: IntT,            // l
@@ -41,12 +35,6 @@ object Dimensions:
     Angle <: IntT,             // a
     AbstractCharge <: IntT,    // aQ
     AbstractPotential <: IntT, // aP
-    Other1 <: IntT,            // o1
-    Other2 <: IntT,            // o2
-    Other3 <: IntT,            // o3
-    Other4 <: IntT,            // o4
-    SolidAngle <: IntT,        // s
-    Information <: IntT,       // b
   ] = Float
 
   // Standard units (SI units for SI dimensions)
@@ -59,19 +47,13 @@ object Dimensions:
   val kilogram : Mass               = 1
   val metre    : Length             = 1
   val mole     : SubstanceAmount    = 1
-  val nat      : Information        = 1
   val newton   : Force              = 1
-  val o1Unit   : Other1             = 1
-  val o2Unit   : Other2             = 1
-  val o3Unit   : Other3             = 1
-  val o4Unit   : Other4             = 1
   val ohm      : ElectricResistance = 1
   val pascal   : Pressure           = 1
   val pUnit    : AbstractPotential  = 1
   val rUnit    : AbstractCharge     = 1
   val degree   : Angle              = 1
   val second   : Time               = 1
-  val steradian: SolidAngle         = 1
   val volt     : ElectricPotential  = 1
   val watt     : Power              = 1
 
@@ -116,64 +98,47 @@ object Dimensions:
   inline def asec(x: Uno): Angle = (math.acos(1 / x.toDouble)/radiansPerDegree).toFloat
   inline def acsc(x: Uno): Angle = (math.asin(1 / x.toDouble)/radiansPerDegree).toFloat
   inline def acot(x: Uno): Angle = (math.atan(1 / x.toDouble)/radiansPerDegree).toFloat
-
-  /**
-   * @param x the (effective) number of values in the discrete uniform distribution
-   * @return the amount of entropy in a discrete uniform distribution with the given number of values
-   */
-  inline def log(x: Uno): Information = math.log(x.toDouble).toFloat
-
-  /**
-   * @param x the entropy of the discrete uniform distribution
-   * @return the (effective) number of values in a discrete uniform distribution with the given entropy
-   */
-  inline def exp(x: Information): Uno = math.exp(x.toDouble).toFloat
-
+  
   /**
    * Absolute value
    */
   inline def abs[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
-    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.abs(x)
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = math.abs(x)
 
   /**
    * Floor
    */
   inline def floor[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
-    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.floor(x.toDouble).toFloat
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = math.floor(x.toDouble).toFloat
 
   /**
    * Ceiling
    */
   inline def ceil[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
-    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
   ](
-    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = math.ceil(x.toDouble).toFloat
+    x: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
+  ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = math.ceil(x.toDouble).toFloat
 
   /**
    * Functions that apply to any quantity, regardless of its dimension.
    */
   extension[
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, N <: IntT, C <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
-    O1 <: IntT, O2 <: IntT, O3 <: IntT, O4 <: IntT, S <: IntT, B <: IntT,
-  ] (x: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B])
+  ] (x: Dim[L, T, P, M, Q, N, C, A, AQ, AP])
 
     /**
      * String representation of this quantity, using base dimensions and standard units
      */
-    def asString(using L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B): String =
+    def asString(using L, T, P, M, Q, N, C, A, AQ, AP): String =
       x.toString + " " + dimensionsAsString(
         summon[L], summon[T], summon[P], summon[M], summon[Q], summon[N], summon[C], summon[A], summon[AQ], summon[AP],
-        summon[O1], summon[O2], summon[O3], summon[O4], summon[S], summon[B]
       )
 
     /**
@@ -181,29 +146,27 @@ object Dimensions:
      */
     def asStringWith[
       L2 <: IntT, T2 <: IntT, P2 <: IntT, M2 <: IntT, Q2 <: IntT, N2 <: IntT, C2 <: IntT, A2 <: IntT, AQ2 <: IntT,
-      AP2 <: IntT, O12 <: IntT, O22 <: IntT, O32 <: IntT, O42 <: IntT, S2 <: IntT, B2 <: IntT,
-    ](unit: Dim[L2, T2, P2, M2, Q2, N2, C2, A2, AQ2, AP2, O12, O22, O32, O42, S2, B2], unitString: String)(using
-      l: L, t: T, p: P, m: M, q: Q, n: N, c: C, a: A, aQ: AQ, aP: AP, o1: O1, o2: O2, o3: O3, o4: O4, s: S, b: B,
-      l2: L2, t2: T2, p2: P2, m2: M2, q2: Q2, n2: N2, c2: C2, a2: A2, aQ2: AQ2, aP2: AP2, o12: O12, o22: O22, o32: O32,
-      o42: O42, s2: S2, b2: B2,
+      AP2 <: IntT,
+    ](unit: Dim[L2, T2, P2, M2, Q2, N2, C2, A2, AQ2, AP2], unitString: String)(using
+      l: L, t: T, p: P, m: M, q: Q, n: N, c: C, a: A, aQ: AQ, aP: AP,
+      l2: L2, t2: T2, p2: P2, m2: M2, q2: Q2, n2: N2, c2: C2, a2: A2, aQ2: AQ2, aP2: AP2,
     ): String =
       val remainingUnits = dimensionsAsString(
         diff(l, l2), diff(t, t2), diff(p, p2), diff(m, m2), diff(q, q2), diff(n, n2), diff(c, c2), diff(a, a2),
-        diff(aQ, aQ2), diff(aP, aP2), diff(o1, o12), diff(o2, o22), diff(o3, o32), diff(o4, o42), diff(s, s2),
-        diff(b, b2),
+        diff(aQ, aQ2), diff(aP, aP2), 
       )
       (x / unit).toString + " " + Seq(unitString, remainingUnits).filter(_.nonEmpty).mkString("·")
 
     /**
      * @return the magnitude of this quantity in the given unit
      */
-    inline def in(unit: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]): Float = x / unit
+    inline def in(unit: Dim[L, T, P, M, Q, N, C, A, AQ, AP]): Float = x / unit
 
     /**
      * Usual smaller-than comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("smallerThan") inline def <(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x < y
@@ -212,7 +175,7 @@ object Dimensions:
      * Usual larger-than comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerThan") inline def >(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x > y
@@ -221,7 +184,7 @@ object Dimensions:
      * Usual smaller-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("smallerOrEqual") inline def <=(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x <= y
@@ -230,7 +193,7 @@ object Dimensions:
      * Usual larger-or-equal comparison; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("largerOrEqual") inline def >=(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x >= y
@@ -239,7 +202,7 @@ object Dimensions:
      * Usual equality; only defined if the two quantities to be compared have the same dimension
      */
     @targetName("equal") inline def =:=(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
     ): Boolean =
       assert(!(x.isNaN || y.isNaN))
       x == y
@@ -248,59 +211,59 @@ object Dimensions:
      * Usual addition; only defined if the two quantities to be added have the same dimension
      */
     @targetName("plus") inline def +(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x + y
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
+    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = x + y
 
     /**
      * Usual subtraction; only defined if the two quantities to be subtracted have the same dimension
      */
     @targetName("minus") inline def -(
-      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B]
-    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x - y
+      y: Dim[L, T, P, M, Q, N, C, A, AQ, AP]
+    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = x - y
 
     /**
      * Negation
      */
-    inline def unary_- : Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = -x
+    inline def unary_- : Dim[L, T, P, M, Q, N, C, A, AQ, AP] = -x
 
     /**
      * Usual multiplication; dimensions are also multiplied
      */
     @targetName("times") inline def *[
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ny <: IntT, Cy <: IntT, Ay <: IntT, AQy <: IntT,
-      APy <: IntT, O1y <: IntT, O2y <: IntT, O3y <: IntT, O4y <: IntT, Sy <: IntT, By <: IntT,
+      APy <: IntT,
     ](
-      y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By]
-     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] *
-        Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By] = x * y
+      y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy]
+     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] *
+        Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy] = x * y
 
     /**
      * Usual % operator (Behaves like the Scala % operator on Floats.)
      */
     @targetName("modulo") inline def %[
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ny <: IntT, Cy <: IntT, Ay <: IntT, AQy <: IntT,
-      APy <: IntT, O1y <: IntT, O2y <: IntT, O3y <: IntT, O4y <: IntT, Sy <: IntT, By <: IntT,
+      APy <: IntT,
     ](
-      y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By]
-     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] = x % y
+      y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy]
+     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] = x % y
 
     /**
      * Usual division; dimensions are also divided
      */
     @targetName("over") inline def /[
       Ly <: IntT, Ty <: IntT, Py <: IntT, My <: IntT, Qy <: IntT, Ny <: IntT, Cy <: IntT, Ay <: IntT, AQy <: IntT,
-      APy <: IntT, O1y <: IntT, O2y <: IntT, O3y <: IntT, O4y <: IntT, Sy <: IntT, By <: IntT,
+      APy <: IntT,
     ](
-       y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By]
-     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] /
-      Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy, O1y, O2y, O3y, O4y, Sy, By] = x / y
+       y: Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy]
+     ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] /
+      Dim[Ly, Ty, Py, My, Qy, Ny, Cy, Ay, AQy, APy] = x / y
 
     /**
      * Usual exponentiation; dimensions are also exponentiated
      */
     @targetName("toThe") inline def ~[E <: IntT](
       y: E
-    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B] ~ E = power(x, y)
+    ): Dim[L, T, P, M, Q, N, C, A, AQ, AP] ~ E = power(x, y)
 
     /**
      * @param q the value/quantity to which the abstract charge is to be set
@@ -308,10 +271,10 @@ object Dimensions:
      */
     inline def withAbstractChargeUnitSetTo[
       Lq <: IntT, Tq <: IntT, Pq <: IntT, Mq <: IntT, Qq <: IntT, Nq <: IntT, Cq <: IntT, Aq <: IntT, AQq <: IntT,
-      APq <: IntT, O1q <: IntT, O2q <: IntT, O3q <: IntT, O4q <: IntT, Sq <: IntT, Bq <: IntT,
-    ](q: Dim[Lq, Tq, Pq, Mq, Qq, Nq, Cq, Aq, AQq, APq, O1q, O2q, O3q, O4q, Sq, Bq])(using qPower: T): WithChargeSetTo[
-      Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B],
-      Dim[Lq, Tq, Pq, Mq, Qq, Nq, Cq, Aq, AQq, APq, O1q, O2q, O3q, O4q, Sq, Bq],
+      APq <: IntT,
+    ](q: Dim[Lq, Tq, Pq, Mq, Qq, Nq, Cq, Aq, AQq, APq])(using qPower: T): WithChargeSetTo[
+      Dim[L, T, P, M, Q, N, C, A, AQ, AP],
+      Dim[Lq, Tq, Pq, Mq, Qq, Nq, Cq, Aq, AQq, APq],
     ] = x * power(q, qPower)
 
     /**
@@ -320,12 +283,12 @@ object Dimensions:
      */
     inline def withAbstractPotentialUnitSetTo[
       Lp <: IntT, Tp <: IntT, Pp <: IntT, Mp <: IntT, Qp <: IntT, Np <: IntT, Cp <: IntT, Ap <: IntT, AQp <: IntT,
-      APp <: IntT, O1p <: IntT, O2p <: IntT, O3p <: IntT, O4p <: IntT, Sp <: IntT, Bp <: IntT,
+      APp <: IntT,
     ](
-      p: Dim[Lp, Tp, Pp, Mp, Qp, Np, Cp, Ap, AQp, APp, O1p, O2p, O3p, O4p, Sp, Bp]
+      p: Dim[Lp, Tp, Pp, Mp, Qp, Np, Cp, Ap, AQp, APp]
     )(using pPower: T): WithPotentialSetTo[
-      Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B],
-      Dim[Lp, Tp, Pp, Mp, Qp, Np, Cp, Ap, AQp, APp, O1p, O2p, O3p, O4p, Sp, Bp],
+      Dim[L, T, P, M, Q, N, C, A, AQ, AP],
+      Dim[Lp, Tp, Pp, Mp, Qp, Np, Cp, Ap, AQp, APp],
     ] = x * power(p, pPower)
 
     /**
@@ -333,7 +296,6 @@ object Dimensions:
      */
     inline def root[E <: NonZeroIntT](n: E)(using
       Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q], Divides[E, N], Divides[E, C],
-      Divides[E, A], Divides[E, AQ], Divides[E, AP], Divides[E, O1], Divides[E, O2], Divides[E, O3], Divides[E, O4],
-      Divides[E, S], Divides[E, B],
-    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP, O1, O2, O3, O4, S, B], E] = typelevelint.root(x, n)
+      Divides[E, A], Divides[E, AQ], Divides[E, AP],
+    ): Root[Dim[L, T, P, M, Q, N, C, A, AQ, AP], E] = typelevelint.root(x, n)
 end Dimensions
