@@ -69,7 +69,7 @@ object Dimensions:
   val pascal   : Pressure           = 1
   val pUnit    : AbstractPotential  = 1
   val rUnit    : AbstractCharge     = 1
-  val radian   : Angle              = 1
+  val degree   : Angle              = 1
   val second   : Time               = 1
   val steradian: SolidAngle         = 1
   val volt     : ElectricPotential  = 1
@@ -94,12 +94,14 @@ object Dimensions:
     inline def apply(d: Uno): Float = d
 
   // Trigonometric functions
-  inline def sin(a: Angle): Uno = math.sin(a.toDouble).toFloat
-  inline def cos(a: Angle): Uno = math.cos(a.toDouble).toFloat
-  inline def tan(a: Angle): Uno = math.tan(a.toDouble).toFloat
-  inline def sec(a: Angle): Uno = (1 / math.cos(a.toDouble)).toFloat
-  inline def csc(a: Angle): Uno = (1 / math.sin(a.toDouble)).toFloat
-  inline def cot(a: Angle): Uno = (1 / math.tan(a.toDouble)).toFloat
+  val radiansPerDegree = (math.Pi / 180)
+
+  inline def sin(a: Angle): Uno = math.sin(a.toDouble * radiansPerDegree).toFloat
+  inline def cos(a: Angle): Uno = math.cos(a.toDouble * radiansPerDegree).toFloat
+  inline def tan(a: Angle): Uno = math.tan(a.toDouble * radiansPerDegree).toFloat
+  inline def sec(a: Angle): Uno = (1 / math.cos(a.toDouble * radiansPerDegree)).toFloat
+  inline def csc(a: Angle): Uno = (1 / math.sin(a.toDouble * radiansPerDegree)).toFloat
+  inline def cot(a: Angle): Uno = (1 / math.tan(a.toDouble * radiansPerDegree)).toFloat
 
   extension (a: Angle)
     /**
@@ -108,12 +110,12 @@ object Dimensions:
     inline def normalized: Angle = (tau.toFloat * fractionalPart((a: Float) / tau.toFloat))
 
   // Inverse trigonometric functions
-  inline def asin(x: Uno): Angle = math.asin(x.toDouble).toFloat
-  inline def acos(x: Uno): Angle = math.acos(x.toDouble).toFloat
-  inline def atan(x: Uno): Angle = math.atan(x.toDouble).toFloat
-  inline def asec(x: Uno): Angle = math.acos(1 / x.toDouble).toFloat
-  inline def acsc(x: Uno): Angle = math.asin(1 / x.toDouble).toFloat
-  inline def acot(x: Uno): Angle = math.atan(1 / x.toDouble).toFloat
+  inline def asin(x: Uno): Angle = (math.asin(x.toDouble)/radiansPerDegree).toFloat
+  inline def acos(x: Uno): Angle = (math.acos(x.toDouble)/radiansPerDegree).toFloat
+  inline def atan(x: Uno): Angle = (math.atan(x.toDouble)/radiansPerDegree).toFloat
+  inline def asec(x: Uno): Angle = (math.acos(1 / x.toDouble)/radiansPerDegree).toFloat
+  inline def acsc(x: Uno): Angle = (math.asin(1 / x.toDouble)/radiansPerDegree).toFloat
+  inline def acot(x: Uno): Angle = (math.atan(1 / x.toDouble)/radiansPerDegree).toFloat
 
   /**
    * @param x the (effective) number of values in the discrete uniform distribution

@@ -3,7 +3,7 @@ package ev3dev4s.measured.dimension
 import ev3dev4s.measured.typelevelint.{IntT, intTAsInt}
 
 
-private inline val tau = 2 * math.Pi
+private inline val tau = 360
 
 private inline def fractionalPart(x: Float): Float = x - math.floor(x).toFloat
 
@@ -19,7 +19,7 @@ def dimensionsAsString[
  ): String =
   Seq(
     unitString(c, "$"), unitString(b, "nat"), unitString(l, "m"), unitString(m, "kg"), unitString(t, "s"),
-    unitString(q, "C"), unitString(p, "K"), unitString(n, "mol"), unitString(a, "rad"), unitString(s, "sr"),
+    unitString(q, "C"), unitString(p, "K"), unitString(n, "mol"), unitString(a, "deg"), unitString(s, "sr"),
     unitString(aQ, "aQ"), unitString(aP, "aP"), unitString(o1, "o1"), unitString(o2, "o2"), unitString(o3, "o3"),
     unitString(o4, "o4"),
   ).filter((i, s) => i != 0).sortBy((i, s) => -i).map((i, s) => s).mkString("·")
