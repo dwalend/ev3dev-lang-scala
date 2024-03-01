@@ -1,4 +1,4 @@
-package ev3dev4s.measured.typelevelint
+package ev3dev4s.measured.exponents
 
 /**
  * First projection of a pair type

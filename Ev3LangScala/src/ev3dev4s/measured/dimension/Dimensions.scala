@@ -1,7 +1,7 @@
 package ev3dev4s.measured.dimension
 
-import ev3dev4s.measured.typelevelint
-import ev3dev4s.measured.typelevelint.{Divides, IntT, NonZeroIntT, diff, power}
+import ev3dev4s.measured.exponents
+import ev3dev4s.measured.exponents.{Divides, IntT, NonZeroIntT, diff, power}
 
 import scala.annotation.targetName
 import scala.language.implicitConversions
@@ -18,11 +18,7 @@ object Dimensions:
    * @tparam Temperature exponent for the temperature component of the dim
    * @tparam Mass exponent for the mass component of the dim
    * @tparam ElectricCharge exponent for the electric charge component of the dim
-   * @tparam SubstanceAmount exponent for the substance amount component of the dim
-   * @tparam Cost exponent for the cost component of the dim
    * @tparam Angle exponent for the angle component of the dim
-   * @tparam AbstractCharge exponent for the abstract charge component of the dim
-   * @tparam AbstractPotential exponent for the abstract potential component of the dim
    */
   opaque type Dim[
     Length <: IntT,            // l
@@ -79,7 +75,7 @@ object Dimensions:
 
   extension (a: Angle)
     /**
-     * Normalizes this angle two be between 0 and 2 Pi.
+     * Normalizes this angle two be between 0 and 360.
      */
     inline def normalized: Angle = tau.toFloat * fractionalPart((a: Float) / tau.toFloat)
 
@@ -260,5 +256,5 @@ object Dimensions:
     inline def root[E <: NonZeroIntT](n: E)(using
       Divides[E, L], Divides[E, T], Divides[E, P], Divides[E, M], Divides[E, Q],
       Divides[E, A], Divides[E, AQ], Divides[E, AP],
-    ): Root[Dim[L, T, P, M, Q,  A], E] = typelevelint.root(x, n)
+    ): Root[Dim[L, T, P, M, Q,  A], E] = exponents.root(x, n)
 end Dimensions

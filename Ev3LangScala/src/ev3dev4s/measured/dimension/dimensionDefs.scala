@@ -1,6 +1,6 @@
 package ev3dev4s.measured.dimension
 
-import ev3dev4s.measured.typelevelint.{_0, _1, _2, _3}
+import ev3dev4s.measured.exponents.{_0, _1, _2, _3}
 import Dimensions.Dim
 
 /**

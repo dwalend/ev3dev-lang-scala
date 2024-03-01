@@ -1,6 +1,6 @@
 package ev3dev4s.measured.dimension
 
-import ev3dev4s.measured.typelevelint.{IntT, intTAsInt}
+import ev3dev4s.measured.exponents.{IntT, intTAsInt}
 
 
 private inline val tau = 360

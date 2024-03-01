@@ -1,4 +1,4 @@
-package ev3dev4s.measured.typelevelint
+package ev3dev4s.measured.exponents
 
 /**
  * Type representing that one nat is less than another

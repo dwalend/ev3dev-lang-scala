@@ -1,7 +1,7 @@
 package ev3dev4s.measured.dimension
 
 
-import ev3dev4s.measured.typelevelint.{Diff, IntT, IntQuotient, NonZeroIntT, Prod, Sum}
+import ev3dev4s.measured.exponents.{Diff, IntT, IntQuotient, NonZeroIntT, Prod, Sum}
 import Dimensions.Dim
 import scala.annotation.targetName
 
@@ -13,7 +13,7 @@ import scala.annotation.targetName
 /**
  * Divides the two given dims.
  */
-@targetName("over") type /[D1, D2] = DimMap2[Diff, D1, D2]
+@targetName("dividedBy") type /[D1, D2] = DimMap2[Diff, D1, D2]
 
 /**
  * Raises the given dim to the given power.
