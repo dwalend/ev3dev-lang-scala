@@ -1,9 +1,8 @@
 package ev3dev4s.actuators.examples
 
 import ev3dev4s.Ev3System
-import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
-
-import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.actuators.{Motor, MotorCommand, MotorStopCommand}
+import ev3dev4s.measured.dimension.Dimensions.unitless
 
 /**
  *
@@ -20,20 +19,20 @@ object MotorExample {
     println(firstMotor.readPosition())
 
     firstMotor.writeStopAction(MotorStopCommand.BRAKE)
-    firstMotor.writeDutyCycle(50.dutyCyclePercent)
+    firstMotor.writeDutyCycle(0.5f * unitless)
     firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
     Thread.sleep(1000)
     firstMotor.writeCommand(MotorCommand.STOP)
     Thread.sleep(1000)
 
-    firstMotor.writeDutyCycle(10.dutyCyclePercent)
+    firstMotor.writeDutyCycle(0.1f * unitless)
     firstMotor.writeCommand(MotorCommand.RUN_DIRECT)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(100.dutyCyclePercent)
+    firstMotor.writeDutyCycle(1 * unitless)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(-50.dutyCyclePercent)
+    firstMotor.writeDutyCycle(-0.5f * unitless)
     Thread.sleep(1000)
-    firstMotor.writeDutyCycle(10.dutyCyclePercent)
+    firstMotor.writeDutyCycle(0.1f * unitless)
     Thread.sleep(1000)
     firstMotor.brake()
     Thread.sleep(1000)

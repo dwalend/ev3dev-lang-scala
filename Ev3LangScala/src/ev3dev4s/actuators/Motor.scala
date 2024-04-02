@@ -1,14 +1,12 @@
 package ev3dev4s.actuators
 
 import ev3dev4s.sysfs.Gadget
-
 import ev3dev4s.Log
+import ev3dev4s.measured.dimension.Dimensions.{degree, second, *}
+import ev3dev4s.measured.dimension.{Angle, AngularVelocity, Time, Uno, milli}
 
-import ev3dev4s.scala2measure.DutyCycle
-import ev3dev4s.scala2measure.DegreesPerSecond
-import ev3dev4s.scala2measure.Conversions._
-import ev3dev4s.scala2measure.Degrees
-import ev3dev4s.scala2measure.MilliSeconds
+import scala.language.implicitConversions
+
 
 /**
  *
@@ -22,41 +20,41 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
 
   def writeStopAction(command:MotorStopCommand):Unit = checkPort(_.writeStopAction(command))
 
-  def writeDutyCycle(dutyCycle:DutyCycle):Unit = checkPort(_.writeDutyCycle(dutyCycle))
+  def writeDutyCycle(dutyCycle:Uno):Unit = checkPort(_.writeDutyCycle(dutyCycle))
 
-  def maxSpeed:DegreesPerSecond
+  def maxSpeed:AngularVelocity
 
-  def observedMaxSpeed:DegreesPerSecond
+  def observedMaxSpeed:AngularVelocity
 
-  def writeSpeed(speed:DegreesPerSecond):Unit = {
-    val safeSpeed = if(speed.abs < maxSpeed ) speed
+  def writeSpeed(speed:AngularVelocity):Unit = {
+    val safeSpeed = if(abs(speed) < maxSpeed ) speed
     else {
       Log.log(s"requested speed $speed is greater than $maxSpeed - using $maxSpeed")
-      (speed.sign * maxSpeed).degreesPerSecond
+      (sign(speed) * maxSpeed)
     }
     checkPort(_.writeSpeed(safeSpeed))
   }
 
-  def writeRampUpTime(fromZeroToMax: MilliSeconds): Unit = {
+  def writeRampUpTime(fromZeroToMax: Time): Unit = {
     checkPort(_.writeRampUpSpeed(fromZeroToMax))
   }
 
-  def writeRampDownTime(fromMaxToZero: MilliSeconds): Unit = {
+  def writeRampDownTime(fromMaxToZero: Time): Unit = {
     checkPort(_.writeRampDownSpeed(fromMaxToZero))
   }
 
-  def writePosition(degrees:Degrees):Unit = checkPort(_.writePosition(degrees))
+  def writePosition(degrees:Angle):Unit = checkPort(_.writePosition(degrees))
 
-  def resetPosition():Unit = writePosition(0.degrees)
+  def resetPosition():Unit = writePosition(0 * degree)
 
-  def writeGoalPosition(degrees:Degrees):Unit = checkPort(_.writeGoalPosition(degrees))
+  def writeGoalPosition(degrees:Angle):Unit = checkPort(_.writeGoalPosition(degrees))
 
-  def writeDuration(milliseconds:MilliSeconds):Unit = checkPort(_.writeDuration(milliseconds))
+  def writeDuration(milliseconds:Time):Unit = checkPort(_.writeDuration(milliseconds))
 
   /**
    * @return position in degrees
    */
-  def readPosition():Degrees = checkPort(_.readPosition())
+  def readPosition():Angle = checkPort(_.readPosition())
 
   def readState(): Array[MotorState] = checkPort(_.readState())
 
@@ -79,29 +77,29 @@ sealed abstract class Motor(port: MotorPort,motorFS:Option[MotorFS]) extends Gad
     writeStopAction(MotorStopCommand.HOLD)
     writeCommand(MotorCommand.STOP)
   }
-  def runDutyCycle(dutyCycle:DutyCycle):Unit = {
+  def runDutyCycle(dutyCycle:Uno):Unit = {
     writeDutyCycle(dutyCycle)
     writeCommand(MotorCommand.RUN_DIRECT)
   }
 
-  def run(speed:DegreesPerSecond):Unit = {
+  def run(speed:AngularVelocity):Unit = {
     writeSpeed(speed)
     writeCommand(MotorCommand.RUN)
   }
 
-  def runToAbsolutePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
+  def runToAbsolutePosition(speed:AngularVelocity,degrees:Angle):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_ABSOLUTE_POSITION)
   }
 
-  def runToRelativePosition(speed:DegreesPerSecond,degrees:Degrees):Unit = {
+  def runToRelativePosition(speed:AngularVelocity,degrees:Angle):Unit = {
     writeSpeed(speed)
     writeGoalPosition(degrees)
     writeCommand(MotorCommand.RUN_TO_RELATIVE_POSITION)
   }
 
-  def runForDuration(speed:DegreesPerSecond,milliseconds:MilliSeconds):Unit = {
+  def runForDuration(speed:AngularVelocity,milliseconds:Time):Unit = {
     writeSpeed(speed)
     writeDuration(milliseconds)
     writeCommand(MotorCommand.RUN_TIME)
@@ -113,8 +111,8 @@ sealed case class Ev3LargeMotor(override val port:MotorPort, md: Option[MotorFS]
     MotorPortScanner.findGadgetDir(port, Ev3LargeMotor.driverName)
       .map(MotorFS.apply)
 
-  override val maxSpeed: DegreesPerSecond = 1050.degreesPerSecond
-  override val observedMaxSpeed: DegreesPerSecond = 700.degreesPerSecond
+  override val maxSpeed: AngularVelocity = 1050 * (degree / second)
+  override val observedMaxSpeed: AngularVelocity = 700 * (degree / second)
 }
 
 object Ev3LargeMotor {
@@ -126,8 +124,8 @@ sealed case class Ev3MediumMotor(override val port:MotorPort, md: Option[MotorFS
     MotorPortScanner.findGadgetDir(port, Ev3MediumMotor.driverName)
       .map(MotorFS.apply)
 
-  override val maxSpeed: DegreesPerSecond = 1560.degreesPerSecond
-  override val observedMaxSpeed: DegreesPerSecond = (maxSpeed.v * 0.7f).degreesPerSecond
+  override val maxSpeed: AngularVelocity = 1560 * (degree / second)
+  override val observedMaxSpeed: AngularVelocity = (maxSpeed * 0.7f)
 }
 
 object Ev3MediumMotor {

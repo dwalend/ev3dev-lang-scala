@@ -1,7 +1,6 @@
 package ev3dev4s.sensors
 
-import ev3dev4s.scala2measure.Conversions._
-import ev3dev4s.scala2measure.Percent
+import ev3dev4s.measured.dimension.{Uno, percent}
 
 import java.nio.file.Path
 
@@ -30,8 +29,8 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
      *
      * @return Reflected light intensity (0 to 100)
      */
-    def readReflect(): Percent = this.synchronized {
-      checkPort(_.readValue0Int().percent)
+    def readReflect(): Uno = this.synchronized {
+      checkPort(_.readValue0Int()* percent)
     }
   }
 
@@ -48,8 +47,8 @@ case class Ev3ColorSensor(override val port:SensorPort,initialSensorDir:Option[P
      *
      * @return Ambient light intensity (0 to 100)
      */
-    def readAmbient(): Percent = this.synchronized {
-      checkPort(_.readValue0Int().percent)
+    def readAmbient(): Uno = this.synchronized {
+      checkPort(_.readValue0Int()* percent)
     }
   }
 

@@ -1,6 +1,6 @@
 package ev3dev4s.lego
 
-import ev3dev4s.scala2measure.Percent
+import ev3dev4s.measured.dimension.Uno
 import ev3dev4s.sensors.{Ev3ColorSensor, SensorPort, SensorPortScanner}
 
 /**
@@ -19,12 +19,12 @@ object ColorSensor {
   }
   scanSensors()
 
-  def readReflected(port: SensorPort): Percent = handleUnplugged(
+  def readReflected(port: SensorPort): Uno = handleUnplugged(
     sensors(port).reflectMode().readReflect(),
     scanSensors
   )
 
   def readColor(port: SensorPort): Ev3ColorSensor.Color = handleUnplugged(sensors(port).colorMode().readColor(),scanSensors)
 
-  def readAmbient(port: SensorPort): Percent = handleUnplugged(sensors(port).ambientMode().readAmbient(),scanSensors)
+  def readAmbient(port: SensorPort): Uno = handleUnplugged(sensors(port).ambientMode().readAmbient(),scanSensors)
 }

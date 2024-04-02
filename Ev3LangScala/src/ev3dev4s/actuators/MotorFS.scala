@@ -3,14 +3,9 @@ package ev3dev4s.actuators
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetFS}
 
 import java.nio.file.Path
-
-import ev3dev4s.scala2measure.Degrees
-import ev3dev4s.scala2measure.Conversions._
-import ev3dev4s.scala2measure.DegreesPerSecond
-import ev3dev4s.scala2measure.MilliSeconds
-import ev3dev4s.scala2measure.DutyCycle
-
 import ev3dev4s.Log
+import ev3dev4s.measured.dimension.Dimensions.{degree, second, *, given}
+import ev3dev4s.measured.dimension.{Angle, AngularVelocity, Time, Uno, milli, percent}
 
 /**
  *
@@ -43,40 +38,40 @@ private[actuators] case class MotorFS(motorDir:Path) extends GadgetFS{
   def writeStopAction(command:MotorStopCommand):Unit =
     stopActionWriter.writeString(command.command)
 
-  def writeDutyCycle(dutyCycle:DutyCycle):Unit = {
-    if(dutyCycle.abs > 100.dutyCyclePercent) Log.log(s"abs duty cycle $dutyCycle is greater than ${100.dutyCyclePercent}")
-    dutyCycleSpWriter.writeAsciiInt(dutyCycle.round)
+  def writeDutyCycle(dutyCycle:Uno):Unit = {
+    if(abs(dutyCycle) > 1) Log.log(s"abs duty cycle ${dutyCycle.in(percent)} is greater than ${unitless.in(percent)}")
+    dutyCycleSpWriter.writeAsciiInt(round(dutyCycle))
   }
 
-  def writeSpeed(speed:DegreesPerSecond):Unit =
-    speedSpWriter.writeAsciiInt(speed.round)
+  def writeSpeed(speed:AngularVelocity):Unit =
+    speedSpWriter.writeAsciiInt(round(speed))
 
-  def writePosition(degrees:Degrees):Unit =
-    positionWriter.writeAsciiInt(degrees.round)
+  def writePosition(degrees:Angle):Unit =
+    positionWriter.writeAsciiInt(round(degrees))
 
   def resetPosition():Unit =
-    writePosition(0.degrees)
+    writePosition(0 * degree)
 
-  def writeGoalPosition(degrees:Degrees):Unit =
-    goalPositionWriter.writeAsciiInt(degrees.round)
+  def writeGoalPosition(angle:Angle):Unit =
+    goalPositionWriter.writeAsciiInt(round(angle))
 
-  def writeDuration(milliseconds:MilliSeconds):Unit =
-    timeWriter.writeAsciiInt(milliseconds.round)
+  def writeDuration(time:Time):Unit =
+    timeWriter.writeAsciiInt(time.in(milli(second)).round)
 
-  def writeRampUpSpeed(fromZeroToMax:MilliSeconds):Unit = {
-    rampUpWriter.writeAsciiInt(fromZeroToMax.v.round)
+  def writeRampUpSpeed(fromZeroToMax:Time):Unit = {
+    rampUpWriter.writeAsciiInt(fromZeroToMax.in(milli(second)).round)
   }
 
-  def writeRampDownSpeed(fromMaxToZero: MilliSeconds): Unit = {
-    rampDownWriter.writeAsciiInt(fromMaxToZero.v.round)
+  def writeRampDownSpeed(fromMaxToZero: Time): Unit = {
+    rampDownWriter.writeAsciiInt(fromMaxToZero.in(milli(second)).round)
   }
 
 
   /**
    * @return position in degrees 
    */
-  def readPosition():Degrees =
-    positionReader.readAsciiInt().degrees
+  def readPosition():Angle =
+    positionReader.readAsciiInt() * degree
 
   val stateNamesToStates: Map[String, MotorState] = MotorState.values.map{ s => s.name -> s}.toMap
   def readState(): Array[MotorState] =

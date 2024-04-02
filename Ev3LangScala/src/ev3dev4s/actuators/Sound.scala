@@ -1,13 +1,13 @@
 package ev3dev4s.actuators
 
 
+import ev3dev4s.measured.dimension.Dimensions.round
+import ev3dev4s.measured.dimension.{Time, Uno, Frequency, percent}
 import ev3dev4s.sysfs.Shell
 
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import java.io.File
-import ev3dev4s.scala2measure.{Hertz, MilliSeconds, Percent}
-import ev3dev4s.scala2measure.Conversions._
 
 /**
  * drives sound via shelling out
@@ -19,12 +19,12 @@ import ev3dev4s.scala2measure.Conversions._
 
 //todo rename Ev3Sound
 object Sound {
-  private var volume = 50.percent
+  private var volume = 50 * percent
 
   def beep():Unit =
     Shell.execute("beep")
 
-  def playTone(frequency: Hertz, duration: MilliSeconds, volume: Percent):Unit = {
+  def playTone(frequency: Frequency, duration: Time, volume: Uno):Unit = {
     this.setVolume(volume)
     this.playTone(frequency, duration)
   }
@@ -34,8 +34,8 @@ object Sound {
    * @param frequency The frequency of the tone in Hertz (Hz).
    * @param duration  The duration of the tone4, in milliseconds.
    */
-  def playTone(frequency: Hertz, duration: MilliSeconds):Unit = {
-    val cmdTone = s"/usr/bin/beep -f ${frequency.round} -l ${duration.round}"
+  def playTone(frequency: Frequency, duration: Time):Unit = {
+    val cmdTone = s"/usr/bin/beep -f ${round(frequency)} -l ${round(duration)}"
     Shell.execute(cmdTone)
   }
   /**
@@ -45,7 +45,7 @@ object Sound {
    * @param volume the volume percentage 0 - 100
    */
     //todo draw from .jar resources
-    def playSample(file: File, volume: Percent = this.volume):Unit = {
+    def playSample(file: File, volume: Uno = this.volume):Unit = {
     this.setVolume(volume)
     this.playSampleUntilDone(file)
   }
@@ -70,16 +70,16 @@ object Sound {
    *
    * @param volume 0-100
    */
-  def setVolume(volume: Percent):Unit = {
+  def setVolume(volume: Uno):Unit = {
     this.volume = volume
-    val cmdVolume = s"/usr/bin/amixer set PCM,0 $volume%"
+    val cmdVolume = s"/usr/bin/amixer set PCM,0 ${volume.in(percent)}%"
     Shell.execute(cmdVolume)
   }
 
   /**
    * Get the current master volume level
    */ 
-  def getVolume:Percent = volume
+  def getVolume:Uno = volume
 
 
   /**

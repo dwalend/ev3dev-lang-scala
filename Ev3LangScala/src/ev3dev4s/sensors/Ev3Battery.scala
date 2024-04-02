@@ -1,8 +1,8 @@
 package ev3dev4s.sensors
 
+import ev3dev4s.measured.dimension.{ElectricPotential, micro}
+import ev3dev4s.measured.dimension.Dimensions.{volt, `*`, given}
 import ev3dev4s.sysfs.ChannelRereader
-import ev3dev4s.scala2measure.Microvolts
-import ev3dev4s.scala2measure.Conversions._
 
 import java.io.File
 import java.nio.file.Path
@@ -17,7 +17,7 @@ object Ev3Battery extends AutoCloseable {
   private lazy val voltageRereader: ChannelRereader = ChannelRereader(Path.of(batteryDir.getAbsolutePath, "voltage_now"))
   private lazy val currentRereader: ChannelRereader = ChannelRereader(Path.of(batteryDir.getAbsolutePath, "current_now"))
 
-  def readMicrovolts(): Microvolts = voltageRereader.readAsciiInt().microvolts
+  def readMicrovolts(): ElectricPotential = voltageRereader.readAsciiInt() * micro(volt)
 
   def readMicoramps(): Int = currentRereader.readString().toInt
 

@@ -2,9 +2,9 @@ package ev3dev4s.sensors
 
 import ev3dev4s.os.Time
 import ev3dev4s.Log
+import ev3dev4s.measured.dimension.{Angle, milli}
+import ev3dev4s.measured.dimension.Dimensions.{degree, second, `*`, given}
 import ev3dev4s.sysfs.{ChannelRereader, ChannelRewriter, GadgetUnplugged, UnpluggedException}
-import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond}
-import ev3dev4s.scala2measure.Conversions._
 
 import java.io.File
 import java.nio.file.Path
@@ -47,29 +47,29 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   sealed case class HeadingMode() extends Mode {
     val name = "GYRO-ANG"
 
-    @volatile var offset: Degrees = 0.degrees
+    @volatile var offset: Angle = 0 * degree
     zero()
 
     /**
      * @return Angle (-32768 to 32767)
      */
-    def readRawHeading(): Degrees = this.synchronized {
-      checkPort(_.readValue0Int()).degrees
+    def readRawHeading(): Angle = this.synchronized {
+      checkPort(_.readValue0Int()) * degree
     }
 
-    def readHeading(): Degrees = this.synchronized {
+    def readHeading(): Angle = this.synchronized {
       readRawHeading() + offset
     }
 
     def zero(): Unit =
-      setHeading(0.degrees)
+      setHeading(0 * degree)
 
-    def setHeading(heading: Degrees): Unit = this.synchronized {
+    def setHeading(heading: Angle): Unit = this.synchronized {
       offset = heading - readRawHeading()
     }
 
     def unwind(): Unit = this.synchronized {
-      offset = offset.unwind
+      offset = offset.normalized
     }
   }
   /**
@@ -89,12 +89,12 @@ case class Ev3Gyroscope(override val port:SensorPort,initialSensorDir:Option[Pat
   sealed case class HeadingAndRateMode() extends Mode {
     val name = "GYRO-G&A"
 
-    def readHeading(): Degrees = this.synchronized {
-      checkPort(_.readValue0Int()).degrees
+    def readHeading(): Angle = this.synchronized {
+      checkPort(_.readValue0Int()) * degree
     }
 
-    def readRate(): DegreesPerSecond = this.synchronized {
-      checkPort(_.readValue1Int()).degreesPerSecond
+    def readRate() = this.synchronized {
+      checkPort(_.readValue1Int()) * degree / second
     }
   }
 
@@ -149,7 +149,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
       //write  "auto" to the right port in /sys/class/lego-port/port1/mode
       Log.log(s"Restart sensor in $legoPortDir by writing auto to mode")
       ChannelRewriter.writeString(legoPortDir.resolve("mode"), "auto")
-      Time.pause(2000.milliseconds)
+      Time.pause(2 * second)
     }
 
     def scanForSensor(port:SensorPort):Boolean = {
@@ -180,7 +180,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
             Log.log(s"Failed with $x")
             System.currentTimeMillis() < deadline // try again if there's time
         }
-      }){Time.pause(500.milliseconds) }
+      }){Time.pause(500 * milli(second)) }
       found
     }
 

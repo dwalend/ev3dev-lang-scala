@@ -1,14 +1,11 @@
 package ev3dev4s.timing
 
-import ev3dev4s.sensors.gyroscope.examples.{Robot,GyroDriveStraight}
+import ev3dev4s.sensors.gyroscope.examples.{GyroDriveStraight, Robot}
 import ev3dev4s.os.Time
 import ev3dev4s.Log
-
-import ev3dev4s.scala2measure.Degrees
-import ev3dev4s.scala2measure.Conversions._
-
+import ev3dev4s.measured.dimension.Dimensions.{degree, unitless, *}
+import ev3dev4s.measured.dimension.{Uno, Angle}
 import ev3dev4s.sensors.Ev3KeyPad
-import ev3dev4s.scala2measure.DutyCycle
 
 /**
  * A test of time to run a reasonable control loop for various comparisons
@@ -32,10 +29,10 @@ object GyroFeedbackLoop extends Runnable {
   override def run(): Unit = {
     //    Robot.gyroscope.despin()
     Robot.headingMode.zero()
-    driveGyroFeedbackTime(0.degrees, 0.dutyCyclePercent, 20000)
+    driveGyroFeedbackTime(0 * degree, 0 * unitless, 20000)
 
     Robot.hold()
-    driveGyroFeedbackTime(0.degrees, 0.dutyCyclePercent, 60000)
+    driveGyroFeedbackTime(0 * degree, 0 * unitless, 60000)
 
     Robot.hold()
     Robot.hold()
@@ -54,8 +51,8 @@ object GyroFeedbackLoop extends Runnable {
    * @param milliseconds  time to travel
    */
   def driveGyroFeedbackTime(
-                             goalHeading: Degrees,
-                             dutyCycle: DutyCycle,
+                             goalHeading: Angle,
+                             dutyCycle: Uno,
                              milliseconds: Int
                            ): Unit = {
     val startTime = Time.now()

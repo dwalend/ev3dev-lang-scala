@@ -1,12 +1,10 @@
 package ev3dev4s.sensors.gyroscope.examples
 
-import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand, MotorState}
+import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorState, MotorStopCommand}
+import ev3dev4s.measured.dimension.Dimensions.{abs, degree, unitless, *}
+import ev3dev4s.measured.dimension.{Angle, Uno, percent, stud, *, given}
 import ev3dev4s.sensors.{Ev3Gyroscope, Ev3KeyPad}
 import ev3dev4s.{Ev3System, Log}
-import ev3dev4s.scala2measure.Degrees
-import ev3dev4s.scala2measure.Conversions._
-import ev3dev4s.scala2measure.DegreesPerSecond
-import ev3dev4s.scala2measure.DutyCycle
 
 /**
  *
@@ -47,12 +45,12 @@ object GyroDriveStraight extends Runnable {
    * @param distanceMm  distance to travel
    */
   def driveGyroFeedbackDistance(
-                                 goalHeading: Degrees,
-                                 dutyCycle: DutyCycle,
-                                 distanceMm: Int
+                                 goalHeading: Angle,
+                                 dutyCycle: Uno,
+                                 distanceMm: Length
                                ): Unit = {
-    val startTac: Degrees = Robot.leftMotor.readPosition()
-    val goalTac = (startTac.v + (360 * distanceMm) / Robot.driveWheelCircumference.v).degrees
+    val startTac: Angle = Robot.leftMotor.readPosition()
+    val goalTac: Angle = startTac + ((360 * degree) * distanceMm) / Robot.driveWheelCircumference
 
     def notThereYet(): Boolean = {
       val tac = Robot.leftMotor.readPosition()
@@ -73,30 +71,30 @@ object GyroDriveStraight extends Runnable {
    * @param keepGoing   false when time to stop
    */
   def driveGyroFeedback(
-                         goalHeading: Degrees,
-                         dutyCycle: DutyCycle,
+                         goalHeading: Angle,
+                         dutyCycle: Uno,
                          keepGoing: () => Boolean
                        ): Unit = {
 
-    Robot.leftMotor.runDutyCycle(0.dutyCyclePercent)
-    Robot.rightMotor.runDutyCycle(0.dutyCyclePercent)
+    Robot.leftMotor.runDutyCycle(0 * percent)
+    Robot.rightMotor.runDutyCycle(0 * percent)
 
     while (keepGoing()) {
-      val heading: Degrees = Robot.headingMode.readHeading()
-      val steerAdjust: DutyCycle =
-        if (heading == goalHeading) 0.dutyCyclePercent
+      val heading: Angle = Robot.headingMode.readHeading()
+      val steerAdjust: Uno =
+        if (heading == goalHeading) 0 * unitless
         else {
           //about 1% per degree off seems good - but it should really care about wheel base width
-          val proportionalSteerAdjust = ((goalHeading - heading) * dutyCycle / 100).dutyCyclePercent
-          if (proportionalSteerAdjust.abs > 1.dutyCyclePercent) proportionalSteerAdjust
-          else if (proportionalSteerAdjust == 0.dutyCyclePercent) 0.dutyCyclePercent
-          else if (proportionalSteerAdjust > 0.dutyCyclePercent) 1.dutyCyclePercent
-          else -1.dutyCyclePercent
+          val proportionalSteerAdjust:Uno = ((goalHeading - heading) * dutyCycle) / degree
+          if (abs(proportionalSteerAdjust) > (1 * unitless)) proportionalSteerAdjust
+          else if (proportionalSteerAdjust  =:= (0 * unitless)) 0 * unitless
+          else if (proportionalSteerAdjust > (0 * unitless)) 1 * unitless
+          else -1 * unitless
         }
 
-      def dutyCyclesFromAdjust(): (DutyCycle, DutyCycle) = {
-        val leftIdeal = ((dutyCycle + steerAdjust) / 10.unitless).dutyCyclePercent
-        val rightIdeal = ((dutyCycle - steerAdjust) / 10.unitless).dutyCyclePercent
+      def dutyCyclesFromAdjust(): (Uno, Uno) = {
+        val leftIdeal = ((dutyCycle + steerAdjust) / 10 * unitless)
+        val rightIdeal = ((dutyCycle - steerAdjust) / 10 * unitless)
         (leftIdeal, rightIdeal)
         //todo for fractions
         //val (leftSteering, rightSteering) = (leftIdeal,rightIdeal)
@@ -270,10 +268,10 @@ object GyroDriveStraight extends Runnable {
 
 object Robot {
 
-  val driveWheelDiameter = 11.studs
-  val driveWheelCircumference = (driveWheelDiameter.v * Math.PI.toFloat).mm
+  val driveWheelDiameter:Length = 11 * stud
+  val driveWheelCircumference:Length = driveWheelDiameter * Math.PI.toFloat
 
-  val robotWheelbase = 18.studs
+  val robotWheelbase:Length = 18 * stud
 
   val keypad = Ev3System.keyPad
 
@@ -286,7 +284,7 @@ object Robot {
   leftMotor.writeStopAction(MotorStopCommand.BRAKE)
   rightMotor.writeStopAction(MotorStopCommand.BRAKE)
 
-  def drive(leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = {
+  def drive(leftSpeed: AngularVelocity, rightSpeed: AngularVelocity): Unit = {
     leftMotor.writeSpeed(leftSpeed)
     rightMotor.writeSpeed(rightSpeed)
     leftMotor.writeCommand(MotorCommand.RUN)

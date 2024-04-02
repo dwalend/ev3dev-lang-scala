@@ -2,8 +2,8 @@ package ev3dev4s.lego
 
 import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorStopCommand}
 import ev3dev4s.lego.Motors.handleUnpluggedMotor
-import ev3dev4s.scala2measure.{Degrees, DegreesPerSecond, MilliSeconds, Percent, Unitless}
-import ev3dev4s.scala2measure.Conversions._
+import ev3dev4s.measured.dimension.{Angle, AngularVelocity, Uno, Time}
+import ev3dev4s.measured.dimension.Dimensions.{abs,sign,unitless,degree,second,*,given}
 
 /**
  *
@@ -30,7 +30,7 @@ object Movement {
    * @param motorDegrees The absolute distance to turn the motor
    * @param speed    Left motor speed. Negative is backwards.
    */
-  def move(motorDegrees: Degrees, speed: DegreesPerSecond): Unit = handleUnpluggedMotor{
+  def move(motorDegrees: Angle, speed: AngularVelocity): Unit = handleUnpluggedMotor{
     leftMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, speed)))
     rightMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees, speed)))
     leftMotor.foreach(_.writeSpeed(speed))
@@ -42,11 +42,11 @@ object Movement {
     rightMotor.foreach(Motors.watchForStop)
   }
 
-  private def relativeGoalPosition(motorDegrees: Degrees, speed: DegreesPerSecond): Degrees = {
-    (motorDegrees.abs * speed.sign).degrees
+  private def relativeGoalPosition(motorDegrees: Angle, speed: AngularVelocity): Angle = {
+    abs(motorDegrees) * sign(speed)
   }
 
-  def startMoving(leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = handleUnpluggedMotor{
+  def startMoving(leftSpeed: AngularVelocity, rightSpeed: AngularVelocity): Unit = handleUnpluggedMotor{
     leftMotor.foreach(_.writeSpeed(leftSpeed))
     rightMotor.foreach(_.writeSpeed(rightSpeed))
     leftMotor.foreach(_.writeCommand(MotorCommand.RUN))
@@ -60,8 +60,8 @@ object Movement {
    * @param leftSpeed Left motor speed. Negative is backwards.
    * @param rightSpeed Right motor speed. Negative is backwards.
    */
-  def move(motorDegrees: Degrees, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = handleUnpluggedMotor{
-    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
+  def move(motorDegrees: Angle, leftSpeed: AngularVelocity, rightSpeed: AngularVelocity): Unit = handleUnpluggedMotor{
+    val (watched, notWatched) = if (abs(leftSpeed) > abs(rightSpeed)) (leftMotor, rightMotor)
     else (rightMotor, leftMotor)
     leftMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees,leftSpeed)))
     rightMotor.foreach(_.writeGoalPosition(relativeGoalPosition(motorDegrees,rightSpeed)))
@@ -81,8 +81,8 @@ object Movement {
    * @param leftSpeed    Left motor speed. Negative is backwards.
    * @param rightSpeed   Right motor speed. Negative is backwards.
    */
-  def moveDuration(duration: MilliSeconds, leftSpeed: DegreesPerSecond, rightSpeed: DegreesPerSecond): Unit = handleUnpluggedMotor{
-    val (watched, notWatched) = if (leftSpeed.abs > rightSpeed.abs) (leftMotor, rightMotor)
+  def moveDuration(duration: Time, leftSpeed: AngularVelocity, rightSpeed: AngularVelocity): Unit = handleUnpluggedMotor{
+    val (watched, notWatched) = if (abs(leftSpeed) > abs(rightSpeed))  (leftMotor, rightMotor)
     else (rightMotor, leftMotor)
     leftMotor.foreach(_.writeDuration(duration))
     rightMotor.foreach(_.writeDuration(duration))
@@ -95,17 +95,17 @@ object Movement {
     notWatched.foreach(_.writeCommand(MotorCommand.STOP))
   }
 
-  private def steerMotors(steer: Percent): (Option[Motor], Option[Motor]) = if (steer < 0.percent) (leftMotor, rightMotor)
+  private def steerMotors(steer: Uno): (Option[Motor], Option[Motor]) = if (steer < 0 * unitless) (leftMotor, rightMotor)
   else (rightMotor, leftMotor)
 
-  private def innerMotorProportion(steer: Percent): Unitless =
-    ((100f - 2f * steer.abs.v) / 100f).unitless
+  private def innerMotorProportion(steer: Uno): Uno =
+    1f - 2f * abs(steer) * unitless
 
 
-  def moveSteer(steer: Percent, speed: DegreesPerSecond, degrees: Degrees): Unit = handleUnpluggedMotor{
+  def moveSteer(steer: Uno, speed: AngularVelocity, degrees: Angle): Unit = handleUnpluggedMotor{
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed: DegreesPerSecond = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
-    val innerDegrees = (degrees.v * innerMotorProportion(steer).v).degrees
+    val innerSpeed: AngularVelocity = speed * innerMotorProportion(steer)
+    val innerDegrees = (degrees * innerMotorProportion(steer))
 
     outerMotor.foreach(_.writeGoalPosition(degrees))
     innerMotor.foreach(_.writeGoalPosition(innerDegrees))
@@ -118,9 +118,9 @@ object Movement {
     rightMotor.foreach(Motors.watchForStop)
   }
 
-  def startMovingSteer(steer: Percent, speed: DegreesPerSecond): Unit = handleUnpluggedMotor{
+  def startMovingSteer(steer: Uno, speed: AngularVelocity): Unit = handleUnpluggedMotor{
     val (innerMotor, outerMotor) = steerMotors(steer)
-    val innerSpeed: DegreesPerSecond = (speed.v * innerMotorProportion(steer).v).degreesPerSecond
+    val innerSpeed: AngularVelocity = (speed * innerMotorProportion(steer))
     outerMotor.foreach(_.writeSpeed(speed))
     innerMotor.foreach(_.writeSpeed(innerSpeed))
     outerMotor.foreach(_.writeCommand(MotorCommand.RUN))

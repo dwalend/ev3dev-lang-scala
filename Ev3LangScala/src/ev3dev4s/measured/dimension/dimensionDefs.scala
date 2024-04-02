@@ -18,6 +18,7 @@ type Angle             = Dim[_0, _0, _0, _0, _0, _1]
 
 // Derived dimensions
 type Acceleration = Velocity / Time
+type AngularVelocity = Angle / Time
 type Area = Length ^ _2
 type Density = Mass / Volume
 type Diffusivity = Area / Time

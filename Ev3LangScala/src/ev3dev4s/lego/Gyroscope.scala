@@ -1,6 +1,6 @@
 package ev3dev4s.lego
 
-import ev3dev4s.scala2measure.Degrees
+import ev3dev4s.measured.dimension.Angle
 import ev3dev4s.sensors.{Ev3Gyroscope, SensorPort, SensorPortScanner}
 import ev3dev4s.sysfs.UnpluggedException
 
@@ -20,11 +20,11 @@ object Gyroscope {
   }
   scanSensors()
 
-  def readHeading(port: SensorPort): Degrees = handleUnplugged[Degrees](sensors(port).headingMode().readHeading(),scanSensors)
+  def readHeading(port: SensorPort): Angle = handleUnplugged[Angle](sensors(port).headingMode().readHeading(),scanSensors)
 
   def reset(port: SensorPort): Unit = handleUnplugged[Unit](sensors(port).headingMode().zero(),scanSensors)
 
-  def setHeading(port: SensorPort,heading:Degrees): Unit = handleUnplugged[Unit](sensors(port).headingMode().setHeading(heading),scanSensors)
+  def setHeading(port: SensorPort,heading:Angle): Unit = handleUnplugged[Unit](sensors(port).headingMode().setHeading(heading),scanSensors)
 
 }
 

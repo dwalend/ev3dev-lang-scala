@@ -10,6 +10,10 @@ import ev3dev4s.sysfs.{ChannelRereader, UnpluggedException}
 import java.nio.file.attribute.FileTime
 import java.nio.file.{FileSystemException, Files, Path, Paths}
 
+import ev3dev4s.measured.dimension.Dimensions.round
+import ev3dev4s.measured.dimension.Dimensions.{hertz, second, `*`}
+import ev3dev4s.measured.dimension.milli
+
 /**
  *
  *
@@ -63,7 +67,7 @@ object TtySensorsAndMenu extends Runnable {
 
   def setSensorRows(): Unit = {
     Lcd.set(0, s"${elapsedTime}s", Lcd.RIGHT)
-    val heading: String = UnpluggedException.safeString(() => s"${gyroscope.headingMode().readHeading().round}d")
+    val heading: String = UnpluggedException.safeString(() => s"${round(gyroscope.headingMode().readHeading())}d")
     Lcd.set(0, heading, Lcd.LEFT)
   }
 
@@ -96,7 +100,7 @@ object TtySensorsAndMenu extends Runnable {
           if (jarFileSize == expectedJarFileSize) {
             expectedJarLastModifiedTime = jarLastModifiedTime
             Log.log(s"New .jar file is complete")
-            Sound.playTone(175.Hz, 200.milliseconds)
+            Sound.playTone(175 * hertz, 200 * milli(second))
           }
         }
       } catch {

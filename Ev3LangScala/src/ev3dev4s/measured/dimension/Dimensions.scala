@@ -30,13 +30,14 @@ object Dimensions:
   ] = Float
 
   // Standard units (SI units for SI dimensions)
+  val unitless : Uno                = 1
   val ampere   : ElectricCurrent    = 1
   val coulomb  : ElectricCharge     = 1
   val hertz    : Frequency          = 1
   val joule    : Energy             = 1
   val kelvin   : Temperature        = 1
   val kilogram : Mass               = 1
-  val metre    : Length             = 1
+  val meter    : Length             = 1
   val newton   : Force              = 1
   val ohm      : ElectricResistance = 1
   val pascal   : Pressure           = 1
@@ -103,7 +104,7 @@ object Dimensions:
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
   ](
     x: Dim[L, T, P, M, Q, A]
-  ): Dim[L, T, P, M, Q, A] = math.floor(x.toDouble).toFloat
+  ): Dim[L, T, P, M, Q, A] = math.floor(x).toFloat
 
   /**
    * Ceiling
@@ -112,7 +113,25 @@ object Dimensions:
     L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
   ](
     x: Dim[L, T, P, M, Q, A]
-  ): Dim[L, T, P, M, Q, A] = math.ceil(x.toDouble).toFloat
+  ): Dim[L, T, P, M, Q, A] = math.ceil(x).toFloat
+
+  /**
+   * Round
+   */
+  inline def round[
+    L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
+  ](
+     x: Dim[L, T, P, M, Q, A]
+   ): Int = math.round(x)
+
+  /**
+   * Sign
+   */
+  inline def sign[
+    L <: IntT, T <: IntT, P <: IntT, M <: IntT, Q <: IntT, A <: IntT, AQ <: IntT, AP <: IntT,
+  ](
+     x: Dim[L, T, P, M, Q, A]
+   ): Int = x.sign.toInt
 
   /**
    * Functions that apply to any quantity, regardless of its dimension.
