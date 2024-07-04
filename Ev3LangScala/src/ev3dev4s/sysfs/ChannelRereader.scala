@@ -39,8 +39,9 @@ case class ChannelRereader(path: Path, bufferLength: Int = 32) extends AutoClose
 
   def readAsciiInt(): Int = readString().toInt
 
-  override def close(): Unit =
+  override def close(): Unit = this.synchronized {
     channel.close()
+  }
 }
 
 object ChannelRereader {
