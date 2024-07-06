@@ -1,0 +1,24 @@
+$schema: https://raw.githubusercontent.com/oyvindberg/bleep/master/schema.json
+$version: 0.0.3
+jvm:
+  name: graalvm-java17:22.3.1
+projects:
+  Ev3LangScala:
+    dependencies:
+    extends: template-common
+    platform:
+      mainClass: ev3dev4s.JarRunner
+  Ev3LangScalaExample:
+    dependencies:
+    extends: template-common
+    platform:
+      mainClass: ev3dev4s.JarRunner
+# todo Experiments
+templates:
+  template-common:
+    platform:
+      name: jvm
+    scala:
+      options: -encoding utf8 -feature -unchecked
+      strict: true
+      version: 2.13.14
