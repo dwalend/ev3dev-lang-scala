@@ -4,17 +4,21 @@ jvm:
   name: graalvm-java17:22.3.1
 projects:
   Ev3LangScala:
-    dependencies:
     extends: template-common
     platform:
       mainClass: ev3dev4s.JarRunner
   Ev3LangScalaExample:
     dependsOn: Ev3LangScala
-    dependencies: 
     extends: template-common
     platform:
       mainClass: ev3dev4s.JarRunner
+  bleepScripts:
+    dependencies:
+      - build.bleep::bleep-core:${BLEEP_VERSION}
+    extends: template-common
 # todo add Experiments
+scripts:
+  jar: bleepScripts/bleep.scripts.Jar
 templates:
   template-common:
     platform:
