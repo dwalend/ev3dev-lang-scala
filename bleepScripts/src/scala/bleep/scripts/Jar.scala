@@ -1,7 +1,8 @@
 package bleep.scripts
 
+import bleep.model.ProjectName
 import bleep.packaging.{JarType, ManifestCreator, createJar}
-import bleep.{BleepScript, Commands, Started}
+import bleep.{BleepScript, Commands, Started, model}
 
 import java.io.{BufferedOutputStream, File, FileOutputStream}
 import java.nio.file.{Files, Path}
@@ -9,6 +10,8 @@ import scala.util.Using
 
 object Jar extends BleepScript("Jar") {
   override def run(started: Started, commands: Commands, args: List[String]): Unit = {
+
+    commands.compile(List(model.CrossProjectName(ProjectName(args.head),None)))
     //todo handle variants instead of hardcoding "normal"
 //    println(${started.activeProjectsFromPath})  //todo why does this crap out?
 
