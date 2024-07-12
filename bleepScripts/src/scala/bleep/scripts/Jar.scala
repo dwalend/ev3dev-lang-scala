@@ -8,6 +8,8 @@ import java.io.{BufferedOutputStream, File, FileOutputStream}
 import java.nio.file.{Files, Path}
 import scala.util.Using
 
+//todo start here. Pick up the ant Jar task instead - to get an executable jar file
+
 object Jar extends BleepScript("Jar") {
   override def run(started: Started, commands: Commands, args: List[String]): Unit = {
 
