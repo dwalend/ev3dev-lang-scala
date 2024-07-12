@@ -15,10 +15,13 @@ projects:
   bleepScripts:
     dependencies:
       - build.bleep::bleep-core:${BLEEP_VERSION}
+      - org.apache.ant:ant-jsch:1.10.13
+      - com.github.mwiede:jsch:0.2.9
     extends: template-common
 # todo add Experiments
 scripts:
   jar: bleepScripts/bleep.scripts.Jar
+  scpJar: bleepScripts/bleep.scripts.ScpJar
 templates:
   template-common:
     platform:
