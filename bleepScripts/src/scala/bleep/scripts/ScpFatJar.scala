@@ -12,9 +12,7 @@ object ScpFatJar extends BleepScript("ScpJar") {
     val projectName = ProjectName(args.head)
     val jarPath = Jar.jarPath(started,projectName)
 
-    println(s"coping $jarPath")
     scpJar(jarPath,projectName)
-    println(s"copied $jarPath")
   }
 
   /**

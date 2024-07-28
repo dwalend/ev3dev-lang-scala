@@ -24,6 +24,7 @@ scripts:
   scpJar: bleepScripts/bleep.scripts.ScpJar
   fatJar: bleepScripts/bleep.scripts.FatJar
   scpFatJar: bleepScripts/bleep.scripts.ScpFatJar
+  scpDoItBash: bleepScripts/bleep.scripts.ScpDoItBash
 templates:
   template-common:
     platform:

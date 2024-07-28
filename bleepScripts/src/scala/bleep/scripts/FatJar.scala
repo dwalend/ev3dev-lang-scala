@@ -57,8 +57,6 @@ object FatJar extends BleepScript("FatJar") {
     libraries.add(libraryFileSelector)
     antJarTask.addZipGroupFileset(libraries)
 
-    started.bloopProject(crossProjectName).dependencies
-
     val mainClassName = "ev3dev4s.JarRunner" //todo get this from bleep yaml - ask how
     val antManifest = new AntManifest()
     antManifest.addConfiguredAttribute(new Attribute("Main-Class",mainClassName))

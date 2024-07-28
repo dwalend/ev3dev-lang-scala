@@ -1,7 +1,5 @@
 package bleep.scripts
 
-import bleep.model.ProjectName
-import bleep.{BleepScript, Commands, Started}
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp => AntScp}
 import org.apache.tools.ant.{Project => AntProject}
 
@@ -21,7 +19,11 @@ object Scp {
     antScp.setLocalFile(fromLocalFile.toString)
     antScp.setRemoteTofile(s"$ev3UserName@$ev3Hostname:$toRemoteFile")
     antScp.setTrust(true)
+
+    println(s"coping $fromLocalFile")
     antScp.execute()
+    println(s"copied $fromLocalFile")
+
     println("\u0007")
   }
 }

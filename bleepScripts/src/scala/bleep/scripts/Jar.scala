@@ -3,7 +3,6 @@ package bleep.scripts
 import bleep.model.ProjectName
 import bleep.packaging.{JarType, ManifestCreator, createJar}
 import bleep.{BleepScript, Commands, Started, model}
-import bloop.config.PlatformFiles
 
 import java.nio.file.{Files, Path}
 
