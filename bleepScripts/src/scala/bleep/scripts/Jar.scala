@@ -12,16 +12,16 @@ object Jar extends BleepScript("Jar") {
 
     val projectName = ProjectName(args.head)
     commands.compile(List(model.CrossProjectName(projectName,None)))
-    //todo handle variants instead of hardcoding "normal"
+    //todo handle variants instead of hardcoding "normal" - ask
 //    println(${started.activeProjectsFromPath})  //todo why does this fail silently, bad exit code?
 
     val classesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("classes")
-    val resourcesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("resources") //todo is this the right path for resources?  Do I even need to do it?
+    val resourcesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("resources") //todo get resources path from yaml - ask
     val jarBytes: Array[Byte] = createJar(
       jarType = JarType.Jar,
       manifestCreator = ManifestCreator.default,
       fromFolders = Seq(classesPath,resourcesPath),
-      mainClass = Option("ev3dev4s.JarRunner") //todo how to get the main class from the bleep.yaml ?
+      mainClass = Option("ev3dev4s.JarRunner") //todo how to get the main class from the bleep.yaml ? - ask
     )
 
     jarDirectory(started, projectName).toFile.mkdirs()

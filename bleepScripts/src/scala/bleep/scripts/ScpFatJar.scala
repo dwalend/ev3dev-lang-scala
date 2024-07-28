@@ -5,9 +5,9 @@ import bleep.{BleepScript, Commands, Started}
 
 import java.nio.file.Path
 
-object ScpJar extends BleepScript("ScpJar") {
+object ScpFatJar extends BleepScript("ScpJar") {
   override def run(started: Started, commands: Commands, args: List[String]): Unit = {
-    commands.script(ScriptName("jar"),args)
+    commands.script(ScriptName("fatJar"),args)
 
     val projectName = ProjectName(args.head)
     val jarPath = Jar.jarPath(started,projectName)

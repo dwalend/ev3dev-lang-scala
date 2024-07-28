@@ -21,8 +21,9 @@ projects:
 # todo add Experiments
 scripts:
   jar: bleepScripts/bleep.scripts.Jar
-  fatJar: bleepScripts/bleep.scripts.FatJar
   scpJar: bleepScripts/bleep.scripts.ScpJar
+  fatJar: bleepScripts/bleep.scripts.FatJar
+  scpFatJar: bleepScripts/bleep.scripts.ScpFatJar
 templates:
   template-common:
     platform:
