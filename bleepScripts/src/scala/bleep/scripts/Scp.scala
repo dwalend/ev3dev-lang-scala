@@ -11,8 +11,8 @@ object Scp {
 
   def scpFile(fromLocalFile:Path, toRemoteFile:String):Unit = {
     val ev3UserName = "robot"    //todo from yaml - ask how
-    val ev3Password = "nope"     //todo from command line or bleep secure way - ask how
-    val ev3Hostname = "sally.local" //todo from yaml -ask how
+    val ev3Password = "fireflycode"     //todo from command line or bleep secure way - ask how
+    val ev3Hostname = "firefly.local" //todo from yaml -ask how
 
     val antScp = new AntScp()
     antScp.init()
