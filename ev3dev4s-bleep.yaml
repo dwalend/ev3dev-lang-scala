@@ -1,3 +1,4 @@
+target: ev3dev
 robots:
   ev3dev:
     hostname: ev3dev.local
