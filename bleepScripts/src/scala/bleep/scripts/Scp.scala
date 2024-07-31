@@ -1,23 +1,26 @@
 package bleep.scripts
 
+import bleep.yaml
+import cats.syntax.either._
+import io.circe._
+import io.circe.generic.auto._
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp => AntScp}
 import org.apache.tools.ant.{Project => AntProject}
 
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 
 object Scp {
 
-  def scpFile(fromLocalFile:Path, toRemoteFile:String):Unit = {
-    val ev3UserName = "robot"    //todo from yaml - ask how
-    val ev3Password = "nope"     //todo from command line or bleep secure way - ask how
-    val ev3Hostname = "firefly.local" //todo from yaml -ask how
+  def scpFile(fromLocalFile:Path, toRemoteFile:String, robotKey:String):Unit = {
+
+    val robotSpec = robotSpecForKey(robotKey)
 
     val antScp = new AntScp()
     antScp.init()
     antScp.setProject(new AntProject())
-    antScp.setPassword(ev3Password)
+    antScp.setPassword(robotSpec.password)
     antScp.setLocalFile(fromLocalFile.toString)
-    antScp.setRemoteTofile(s"$ev3UserName@$ev3Hostname:$toRemoteFile")
+    antScp.setRemoteTofile(s"${robotSpec.username}@${robotSpec.hostname}:$toRemoteFile")
     antScp.setTrust(true)
 
     println(s"coping $fromLocalFile")
@@ -26,5 +29,20 @@ object Scp {
 
     println("\u0007")
   }
+
+  def robotSpecForKey(robotKey:String): RobotYaml = {
+
+    val yamlString:String = Files.readString(Path.of("ev3dev4s.yaml"))
+    val ev3Dev4SYaml: Either[Error, Ev3Dev4sYaml] = yaml.decode[Ev3Dev4sYaml](yamlString)
+
+    val maybeRobotSpec: Either[Error, RobotYaml] = ev3Dev4SYaml.map(_.robots(robotKey))
+
+    maybeRobotSpec.getOrElse(throw new IllegalStateException("blart"))
+  }
+
+  //todo special handling of the password??
+  case class RobotYaml(username:String, password:String, hostname:String)
+
+  case class Ev3Dev4sYaml(robots:Map[String,RobotYaml])
 }
 

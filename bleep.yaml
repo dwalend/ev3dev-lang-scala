@@ -15,6 +15,7 @@ projects:
   bleepScripts:
     dependencies:
       - build.bleep::bleep-core:${BLEEP_VERSION}
+      - build.bleep::bleep-model:${BLEEP_VERSION}
       - org.apache.ant:ant-jsch:1.10.13
       - com.github.mwiede:jsch:0.2.9
     extends: template-common

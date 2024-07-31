@@ -1,0 +1,13 @@
+robots:
+  ev3dev:
+    hostname: ev3dev.local
+    username: robot
+    password: maker
+  firefly:
+    hostname: firefly.local
+    username: robot
+    password: maker
+  sally:
+    hostname: sally.local
+    username: robot
+    password: maker
