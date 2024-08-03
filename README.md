@@ -51,19 +51,19 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 # Moving compiled code to the Ev3
 
-(Always change the Ev3 password from the default `maker`. Update your local ev3dev4s-bleep.yaml with your robot host names, usernames, and passwords. host name can also be an IP address)
+The command line arguments `-- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local` are optional if all the values are default, but you really should change that password.
 
-## Build and upload the Ev3LangScala library (Do this if you change the code library - first and rarely)
+## Build and upload the Ev3LangScala library (Do this if you change the ev3dev4s library - first and rarely)
 
-```bleep scpFatJar Ev3LangScala -- -J-DrobotName=ev3dev```
+```bleep scpFatJar Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
 
-## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your addtions to the team's code run in the Ev3)
+## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your changes to the team's code run in the Ev3)
 
-```bleep scpJar Ev3LangScalaExample -- -J-DrobotName=ev3dev```
+```bleep scpJar Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
 
-## Upload the Ev3LangScalaExample bash file (Probably once)
+## Upload the Ev3LangScalaExample bash file (Do this if you change the DoIt.bash script - rarely)
 
-```bleep scpDoItBash Ev3LangScalaExample -- -J-DrobotName=ev3dev```
+```bleep scpDoItBash Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
 
 ---
 
