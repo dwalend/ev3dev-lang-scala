@@ -5,6 +5,7 @@ import bleep.yaml
 import io.circe.generic.auto._
 
 import java.nio.file.{Files, Path}
+import scala.jdk.CollectionConverters.EnumerationHasAsScala
 
 /**
  * A class to read project-specific yaml into.
@@ -13,7 +14,7 @@ import java.nio.file.{Files, Path}
  * @since v0.0.0
  */
 //todo remove target when you can get something in via -D
-case class Ev3Dev4sYaml(target:String,robots:Map[String,RobotYaml])
+case class Ev3Dev4sYaml(robots:Map[String,RobotYaml])
 
 object Ev3Dev4sYaml {
 
@@ -23,12 +24,8 @@ object Ev3Dev4sYaml {
   }
 
   def robotSpecForKey: Either[Error, RobotYaml] = {
-    println(System.getProperties.get("robotName"))
 
-    //todo replace with -D
-//    val robotKey: String = Option(System.getProperties.get("robotName")).getOrElse("firefly").toString
-    val robotKey: String = loadYaml.map(_.target).getOrElse(throw new IllegalStateException("No target in .yaml"))
-
+    val robotKey: String = Option(System.getProperties.get("robotName")).getOrElse("ev3dev").toString
     loadYaml.map(_.robots(robotKey))
   }
 }

@@ -1,6 +1,8 @@
 # Set up Intellij Idea to write Ev3 code
 
 ## Download and install Intellij Idea Community Edition from https://www.jetbrains.com/idea/download/#section=mac 
+            
+## Install bleep from https://bleep.build/docs/installing/
 
 ## Fork this repository in github
 
@@ -17,7 +19,7 @@ Select ev3-dev-lang-scala -> Clone
 (You might get an error - small red dot in bottom right corner. Install Xcode's git, then run around the "Get from VCS" again)
 Trust the project.
 
-## Install the Scala plugin. 
+## Install the Scala plugin in Intellij 
 
 Open up the Ev3ScalaExample/src/ev3dev4s/HelloWorld.scala file. (It will look monochrome.)
 You'll be invited to install the Scala plugin (upper right corner). 
@@ -31,14 +33,14 @@ In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> O
        
 ## Have Intellij understand the project structure
 
-Set up for mill in intellij (So that intellij will know how everything hangs togeter)
-```./millw mill.bsp.BSP/install```
+Use bleep to set up the ide (So that intellij will know how everything hangs togeter)
+```bleep setup-ide```
 
 In intellij's terminal, 
 
 ```rm -rf .idea```
 
-Close intellij. Reopen it. 
+Close Intellij. Reopen it. 
 
 File -> New -> Project from Existing Sources -> ev3dev-lang-scala
 Import project from external model -> BSP -> Create
@@ -49,19 +51,19 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 # Moving compiled code to the Ev3
 
-(Always change the Ev3 password from the default `maker`)
+(Always change the Ev3 password from the default `maker`. Update your local ev3dev4s-bleep.yaml with your robot host names, usernames, and passwords. host name can also be an IP address)
 
 ## Build and upload the Ev3LangScala library (Do this if you change the code library - first and rarely)
 
-```./millw -D ev3Password=maker Ev3LangScala.AppToRobot```
+```bleep scpFatJar Ev3LangScala -- -J-DrobotName=ev3dev```
 
 ## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your addtions to the team's code run in the Ev3)
 
-```./millw -D ev3Password=maker Ev3LangScalaExample.ToRobot```
+```bleep scpJar Ev3LangScalaExample -- -J-DrobotName=ev3dev```
 
 ## Upload the Ev3LangScalaExample bash file (Probably once)
 
-```./millw -D ev3Password=maker Ev3LangScalaExample.DoItToRobot```
+```bleep scpDoItBash Ev3LangScalaExample -- -J-DrobotName=ev3dev```
 
 ---
 
