@@ -1,8 +1,8 @@
 package ev3dev4s.examples
 
-import ev3dev4s.{Ev3System, sensors}
-import ev3dev4s.actuators.{Ev3Led, Motor}
-import ev3dev4s.sensors.{Ev3ColorSensor, Ev3Gyroscope, Ev3TouchSensor, Mode, Sensor}
+import ev3dev4s.Ev3System
+import ev3dev4s.actuators.Motor
+import ev3dev4s.sensors.{Ev3ColorSensor, Ev3Gyroscope, Ev3TouchSensor, Sensor}
 import ev3dev4s.sysfs.UnpluggedException
 
 /**
@@ -35,7 +35,7 @@ object AllGadgetsExample extends Runnable {
             }")
           }
           catch {
-            case ux: UnpluggedException => println(s"motor $motor unplugged")
+            case _: UnpluggedException => println(s"motor $motor unplugged")
           }
       }
       sensors.foreach {
@@ -55,10 +55,11 @@ object AllGadgetsExample extends Runnable {
               case touchSensor: Ev3TouchSensor => println(s"sensor $sensor ${
                 touchSensor.readTouch()
               }")
+              case _ => println(s"new sensor type ${sensor.getClass.getSimpleName}")
             }
           }
           catch {
-            case ux: UnpluggedException => println(s"sensor $sensor unplugged")
+            case _: UnpluggedException => println(s"sensor $sensor unplugged")
           }
 
       }

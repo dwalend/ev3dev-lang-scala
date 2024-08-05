@@ -63,7 +63,7 @@ object GyroFeedbackLoop extends Runnable {
     var count = 0
 
     def notDoneYet(): Boolean = {
-      val tac = Robot.leftMotor.readPosition()
+//      val tac = Robot.leftMotor.readPosition()
       count = count + 1
       Time.now() < startTime + milliseconds
     }

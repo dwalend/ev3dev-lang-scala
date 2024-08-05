@@ -2,7 +2,6 @@ package bleep.scripts
 
 import org.apache.tools.ant.taskdefs.optional.ssh.{Scp => AntScp}
 import org.apache.tools.ant.{Project => AntProject}
-import cats.syntax.either._
 
 import java.nio.file.Path
 

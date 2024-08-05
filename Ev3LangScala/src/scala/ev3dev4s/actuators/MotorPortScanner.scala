@@ -18,7 +18,7 @@ object MotorPortScanner extends GadgetPortScanner(new File("/sys/class/tacho-mot
       val motor = driverName match {
         case Ev3LargeMotor.driverName => Ev3LargeMotor(portAndDir._1, Option(MotorFS(portAndDir._2)))
         case Ev3MediumMotor.driverName => Ev3MediumMotor(portAndDir._1, Option(MotorFS(portAndDir._2)))
-        case unknown => throw new IllegalArgumentException(s"Unknown driver $driverName")
+        case _ => throw new IllegalArgumentException(s"Unknown driver $driverName")
       }
       portAndDir._1 -> motor
     }

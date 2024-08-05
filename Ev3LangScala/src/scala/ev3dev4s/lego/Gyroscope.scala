@@ -2,7 +2,6 @@ package ev3dev4s.lego
 
 import ev3dev4s.scala2measure.Degrees
 import ev3dev4s.sensors.{Ev3Gyroscope, SensorPort, SensorPortScanner}
-import ev3dev4s.sysfs.UnpluggedException
 
 /**
  *

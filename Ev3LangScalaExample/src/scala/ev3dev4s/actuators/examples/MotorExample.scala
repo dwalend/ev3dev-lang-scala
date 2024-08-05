@@ -1,7 +1,7 @@
 package ev3dev4s.actuators.examples
 
 import ev3dev4s.Ev3System
-import ev3dev4s.actuators.{Motor, MotorCommand, MotorPort, MotorPortScanner, MotorStopCommand}
+import ev3dev4s.actuators.{Motor, MotorCommand, MotorStopCommand}
 
 import ev3dev4s.scala2measure.Conversions._
 

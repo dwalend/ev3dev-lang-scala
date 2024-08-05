@@ -13,7 +13,7 @@ import ev3dev4s.scala2measure.Conversions._
  */
 
 sealed case class Ev3Led(side:Int) extends AutoCloseable {
-  import ev3dev4s.actuators.Ev3Led.{Color,brightest, darkest,Off,Red,Green,Yellow}
+  import ev3dev4s.actuators.Ev3Led.{Color,Off,Red,Green,Yellow}
 
   val rootName = "/sys/class"
   //noinspection SpellCheckingInspection
@@ -38,7 +38,7 @@ sealed case class Ev3Led(side:Int) extends AutoCloseable {
     greenWriter.close ()
   }
 
-  def writeColor(color:Color) = {
+  def writeColor(color:Color): Unit = {
     writeBrightness(color.red,color.green)
   }
 

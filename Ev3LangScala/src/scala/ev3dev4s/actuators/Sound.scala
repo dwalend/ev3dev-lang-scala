@@ -95,7 +95,7 @@ object Sound {
    * we don't know where they are as notes. will figure out
    * @param amplitude
    * volume, scale from 0-200
-   * @param speeeeed
+   * @param speed
    * words per minute. lower limit 80, no upper limit (stop at about 500)
    * from
    * http://espeak.sourceforge.net/commands.html
@@ -105,9 +105,9 @@ object Sound {
              voice: String = "en",
              pitch: Int = 50,
              amplitude: Int = 100,
-             speeeeed: Int = 150
+             speed: Int = 150
            ): Unit = {
-    val speakCommand = s"""/usr/bin/espeak -v$voice -p$pitch -a$amplitude -s$speeeeed "$say" --stdout | aplay"""
+    val speakCommand = s"""/usr/bin/espeak -v$voice -p$pitch -a$amplitude -s$speed "$say" --stdout | aplay"""
     Shell.execute(Array("/bin/sh", "-c", speakCommand))
   }
 }
