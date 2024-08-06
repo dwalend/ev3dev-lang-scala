@@ -31,6 +31,6 @@ templates:
     platform:
       name: jvm
     scala:
-      options: -encoding utf8 -feature -unchecked
+      options: -encoding utf8 -feature -unchecked -Wconf:cat=w-flag-value-discard:silent,cat=other-pure-statement:silent,cat=w-flag-numeric-widen:silent,any:warning-verbose
       strict: true
       version: 2.13.14

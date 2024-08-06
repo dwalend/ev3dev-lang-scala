@@ -205,7 +205,7 @@ TILT-ANG [24]	Angle (2nd axis)	deg (degrees)	0	1	value0: Angle (-32768 to 32767)
       Time.pause()
     }
 
-    maybeOldMode.map(setMaybeWriteMode(_))
+    maybeOldMode.foreach(setMaybeWriteMode(_))
 
     reportProgress(3)()
 

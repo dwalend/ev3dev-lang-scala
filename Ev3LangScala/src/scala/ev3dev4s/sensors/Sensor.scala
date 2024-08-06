@@ -50,7 +50,6 @@ object MultiModeSensorFS {
     private lazy val value0Reader = ChannelRereader(sensorDir.resolve("value0"))
 
     private[sensors] def writeMode(mode: Mode): Unit = {
-      val file = sensorDir.resolve("mode").toFile
       modeWriter.writeString(mode.name)
     }
 

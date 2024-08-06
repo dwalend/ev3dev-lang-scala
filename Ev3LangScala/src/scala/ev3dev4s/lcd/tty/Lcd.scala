@@ -14,7 +14,7 @@ object Lcd extends AutoCloseable {
 
   private lazy val printStream: PrintStream = {
     //set everything back on shutdown
-    val sttySane = new Runnable {
+    val sttySane: Runnable = new Runnable {
       override def run(): Unit = Shell.execute("stty -F /dev/tty sane")
     }
     Runtime.getRuntime.addShutdownHook(new Thread(sttySane,"reset stty at shutdown"))
