@@ -2,7 +2,7 @@ package bleep.scripts
 
 import bleep.model.ProjectName
 import bleep.{BleepScript, Commands, Started, model}
-import bloop.config.PlatformFiles
+import bloop.config.{Config, PlatformFiles}
 import org.apache.tools.ant.taskdefs.Manifest.Attribute
 import org.apache.tools.ant.taskdefs.{Jar => AntJar, Manifest => AntManifest}
 import org.apache.tools.ant.types.FileSet
@@ -57,12 +57,16 @@ object FatJar extends BleepScript("FatJar") {
     libraries.add(libraryFileSelector)
     antJarTask.addZipGroupFileset(libraries)
 
-    val mainClassName = "ev3dev4s.JarRunner" //todo get this from bleep yaml - ask how
+    val bloopProject: Config.Project = started.bloopFiles(crossProjectName).forceGet.project
+    val mainClassName: Option[String] = bloopProject.platform.flatMap(_.mainClass)
+
     val antManifest = new AntManifest()
-    antManifest.addConfiguredAttribute(new Attribute("Main-Class",mainClassName))
+    mainClassName.foreach{m => antManifest.addConfiguredAttribute(new Attribute("Main-Class",m))}
     antJarTask.addConfiguredManifest(antManifest)
 
     antJarTask.execute()
+
+    println(s"Wrote fat jar $destFile with main class $mainClassName")
   }
 }
 
