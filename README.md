@@ -30,7 +30,24 @@ Restart Intellij to get the Scala plugin going
 In the upper right Set Up JDK -> Version 11 , Eclipse Temurin 11.0.16 -> OK
 
 In the upper right Set Up Scala SDK -> Use Library -> Download 2.13.8 -> OK -> OK
-       
+         
+## Install bleep
+
+bleep is the command line tool that will compile your Scala code and copy it to your robot. To get it you first have to install another tool called Coursier. Install it via Intellij's terminal. 
+
+On a modern Mac use 
+
+```
+curl -fL https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-apple-darwin.gz | gzip -d > cs
+chmod +x cs
+./cs setup
+```
+See https://get-coursier.io/docs/cli-installation for other operating systems
+
+Next install bleep:
+
+```cs install --channel https://raw.githubusercontent.com/oyvindberg/bleep/master/coursier-channel.json bleep```
+
 ## Have Intellij understand the project structure
 
 Use bleep to set up the ide (So that intellij will know how everything hangs togeter)
@@ -51,19 +68,19 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 # Moving compiled code to the Ev3
 
-The command line arguments `-- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local` are optional if all the values are default, but you really should change that password.
+(The command line arguments `-- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local` are optional if all the values are default, but you really should change at least the password.)
 
 ## Build and upload the Ev3LangScala library (Do this if you change the ev3dev4s library - first and rarely)
 
-```bleep scpFatJar Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
+```bleep scpFatJar Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your changes to the team's code run in the Ev3)
 
-```bleep scpJar Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
+```bleep scpJar Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Upload the Ev3LangScalaExample bash file (Do this if you change the DoIt.bash script - rarely)
 
-```bleep scpDoItBash Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=firefly.local```
+```bleep scpDoItBash Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ---
 
@@ -76,7 +93,7 @@ Intellij Idea will let you open up a second terminal with the big +, so you can 
 ```ssh robot@ev3dev.local```
 And enter your password when prompted. (You are sure you want to continue connecting.)
 
-Run in the shell
+To run in the shell use
 ```brickrun -r -- java -cp Ev3LangScala.jar ev3dev4s.JarRunner Ev3LangScalaExample.jar examples.HelloWorld```
 
 (It will blink green for about 45 seconds before honking and starting)
