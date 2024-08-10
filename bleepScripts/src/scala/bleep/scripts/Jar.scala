@@ -3,6 +3,7 @@ package bleep.scripts
 import bleep.model.ProjectName
 import bleep.packaging.{JarType, ManifestCreator, createJar}
 import bleep.{BleepScript, Commands, Started, model}
+import bloop.config.Config
 
 import java.nio.file.{Files, Path}
 
@@ -10,16 +11,20 @@ object Jar extends BleepScript("Jar") {
   def run(started: Started, commands: Commands, args: List[String]): Unit = {
 
     val projectName = ProjectName(args.head)
-    commands.compile(List(model.CrossProjectName(projectName,None)))
-    //todo handle variants instead of hardcoding "normal" - ask
+    val crossProjectName = model.CrossProjectName(projectName,None)
+    commands.compile(List(crossProjectName))
 
-    val classesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("classes")
-    val resourcesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("resources") //todo get resources path from yaml - ask
+    val classesPath: Path = started.projectPaths(crossProjectName).classes
+    val resourcesPath: Path = started.projectPaths(crossProjectName).targetDir.resolve("resources")
+
+    val bloopProject: Config.Project = started.bloopFiles(crossProjectName).forceGet.project
+    val mainClassName: Option[String] = bloopProject.platform.flatMap(_.mainClass)
+
     val jarBytes: Array[Byte] = createJar(
       jarType = JarType.Jar,
       manifestCreator = ManifestCreator.default,
       fromFolders = Seq(classesPath,resourcesPath),
-      mainClass = Option("ev3dev4s.JarRunner") //todo how to get the main class from the bleep.yaml ? - ask
+      mainClass = mainClassName
     )
 
     jarDirectory(started, projectName).toFile.mkdirs()

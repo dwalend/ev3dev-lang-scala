@@ -17,7 +17,6 @@ object FatJar extends BleepScript("FatJar") {
     val projectName = ProjectName(args.head)
     val crossProjectName = model.CrossProjectName(projectName,None)
     commands.compile(List(crossProjectName))
-    //    println(${started.activeProjectsFromPath})  //todo why does this fail silently, bad exit code?
 
     val classesPath: Path = started.projectPaths(crossProjectName).classes
     val resourcesPath: Path = started.projectPaths(crossProjectName).targetDir.resolve("resources")
