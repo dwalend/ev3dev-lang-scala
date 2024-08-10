@@ -17,11 +17,10 @@ object FatJar extends BleepScript("FatJar") {
     val projectName = ProjectName(args.head)
     val crossProjectName = model.CrossProjectName(projectName,None)
     commands.compile(List(crossProjectName))
-    //todo handle variants instead of hardcoding "normal"
     //    println(${started.activeProjectsFromPath})  //todo why does this fail silently, bad exit code?
 
-    val classesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("classes")
-    val resourcesPath: Path = started.buildPaths.buildsDir.resolve("normal").resolve(".bloop").resolve(projectName.value).resolve("resources") //todo is this the right path for resources?  Do I even need to do it?
+    val classesPath: Path = started.projectPaths(crossProjectName).classes
+    val resourcesPath: Path = started.projectPaths(crossProjectName).targetDir.resolve("resources")
 
     val destFile = Jar.jarPath(started, projectName).toFile
     Jar.jarDirectory(started, projectName).toFile.mkdirs()
