@@ -51,6 +51,7 @@ Next install bleep:
 ## Have Intellij understand the project structure
 
 Use bleep to set up the ide (So that intellij will know how everything hangs togeter)
+
 ```bleep setup-ide```
 
 In intellij's terminal, 
@@ -68,19 +69,19 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 # Moving compiled code to the Ev3
 
-(The command line arguments `-- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local` are optional if all the values are default, but you really should change at least the password.)
+(The command line arguments `-- -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local` are optional if all the values are default, but you really should change at least the password.)
 
 ## Build and upload the Ev3LangScala library (Do this if you change the ev3dev4s library - first and rarely)
 
-```bleep appToRobot Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep appToRobot Ev3LangScala -- -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your changes to the team's code run in the Ev3)
 
-```bleep toRobot Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep toRobot Ev3LangScalaExample -- -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Upload the Ev3LangScalaExample bash file (Do this if you change the DoIt.bash script - rarely)
 
-```bleep doItToRobot Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep doItToRobot Ev3LangScalaExample -- -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ---
 
