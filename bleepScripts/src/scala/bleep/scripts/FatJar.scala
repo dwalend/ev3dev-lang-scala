@@ -44,17 +44,18 @@ object FatJar extends BleepScript("FatJar") {
       antJarTask.addFileset(resourceFiles)
     }
 
-    //todo find each dependency libraries and add it
+    //find each dependency library and add it
     //todo is there a way to just include referenced dependencies?
     val classpath: Seq[PlatformFiles.Path] = started.bloopProject(crossProjectName).classpath
     val libraries = new FileSet()
     libraries.setProject(antProject)
-    libraries.setDir(classpath.head.toFile.getParentFile)
-    val libraryFileSelector = new FilenameSelector()
-    libraryFileSelector.setName(classpath.head.toFile.getName)
-
-    libraries.add(libraryFileSelector)
-    antJarTask.addZipGroupFileset(libraries)
+    classpath.foreach{ cp =>
+      libraries.setDir(cp.toFile.getParentFile)
+      val libraryFileSelector = new FilenameSelector()
+      libraryFileSelector.setName(cp.toFile.getName)
+      libraries.add(libraryFileSelector)
+      antJarTask.addZipGroupFileset(libraries)
+    }
 
     val bloopProject: Config.Project = started.bloopFiles(crossProjectName).forceGet.project
     val mainClassName: Option[String] = bloopProject.platform.flatMap(_.mainClass)
