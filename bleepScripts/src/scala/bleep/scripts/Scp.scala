@@ -13,7 +13,7 @@ object Scp {
     val ev3Password: String = Option(System.getProperties.get("ev3Password")).getOrElse("maker").toString
     val ev3Hostname: String = Option(System.getProperties.get("ev3Hostname")).getOrElse("ev3dev").toString
 
-    val remoteTarget = s"$ev3Username@${ev3Hostname}:$toRemoteFile"
+    val remoteTarget = s"$ev3Username@$ev3Hostname:$toRemoteFile"
 
     val antScp = new AntScp()
     antScp.init()

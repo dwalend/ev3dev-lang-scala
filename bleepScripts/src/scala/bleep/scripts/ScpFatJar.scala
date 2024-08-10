@@ -19,7 +19,7 @@ object ScpFatJar extends BleepScript("ScpJar") {
    * Copy a jar file to the ev3 via scp - and write the expected size in another file (in hopes of detecting that the
    * jar file is complete.)
    */
-  def scpJar(jarPath: Path,projectName: ProjectName) = {
+  def scpJar(jarPath: Path,projectName: ProjectName): Unit = {
     Scp.scpFile(jarPath,s"${projectName.value}.jar")
   }
 }
