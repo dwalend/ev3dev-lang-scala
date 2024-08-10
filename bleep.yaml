@@ -22,10 +22,10 @@ projects:
 # todo add Experiments
 scripts:
   jar: bleepScripts/bleep.scripts.Jar
-  scpJar: bleepScripts/bleep.scripts.ScpJar
+  toRobot: bleepScripts/bleep.scripts.ScpJar
   fatJar: bleepScripts/bleep.scripts.FatJar
-  scpFatJar: bleepScripts/bleep.scripts.ScpFatJar
-  scpDoItBash: bleepScripts/bleep.scripts.ScpDoItBash
+  appToRobot: bleepScripts/bleep.scripts.ScpFatJar
+  doItToRobot: bleepScripts/bleep.scripts.ScpDoItBash
 templates:
   template-common:
     platform:

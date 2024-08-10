@@ -72,15 +72,15 @@ Test that you can navigate in the source code. Open up Ev3ScalaExample/src/ev3de
 
 ## Build and upload the Ev3LangScala library (Do this if you change the ev3dev4s library - first and rarely)
 
-```bleep scpFatJar Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep appToRobot Ev3LangScala -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Build and upload the Ev3LangScalaExample library (Do this every time you want to see your changes to the team's code run in the Ev3)
 
-```bleep scpJar Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep toRobot Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ## Upload the Ev3LangScalaExample bash file (Do this if you change the DoIt.bash script - rarely)
 
-```bleep scpDoItBash Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
+```bleep doItToRobot Ev3LangScalaExample -- -J-Dev3UserName=ev3dev -J-Dev3Username=robot -J-Dev3Password=maker -J-Dev3Hostname=ev3dev.local```
 
 ---
 
