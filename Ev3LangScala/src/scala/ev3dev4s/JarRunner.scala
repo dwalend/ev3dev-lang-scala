@@ -53,7 +53,7 @@ object JarRunner {
         MotorPortScanner.stopAllMotors()
         Ev3Led.writeBothRed()
         Lcd.clear()
-        x.getMessage.grouped(11).take(3).zipWithIndex.foreach { chunk =>
+        Option(x.getMessage).getOrElse("No Message").grouped(11).take(3).zipWithIndex.foreach { chunk =>
           Lcd.set(chunk._2, chunk._1)
         }
         Lcd.set(3,"Push Button")

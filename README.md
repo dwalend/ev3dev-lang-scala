@@ -52,9 +52,18 @@ Next install bleep:
 
 Use bleep to set up the ide (So that intellij will know how everything hangs togeter)
 
-```bleep setup-ide```
+In intellij's terminal,
 
-In intellij's terminal, 
+```shell
+bleep setup-ide
+```
+. Download and compile all the code
+
+```shell
+bleep compile
+```
+
+Remove whatever intellij created on its own. 
 
 ```rm -rf .idea```
 
