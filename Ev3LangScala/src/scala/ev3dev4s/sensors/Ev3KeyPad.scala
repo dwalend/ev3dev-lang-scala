@@ -1,6 +1,8 @@
 package ev3dev4s.sensors
 
 import ev3dev4s.os.Time
+import ev3dev4s.scala2measure.Conversions.IntConversions
+import ev3dev4s.scala2measure.MilliSeconds
 
 import java.io.{DataInputStream, FileInputStream}
 import scala.annotation.tailrec
@@ -45,18 +47,18 @@ object Ev3KeyPad extends AutoCloseable {
   private val keyPadInputStream = new DataInputStream(new FileInputStream(keyPadEventPath))
   private val bytes32: Array[Byte] = Array.fill[Byte](32)(0x0)
 
-  def blockUntilAnyKey(startTime:Long = Time.now()): (Key, State) = this.synchronized{
+  def blockUntilAnyKey(startTime:MilliSeconds = Time.now()): (Key, State) = this.synchronized{
     recursiveBlockUntilAnyKey(startTime)
   }
   
   @tailrec
-  private final def recursiveBlockUntilAnyKey(startTime:Long): (Key, State) = {
+  private final def recursiveBlockUntilAnyKey(startTime:MilliSeconds): (Key, State) = {
     val KEY_INDEX = 10 // should be a key.byte
     val STATE_INDEX = 12 // should be a state.byte
 
     keyPadInputStream.readFully(bytes32)
     //debounce the keypad
-    if(Time.now() - startTime > 5) {// long enough to clear the old pushes
+    if(Time.now() - startTime > 5.ms) {// long enough to clear the old pushes
       val keyAndState: (Byte, Byte) = (bytes32(KEY_INDEX), bytes32(STATE_INDEX))
       bytesToKeyStates.getOrElse(keyAndState, throw new IllegalStateException(s"No key state for $keyAndState"))
     } else {

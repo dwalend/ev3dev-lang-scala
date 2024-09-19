@@ -109,7 +109,7 @@ class DutyCycle(val v:Float) extends AnyVal with Measured[DutyCycle] {
 class LedIntensity(val v:Float) extends AnyVal with Measured[LedIntensity] {
   def create(i: Float) = new LedIntensity(i)
 
-  override def toString(): String = s"${v}i"
+  override def toString(): String = s"${v}l"
 }
 
 class MilliMeters(val v:Float) extends AnyVal with Measured[MilliMeters] {
